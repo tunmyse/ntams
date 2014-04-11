@@ -39,8 +39,9 @@ class User_model extends CI_Model {
     public function authenticate_user(array $query_fields) {
 
         // Build query to authenticate user against a database entry
+        $tablename = $this->db->dbprefix('users');
         $sql = "SELECT * "
-                . "FROM tams_users "
+                . "FROM {$tablename} "
                 . "WHERE schoolid = ? "
                 . "AND password = ? "
                 . "AND (email LIKE ? OR usertypeid LIKE ? OR phone LIKE ?) ";
@@ -69,90 +70,137 @@ class User_model extends CI_Model {
      * Log request for a password reset
      * 
      * @access public
-     * @param tring $uid, array $qurery_fields
+     * @param array $query_fields
      * @return uid (string)
      */
-    public function create_request_entry($uid, $query_fields) {
-        // Build query to retrieve userid and email of user
-        $sql = "SELECT userid, email "
-                . "FROM tams_users "
-                . "WHERE schoolid = ? "
-                . "AND (email LIKE ? OR usertypeid LIKE ? OR phone LIKE ?) ";
-
-
-        $result = $this->db->query($sql, 
-                        array(
-                            $query_fields['school_id'], 
-                            $query_fields['username'], 
-                            $query_fields['username'], 
-                            $query_fields['username']
-                        )
-                    );
+    public function create_request_entry($query_fields) {
         
-        if($result->num_rows() < 1) 
-            return false;
+        // Check if user has a pending reset request
+        $query = $this->db->get_where('reset_request', array('userid' => $query_fields['userid']));
+        $result = $query->row();
         
-        $info = $result->row();
+        // Get reset link expiration time
+        $expiration_time = $this->config->item('password_expiration_time');
         
-        $insert_data = array(
-            'userid'    => $info->userid,
-            'uid'       => $uid,
-            'date'      => date('Y-m-d H:i:s')
-        );
+        // Check if link has expired.
+        $cur_date = new DateTime('now');
+        $exp_date = new DateTime(date('Y-m-d H:i:s', strtotime($result->date)));
+        $exp_date->modify("+{$expiration_time} hour");
         
-        $ret = $this->db->insert($insert_data);
-        
-        if($ret) {
-            return array('email' => $info->email, 'uid' => $uid);
+        if($query->num_rows() > 0 && $cur_date > $exp_date) {
+            $this->db->delete('reset_request', array('resetid' => $result->resetid));   
+        }else {
+            return DEFAULT_EXIST;
         }
         
-        return false;
+        $ret = $this->db->insert('reset_request', $query_fields);
+        
+        if(!$ret)
+            return DEFAULT_ERROR;
+        
+        return DEFAULT_SUCCESS;
     }
     
     /**
-     * fetch user groups, modules and permissions
+     * Check if a reset link exists, or is valid
      * 
      * @access public
-     * @param user id
-     * @param account type 
+     * @param array $query_fields
+     * @return uid (string)
+     */
+    public function check_reset_link($uid) {
+        
+        $query = $this->db->get_where('reset_request', array('uid' => $uid));
+        
+        if($query->num_rows() > 0) {
+            
+            $result = $query->row();
+            // Get reset link expiration time
+            $expiration_time = $this->config->item('password_expiration_time');
+
+            // Check if link has expired.
+            $cur_date = new DateTime('now');
+            $exp_date = new DateTime(date('Y-m-d H:i:s', strtotime($result->date)));
+            $exp_date->modify("+{$expiration_time} hour");
+            
+            if($cur_date > $exp_date) {
+                $this->db->delete('reset_request', array('resetid' => $result->resetid)); 
+                return DEFAULT_EXPIRED;
+            }else {
+                return $result;
+            }
+        
+        }
+        
+        return DEFAULT_NOT_EXIST;
+        
+    }// End func check_reset_link
+    
+    /**
+     * Change a users password
+     * 
+     * @access public
+     * @param int $userid, array $params
      * @return bool
      */
-    public function get_user_info($id_user){
-
-        if(empty($id_user)){
-            return false;
-        }
-
-        $sql = "select 
-                                    g.subject as group_subject,
-                                    m.id_module, 
-                m.subject as module_subject, 
-                m.id_string as module_id_string,
-                                    p.subject as perm_subject, 
-                p.id_perm, 
-                                    p.id_string as perm_id_string,
-                                    p.in_menu,
-                                    u.id_user 
-                from user_perms u
-                left join module_perms p on p.id_perm = u.id_perm
-                                    and p.in_menu = 1
-                left join modules m on m.id_module = p.id_module
-                left join module_group g on g.id_group = m.id_group
-                where u.id_user = ". $id_user ."
-                group by u.id_perm";
-
-        $result = $this->db->query($sql)->result_array();
-
-        if(empty($result)){
-            return false;
-        }
-
-        return $result;
-    } // End func fetch_user_modules_perms
-
+    public function change_user_password($userid, $params) {
+        // Build sql
+        $this->db->where('userid', $userid);
+        $ret = $this->db->update('users', $params);
         
+        if($ret)
+            return true;
+            
+        return false;
+    }// End func change_user_password
+    
+    /**
+     * Get user information
+     * 
+     * @access public
+     * @param (int | array) $params, bool $extended optional
+     * @return bool | array
+     */
+    public function get_user_info($params, $extended=FALSE){
+        
+        // Add prefix to table name
+        $tablename = $this->db->dbprefix('users');
+        
+        // Build query to retrieve userid and email of user 
+        if(array_key_exists('user_id', $params)) {
+            $sql = "SELECT * "
+               . "FROM {$tablename} "
+               . "WHERE schoolid = ? "
+               . "AND userid = ?";
+            $param = array($params['school_id'], $params['user_id']);
+        }else {
+            $sql = "SELECT * "
+               . "FROM {$tablename} "
+               . "WHERE schoolid = ? "
+               . "AND (email LIKE ? OR usertypeid LIKE ? OR phone LIKE ?) ";
+            $param = array($params['school_id'], $params['username'], $params['username'], $params['username']);
+        }
+        
+        $query = $this->db->query($sql, $param);
+        
+        if($query->num_rows() < 1) 
+            return false;
+        
+        $result = $query->row();
+        
+        // Get extended results from appropriate user_type table 
+        if($extended && isset($result->usertype)) {
+            $this->db->select('*');
+            $this->db->from('users u');
+            $this->db->join("{$usertype}", 'u.userid = ut.userid');
+            $query = $this->db->get();
+            return $query->row();
+        }else{
+            return $result;
+        }
+        
+    } // End func get_user_info      
 	
 } // End class User_model
 
 // End file user_model.php
-?>

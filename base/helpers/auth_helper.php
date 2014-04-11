@@ -17,21 +17,22 @@ if ( ! function_exists('check_field')) {
         if($value == NULL || $value == '')
             return false;
         
+        $CI =& get_instance();
+        
         switch ($type) {
-            case PASSWORD_FIELD_TYPE:
-                if(strlen($value) < PASSWORD_LENGTH_MIN)
+            case FIELD_TYPE_PASSWORD:
+                if(strlen($value) < $CI->config->item('password_min_length'))
                     return false;
                 break;
 
-            case USERNAME_FIELD_TYPE:
-                if(strlen($value) < USERNAME_LENGTH_MIN)
+            case FIELD_TYPE_USERNAME:
+                if(strlen($value) < $CI->config->item('username_min_length'))
                     return false;
                 break;
 
-            case EMAIL_FIELD_TYPE:
-                $CI =& get_instance();
+            case FIELD_TYPE_EMAIL:
                 $CI->load->helper('email');
-                if(!valid_email($value))
+                if(!valid_email($value) || strtolower($value) == DEFAULT_EMAIL)
                     return false;
                 break;
 

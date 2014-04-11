@@ -78,11 +78,16 @@ class Auth extends CI_Driver_Library {
         $password = $this->encrypt($this->credentials['password']);
         
         // Fetch user data from database by usertypeid, email or phone number and password
-        $authenticated = $this->CI->user_model->authenticate_user(array('school_id' => $this->credentials['school_id'], 'username' => $this->credentials['username'], 'password' => $password));
+        $authenticated = $this->CI->user_model->authenticate_user(
+                array(
+                    'school_id' => $this->credentials['school_id'], 
+                    'username' => $this->credentials['username'], 
+                    'password' => $password)
+                );
         
         if(!$authenticated) {
             $error_msg = $this->CI->lang->line('user_not_found');            
-            $this->CI->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+            $this->CI->main->set_notification_message(MSG_TYPE_ERROR, sprintf($error_msg, 'credentials'));
             return false;
         }
         
@@ -93,6 +98,35 @@ class Auth extends CI_Driver_Library {
         
     } // End func authentication        
      
+    /**
+     * Change users password.	 
+     *
+     * @access private
+     * @param string $name
+     * @return bool
+     **/
+    private function change_password() {
+        
+        // Encrypt password
+        $password = $this->encrypt($this->credentials['password']);
+        
+        // Change user password.
+        $changed = $this->CI->user_model->change_user_password($this->credentials['user_id'], 
+                array( 
+                    'password' => $password)
+                );
+        if(!$changed) {
+            $error_msg = $this->CI->lang->line('user_not_found');            
+            $this->CI->main->set_notification_message(MSG_TYPE_ERROR, sprintf($error_msg, 'credentials'));
+            return DEFAULT_ERROR;
+        }
+        
+        $success_msg = $this->CI->lang->line('reset_email_succeeded');
+        $this->CI->main->set_notification_message(MSG_TYPE_ERROR, $success_msg);
+        return DEFAULT_SUCCESS;
+        
+    }// End of func _valid_auth_provider
+    
     /**
      * Check for a valid authentication type.	 
      *

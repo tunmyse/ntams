@@ -10,7 +10,7 @@
             <div class="dropdown">
                 <a href="#" class='dropdown-toggle' data-toggle="dropdown">
                     <?php echo $display_name;?> 
-                    <img src="/img/demo/user-avatar.jpg" alt="">
+                    <img src="img/demo/user-avatar.jpg" alt="">
                 </a>
                 <ul class="dropdown-menu pull-right">
                     <li>

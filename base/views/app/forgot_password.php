@@ -27,33 +27,33 @@
 	<title>TAMS - Forgot password</title>
 
 	<!-- Bootstrap -->
-	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="<?php echo site_url(); ?>css/bootstrap.min.css">
 	<!-- Bootstrap responsive -->
-	<link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+	<link rel="stylesheet" href="<?php echo site_url(); ?>css/bootstrap-responsive.min.css">
 	<!-- icheck -->
-	<link rel="stylesheet" href="css/plugins/icheck/all.css">
+	<link rel="stylesheet" href="<?php echo site_url(); ?>css/plugins/icheck/all.css">
 	<!-- Theme CSS -->
-	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="<?php echo site_url(); ?>css/style.css">
 	<!-- Color CSS -->
-	<link rel="stylesheet" href="css/themes.css">
+	<link rel="stylesheet" href="<?php echo site_url(); ?>css/themes.css">
 
 
 	<!-- jQuery -->
-	<script src="js/jquery.min.js"></script>
+	<script src="<?php echo site_url(); ?>js/jquery.min.js"></script>
 	
 	<!-- Nice Scroll -->
-	<script src="js/plugins/nicescroll/jquery.nicescroll.min.js"></script>
+	<script src="<?php echo site_url(); ?>js/plugins/nicescroll/jquery.nicescroll.min.js"></script>
 	<!-- Validation -->
-	<script src="js/plugins/validation/jquery.validate.min.js"></script>
-	<script src="js/plugins/validation/additional-methods.min.js"></script>
+	<script src="<?php echo site_url(); ?>js/plugins/validation/jquery.validate.min.js"></script>
+	<script src="<?php echo site_url(); ?>js/plugins/validation/additional-methods.min.js"></script>
 	<!-- icheck -->
-	<script src="js/plugins/icheck/jquery.icheck.min.js"></script>
+	<script src="<?php echo site_url(); ?>js/plugins/icheck/jquery.icheck.min.js"></script>
 	<!-- Bootstrap -->
-	<script src="js/bootstrap.min.js"></script>
-	<script src="js/eakroko.js"></script>
+	<script src="<?php echo site_url(); ?>js/bootstrap.min.js"></script>
+	<script src="<?php echo site_url(); ?>js/eakroko.js"></script>
 
 	<!--[if lte IE 9]>
-		<script src="js/plugins/placeholder/jquery.placeholder.min.js"></script>
+		<script src="<?php echo site_url(); ?>js/plugins/placeholder/jquery.placeholder.min.js"></script>
 		<script>
 			$(document).ready(function() {
 				$('input, textarea').placeholder();
@@ -63,15 +63,15 @@
 	
 
 	<!-- Favicon -->
-	<link rel="shortcut icon" href="img/icon.png" />
+	<link rel="shortcut icon" href="<?php echo site_url(); ?>img/icon.png" />
 	<!-- Apple devices Homescreen icon -->
-	<link rel="apple-touch-icon-precomposed" href="img/apple-touch-icon-precomposed.png" />
+	<link rel="apple-touch-icon-precomposed" href="<?php echo site_url(); ?>img/apple-touch-icon-precomposed.png" />
 
     </head>
 
     <body class='login'>
 	<div class="wrapper">
-            <h1><a href="<?php echo site_url()?>"><img src="img/logo2.png" alt="" class='retina-ready' width="59" height="49">TASUED</a></h1>
+            <h1><a href="<?php echo site_url()?>"><img src="<?php echo site_url(); ?>img/logo2.png" alt="" class='retina-ready' width="59" height="49">TASUED</a></h1>
             <div class="login-body" style="padding-top: 20px">
                 <p class="small text-<?php echo $msg_type;?>" style="padding: 0 30px"><?php echo $msg?></p>
                 <h2>FORGOT PASSWORD</h2>
@@ -87,7 +87,7 @@
                     </div>
                 </form>
                 <div class="forget">
-                    <a>Powered by TAMS.<img src="img/powered.png" alt=""></a>  
+                    <a>Powered by TAMS.<img src="<?php echo site_url(); ?>img/powered.png" alt=""></a>  
                 </div>
             </div>
 	</div>

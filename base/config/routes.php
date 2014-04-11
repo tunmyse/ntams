@@ -56,6 +56,9 @@ $route['forgot_password'] = "application/forgot_password";
 $route['reset_password/(:any)'] = "application/reset_password/$1";
 $route['reset_password'] = "application/reset_password";
     
+// Reset password rules
+$route['change_password'] = "application/change_password";
+
 $route['404_override'] = '';
 
 

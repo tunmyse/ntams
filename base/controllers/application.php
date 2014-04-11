@@ -81,11 +81,121 @@ class Application extends CI_Controller {
     }// End of func login
     
     /**
-     * Reset password.	 
+     * Logout function for the application.	 
      */
-    public function reset_password($uid='') {
-        $page_name = 'reset_password';
-        $this->load->view($this->folder_name.'/'.$page_name);
+    public function logout() {
+        
+        // Call logout in Main Library
+        $this->main->logout();
+        
+        // Redirect to the login view
+        redirect(site_url('login'));
+        
+    }// End of func logout
+    
+    /**
+     * Reset password.
+     * 
+     * @access public
+     * @param string $uid
+     * @return void	 
+     */
+    public function reset_password($uid=NULL) {
+        $page_name = 'change_password';
+        
+         // Set page parameters. 
+        $data['msg_type'] = $data['msg'] = '';
+        $data['collapse']   = false;   
+        
+        // Check request to either show the view or initiate a password change.
+        if($this->input->server('REQUEST_METHOD') == 'POST'){
+            
+            $error = false;
+            // Retrieve user's password
+            $upw = $this->input->post('upw', TRUE);
+            $cpw = $this->input->post('cpw', TRUE);
+            
+            // Validate user's username
+            if(!check_field($upw, FIELD_TYPE_PASSWORD) || !check_field($cpw, FIELD_TYPE_PASSWORD)) {
+                $error = true;
+                $data['msg'] = $this->lang->line('invalid_username');  
+                $data['msg_type']   = MSG_TYPE_ERROR;
+            }
+            
+            if($upw != $cpw) {
+                $error = true;
+                $data['msg'] = $this->lang->line('password_unmatch');    
+                $data['msg_type']   = MSG_TYPE_ERROR;                               
+            }
+            
+            if(!$error) {
+                // Initiate password reset
+                $status = $this->main->change_password($upw);
+
+                switch ($status) {
+                    case DEFAULT_SUCCESS:
+                        $data['collapse']   = true;
+                        $data['msg_type']   = MSG_TYPE_SUCCESS;
+                        $data['msg']        = sprintf($this->lang->line('password_change_success'), site_url('login'));
+                        break;
+
+                    case DEFAULT_ERROR:
+                        $data['collapse']   = false;
+                        $data['msg_type']   = MSG_TYPE_ERROR;
+                        $data['msg']        = sprintf($this->lang->line('password_change_error'), 'resetting', 'Try your reset link again');
+                        break;
+                }
+            }
+            
+        }else {            
+            
+            // Check if query string is set.
+            if(!isset($uid)) {
+                $data['collapse']   = true;
+                $data['msg_type']   = MSG_TYPE_ERROR;
+                $data['msg']        = sprintf($this->lang->line('invalid_reset_link'), site_url('forgot_password'));
+            }else {
+                
+                // Check if $uid is a success or error message
+                switch($uid) {
+                    
+                    case MSG_TYPE_ERROR:
+                        $data['msg_type']   = MSG_TYPE_ERROR;
+                        $data['msg']        = sprintf($this->lang->line('password_change_error'), 'resetting', 'Try your reset link again');
+                        break;
+                
+                    case MSG_TYPE_SUCCESS: 
+                        $data['msg_type']   = MSG_TYPE_SUCCESS;
+                        $data['msg']        = sprintf($this->lang->line('password_change_success'), site_url('login'));
+                        break;
+                    
+                    default:
+                        // Check if query string is valid
+                        $status = $this->main->check_reset_link($uid);
+                        
+                        // Check if link exists
+                        switch($status) {
+                            case DEFAULT_NOT_EXIST:
+                                $data['collapse']   = true;
+                                $data['msg_type']   = MSG_TYPE_ERROR;
+                                $data['msg']        = sprintf($this->lang->line('invalid_reset_link'), site_url('forgot_password'));
+                                break;
+
+                            case DEFAULT_EXPIRED: 
+                                $data['collapse']   = true;
+                                $data['msg_type']   = MSG_TYPE_ERROR;
+                                $data['msg']        = sprintf($this->lang->line('reset_link_expired'), site_url('forgot_password'));
+                                break;
+                            
+                            default:
+                        }
+                }  
+            }
+        }
+        
+        // Load reset password view
+        $this->load->view($this->folder_name.'/'.$page_name, $data);
+        
     }// End of func reset_pasword
     
     /**
@@ -94,18 +204,16 @@ class Application extends CI_Controller {
     public function forgot_password($query=NULL) {
         
         $page_name = 'forgot_password';
-//        
-//        var_dump($this->input->server());
-//        exit;
+        
         // Check request to either show the view or send a reset email.
         if($this->input->server('REQUEST_METHOD') != 'POST' || isset($query)){
-            echo $query;
+            
             // Set notification message and type to the query string
             $data['msg'] = $data['msg_type'] = $query;
             
             // Check if query string is set, to get appropriate notifiction message - the first message only.
             if(isset($query))
-                echo $data['msg'] = $this->main->get_notification_messages($query, 1);
+                $data['msg'] = $this->main->get_notification_messages($query, 1);
             
             // Load view forgot password view
             $this->load->view($this->folder_name.'/'.$page_name, $data);
@@ -116,17 +224,31 @@ class Application extends CI_Controller {
             $uname = $this->input->post('uname', TRUE);
             
             // Validate user's username
-            if(!check_field($uname, USERNAME_FIELD_TYPE)) {
+            if(!check_field($uname, FIELD_TYPE_USERNAME)) {
                 $error_msg = $this->lang->line('invalid_username');  
                 $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-                $this->forgot_password(MSG_TYPE_ERROR);
+                redirect(site_url('forgot_password/'.MSG_TYPE_ERROR));
             }
 
             // Send reset password email
             $status = $this->main->send_reset_email($uname);
         
             // Redirect to forgot_password view to display appropriate message to user
-            $this->forgot_password($status);
+            switch($status) {            
+                case MSG_TYPE_ERROR:
+                    redirect(site_url('forgot_password/'.MSG_TYPE_ERROR));
+                    break;
+
+                case MSG_TYPE_WARNING:
+                    redirect(site_url('forgot_password/'.MSG_TYPE_WARNING));
+                    break;  
+                
+                case MSG_TYPE_SUCCESS:
+                    redirect(site_url('forgot_password/'.MSG_TYPE_SUCCESS));
+                    break;
+                
+            }            
+            
         }
         
     }// End of func forgot_pasword
@@ -152,9 +274,10 @@ class Application extends CI_Controller {
         $upw = $this->input->post('upw', TRUE);
         
         // Validate user's credentials
-        if(!check_field($uname, USERNAME_FIELD_TYPE) || !check_field($upw, PASSWORD_FIELD_TYPE)) {
+        if(!check_field($uname, FIELD_TYPE_USERNAME) || !check_field($upw, FIELD_TYPE_PASSWORD)) {
+            $password_length = $this->config->item('password_min_length');
             $error_msg = $this->lang->line('invalid_credentials');  
-            $this->main->set_notification_message(MSG_TYPE_ERROR, sprintf($error_msg, PASSWORD_LENGTH_MIN));
+            $this->main->set_notification_message(MSG_TYPE_ERROR, sprintf($error_msg, $password_length));
             redirect(site_url('login'));
         }
         

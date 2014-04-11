@@ -40,9 +40,10 @@ class Message extends CI_Driver_Library {
      * Class constructor
      * 
      * @access public
-     * @return void
+     * @param string $email, array $params, string $template
+     * @return bool
      */
-    public function send_email_from_template() {	
+    public function send_email_from_template($email, $params, $template) {	
         return true;
 
     } // End func __construct

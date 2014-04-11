@@ -2,6 +2,19 @@
 
 /*
 |--------------------------------------------------------------------------
+| TAMS default values
+|--------------------------------------------------------------------------
+*/
+define('DEFAULT_EMAIL', 'change@youremail.com');
+define('DEFAULT_SUCCESS', 0);
+define('DEFAULT_ERROR', 1);
+define('DEFAULT_EXIST', 2);
+define('DEFAULT_NOT_EXIST', 3);
+define('DEFAULT_EXPIRED', 4);
+
+
+/*
+|--------------------------------------------------------------------------
 | Notification message types
 |--------------------------------------------------------------------------
 */
@@ -16,9 +29,18 @@ define('MSG_TYPE_SUCCESS', 'success');
 */
 define('PASSWORD_LENGTH_MIN', 5);
 define('USERNAME_LENGTH_MIN', 6);
-define('USERNAME_FIELD_TYPE', 'username');
-define('PASSWORD_FIELD_TYPE', 'password');
-define('EMAIL_FIELD_TYPE', 'email');
+define('FIELD_TYPE_USERNAME', 'username');
+define('FIELD_TYPE_PASSWORD', 'password');
+define('FIELD_TYPE_EMAIL', 'email');
+
+/*
+|--------------------------------------------------------------------------
+| Email Templates
+|--------------------------------------------------------------------------
+*/
+define('EMAIL_TEMPLATE_RESET', 'email_reset');
+
+
 
 /*
 |--------------------------------------------------------------------------

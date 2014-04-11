@@ -70,7 +70,8 @@ class Main {
             // Load CI object
             $this->CI = get_instance();
 
-            // Load libraries
+            // Load drivers
+            $this->CI->load->driver("Message/Message", 'message');
             
             // Set user email value form sessions
             $this->user_email = $this->CI->session->userdata('email');
@@ -164,21 +165,52 @@ class Main {
      * @return string $status
      **/
     public function send_reset_email($username) {
+        $this->CI->load->helper('auth');
+        
         $params = array('school_id' => $this->school_id, 'username' => $username);
+        $user_info = $this->CI->user_model->get_user_info($params);
         
-        // Generate unique id for this particular request.
-        $uid = md5(uniqid(rand(),1));
-        
-        // Log the entry into the database and return user information for the email template
-        $status = $this->CI->user_model->create_request_entry($uid, $params);
-        
-        // If user not found, or request could not be logged, set error and return.
-        if(!$status) {
+        // Check if user exists.
+        if(!$user_info) {
             $error_msg = $this->CI->lang->line('user_not_found');      
+            $this->set_notification_message(MSG_TYPE_ERROR, sprintf($error_msg, 'username'));
+            return MSG_TYPE_ERROR;
+        }
+        
+        // Check if email exist or is valid.
+        if(!check_field($user_info->email, FIELD_TYPE_EMAIL)) {
+            $error_msg = $this->CI->lang->line('invalid_email');      
             $this->set_notification_message(MSG_TYPE_ERROR, $error_msg);
             return MSG_TYPE_ERROR;
         }
+        
+        // Generate unique id for this particular request.
+        $uid = md5(uniqid(rand(),1));          
+        
+        $reset_params = array(
+            'userid'    => $user_info->userid,
+            'uid'       => $uid,
+            'date'      => date('Y-m-d H:i:s')
+        );
+        
+        // Log the entry into the database and return user information for the email template
+        $status = $this->CI->user_model->create_request_entry($reset_params);
+        
+        // Check if reset request was successfully logged into database.
+        switch($status) {            
+            case DEFAULT_ERROR:
+                $error_msg = $this->CI->lang->line('operation_error');      
+                $this->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+                return MSG_TYPE_ERROR;
+                break;
             
+            case DEFAULT_EXIST:
+                $error_msg = $this->CI->lang->line('reset_pending');      
+                $this->set_notification_message(MSG_TYPE_WARNING, $error_msg);
+                return MSG_TYPE_WARNING;
+                break;            
+        }
+        
         // Build reset link
         $reset_link = site_url("reset_password/{$uid}");
         
@@ -188,25 +220,63 @@ class Main {
             'title'         => '',
             'display_name'  => '',
             'department'    => '',
-            'college'   => ''
+            'college'       => ''
         );
         
-        // Send email
-        $email = $this->CI->Message->send_email_from_template($email_params);
+        // Send email using reset password template
+        $email_status = $this->CI->message->send_email_from_template($user_info->email, $email_params, EMAIL_TEMPLATE_RESET);
         
-        
-        if(!$email) {
-            $error_msg = $this->CI->lang->line('send_email_failed');      
+        // Check if email was sent
+        if(!$email_status) {
+            $error_msg = $this->CI->lang->line('reset_email_failed');      
             $this->set_notification_message(MSG_TYPE_ERROR, $error_msg);
             return MSG_TYPE_ERROR;
         }
         
         // Set successs notification message
-        $success_msg = $this->CI->lang->line('send_email_succeeded');      
+        $success_msg = $this->CI->lang->line('reset_email_succeeded');      
         $this->set_notification_message(MSG_TYPE_SUCCESS, $success_msg);
         
         return MSG_TYPE_SUCCESS;
     }
+    
+    /**
+     * Check reset link
+     *
+     * @access public
+     * @param string $uid
+     * @return int $status
+     **/
+    public function check_reset_link($uid) {
+        $status = $this->CI->user_model->check_reset_link($uid);
+        
+        if($status != DEFAULT_NOT_EXIST && $status != DEFAULT_EXPIRED) {
+            $user_data = array('user_id' => $status->userid);
+            $this->CI->session->set_userdata($user_data);
+            return DEFAULT_EXIST;
+        }
+            
+        return $status;
+    }// End func check_reset_link
+    
+    /**
+     * Change user password
+     *
+     * @access public
+     * @param string $new_password
+     * @return int $status
+     **/
+    public function change_password($new_password) {
+        // Set credentials
+        $credentials['password'] = $new_password;
+        $credentials['userid'] = $this->get('userid');
+        
+        // Load Authentication driver
+        $this->CI->load->driver("Auth/Auth", $credentials, 'auth_prov');
+        
+        // Change user password
+        return $this->CI->auth_prov->change_password();
+    }// End func change_password
     
     /**
      * Set notification messages
