@@ -56,7 +56,7 @@ if (defined('ENVIRONMENT'))
  * as this file.
  *
  */
-	$system_path = 'system';
+	$system_path = 'tams_sys';
 
 /*
  *---------------------------------------------------------------
@@ -72,7 +72,7 @@ if (defined('ENVIRONMENT'))
  * NO TRAILING SLASH!
  *
  */
-	$application_folder = 'base';
+	$application_folder = 'tams_base';
 
         /*
  *---------------------------------------------------------------
@@ -206,7 +206,7 @@ if (defined('ENVIRONMENT'))
 		}
 
 		define('APPPATH', BASEPATH.$application_folder.'/');
-                define('TMPLPATH', APPPATH.$template_folder.'/');
+                define('TMPLPATH', $template_folder.'/');
 	}
 
 /*
