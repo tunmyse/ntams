@@ -111,20 +111,28 @@ class Application extends CI_Controller {
         if($this->input->server('REQUEST_METHOD') == 'POST'){
             
             $error = false;
+            
             // Retrieve user's password
             $upw = $this->input->post('upw', TRUE);
             $cpw = $this->input->post('cpw', TRUE);
             
-            // Validate user's username
-            if(!check_field($upw, FIELD_TYPE_PASSWORD) || !check_field($cpw, FIELD_TYPE_PASSWORD)) {
-                $error = true;
-                $data['msg'] = $this->lang->line('invalid_username');  
+            // Validate user's password
+            if(!check_field($upw, FIELD_TYPE_PASSWORD)) {
+                // Set error to true
+                $error              = true;
+                
+                // Set error message and type
+                $data['msg']        = $this->lang->line('invalid_password');  
                 $data['msg_type']   = MSG_TYPE_ERROR;
             }
             
-            if($upw != $cpw) {
-                $error = true;
-                $data['msg'] = $this->lang->line('password_unmatch');    
+            // Ensure passwords match
+            if($upw !== $cpw) {
+                // Set error to true
+                $error              = true;
+                
+                // Set error message and type
+                $data['msg']        = $this->lang->line('password_unmatch');    
                 $data['msg_type']   = MSG_TYPE_ERROR;                               
             }
             
@@ -149,7 +157,7 @@ class Application extends CI_Controller {
             
         }else {            
             
-            // Check if query string is set.
+            // Check if query string - reset_id is set.
             if(!isset($uid)) {
                 $data['collapse']   = true;
                 $data['msg_type']   = MSG_TYPE_ERROR;
@@ -167,6 +175,7 @@ class Application extends CI_Controller {
                     case MSG_TYPE_SUCCESS: 
                         $data['msg_type']   = MSG_TYPE_SUCCESS;
                         $data['msg']        = sprintf($this->lang->line('password_change_success'), site_url('login'));
+                        $this->main->set('userid', '', true);
                         break;
                     
                     default:
@@ -298,7 +307,7 @@ class Application extends CI_Controller {
         $this->user_type = $this->main->get('user_type');
         
         // Redirect to user's dashboard based on user type (student | staff | admin)
-        redirect("{$this->user_type}/dashboard");
+        redirect(site_url("{$this->user_type}/dashboard"));
         
     }// End of func authenticate    
     

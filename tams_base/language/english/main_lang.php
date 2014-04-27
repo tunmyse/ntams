@@ -2,6 +2,7 @@
 
 $lang['invalid_credentials'] = 'Invalid login credentials. Ensure your password is at least %s characters long!';
 $lang['invalid_username'] = 'Invalid username!';
+$lang['invalid_password'] = 'Invalid password!';
 $lang['invalid_email'] = 'Your email address is either invalid or hasn\'t been changed from the default!';
 $lang['invalid_auth_method'] = 'Please login using an accepted authentication method!';
 $lang['invalid_req_method'] = 'Invalid server request method!';

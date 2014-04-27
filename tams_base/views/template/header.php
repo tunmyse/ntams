@@ -1,4 +1,18 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+/**
+ * TAMS
+ * Header Template
+ * 
+ * @category   Views
+ * @package    Template
+ * @subpackage Header
+ * @author     Akinsola Tunmise <akinsolatunmise@gmail.com>
+ * @copyright  Copyright © 2014 TAMS.
+ * @version    1.0.0
+ * @since      File available since Release 1.0.0
+ */
+?>
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />

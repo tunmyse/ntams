@@ -88,7 +88,7 @@ if (defined('ENVIRONMENT'))
  * NO TRAILING SLASH!
  *
  */
-	$template_folder = 'views/template';
+	$template_folder = 'template';
 
 /*
  * --------------------------------------------------------------------

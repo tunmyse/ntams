@@ -55,6 +55,8 @@ class Auth extends CI_Driver_Library {
      */
     public function encrypt($str) {
         // Only used for compartibility with existing data
+        // Should use a more secure password encrypting function
+        
         return md5($str);
     } // End func encrypt
 
@@ -101,11 +103,11 @@ class Auth extends CI_Driver_Library {
     /**
      * Change users password.	 
      *
-     * @access private
+     * @access public
      * @param string $name
      * @return bool
      **/
-    private function change_password() {
+    public function change_password() {
         
         // Encrypt password
         $password = $this->encrypt($this->credentials['password']);
@@ -116,13 +118,10 @@ class Auth extends CI_Driver_Library {
                     'password' => $password)
                 );
         if(!$changed) {
-            $error_msg = $this->CI->lang->line('user_not_found');            
-            $this->CI->main->set_notification_message(MSG_TYPE_ERROR, sprintf($error_msg, 'credentials'));
             return DEFAULT_ERROR;
         }
         
-        $success_msg = $this->CI->lang->line('reset_email_succeeded');
-        $this->CI->main->set_notification_message(MSG_TYPE_ERROR, $success_msg);
+        $this->CI->user_model->invalidate_reset_link($this->credentials['user_id']);
         return DEFAULT_SUCCESS;
         
     }// End of func _valid_auth_provider

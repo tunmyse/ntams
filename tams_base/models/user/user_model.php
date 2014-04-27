@@ -79,20 +79,23 @@ class User_model extends CI_Model {
         $query = $this->db->get_where('reset_request', array('userid' => $query_fields['userid']));
         $result = $query->row();
         
-        // Get reset link expiration time
-        $expiration_time = $this->config->item('password_expiration_time');
-        
-        // Check if link has expired.
-        $cur_date = new DateTime('now');
-        $exp_date = new DateTime(date('Y-m-d H:i:s', strtotime($result->date)));
-        $exp_date->modify("+{$expiration_time} hour");
-        
-        if($query->num_rows() > 0 && $cur_date > $exp_date) {
-            $this->db->delete('reset_request', array('resetid' => $result->resetid));   
-        }else {
-            return DEFAULT_EXIST;
+        if($query->num_rows() > 0) {
+            // Get reset link expiration time
+            $expiration_time = $this->config->item('password_expiration_time');
+
+            // Construct date objects to check if link has expired.
+            $cur_date = new DateTime('now');
+            $exp_date = new DateTime(date('Y-m-d H:i:s', strtotime($result->date)));
+            $exp_date->modify("+{$expiration_time} hour");
+            
+            if($cur_date > $exp_date) {
+                $this->db->delete('reset_request', array('resetid' => $result->resetid));   
+            }else {
+                return DEFAULT_EXIST;
+            }
         }
         
+        // Insert new entry if no entry already exists
         $ret = $this->db->insert('reset_request', $query_fields);
         
         if(!$ret)
@@ -153,6 +156,17 @@ class User_model extends CI_Model {
             
         return false;
     }// End func change_user_password
+    
+    /**
+     * Delete any reset id for a particular user
+     * 
+     * @access public
+     * @param int $userid
+     * @return void
+     */
+    public function invalidate_reset_link($userid) {
+        $this->db->delete('reset_request', array('userid' => $userid)); 
+    }// End func invalidate_reset_link
     
     /**
      * Get user information

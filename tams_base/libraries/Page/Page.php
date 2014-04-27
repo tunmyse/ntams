@@ -87,27 +87,28 @@ class Page {
         $includes = $this->CI->load->file(APPPATH.'views/'.$folder_name.'/include.json', TRUE);
         $incl_array = json_decode($includes, TRUE);
         $header_data['includes'] = $this->build_includes($incl_array[$page_name]);
-        $header_buffer = $this->CI->load->view('template/header', $header_data, true);
+        $header_buffer = $this->CI->load->view(TMPLPATH.'header', $header_data, true);
 
         $nav_menu = $this->get_assoc();
         
-        $top_menu_buffer = $this->build_top_menu($nav_menu, $this->user_type);
+        $top_menu_build = $this->build_top_menu($nav_menu, $this->user_type);
         $top_menu = array(
-            'topmenu_content' => $top_menu_buffer,
+            'topmenu_content' => $top_menu_build,
             'dashboard_url' => '/'.$this->user_type.'/dashboard',
             'logout_url' => '/logout',
-            'display_name' => 'Test'
+            'display_name' => 'Test',
+            'display_img' => 'img/demo/user-avatar.jpg'
         );
-        $top_menu_buffer = $this->CI->load->view('template/top_menu', $top_menu, true);        
+        $top_menu_buffer = $this->CI->load->view(TMPLPATH.'top_menu', $top_menu, true);        
 
         $left_sidebar_content = $this->build_sidebar_menu($nav_menu);
         $left_sidebar = array(
                 'school_name' => $this->school_name,
                 'sidemenu_content' => $left_sidebar_content
         );        
-        $left_sidebar_buffer = $this->CI->load->view('template/left_sidebar', $left_sidebar, true);
+        $left_sidebar_buffer = $this->CI->load->view(TMPLPATH.'left_sidebar', $left_sidebar, true);
         
-        $footer_buffer = $this->CI->load->view('template/footer', '', true);
+        $footer_buffer = $this->CI->load->view(TMPLPATH.'footer', '', true);
 
         $body_parts = array(
                 'page_content' => $page_content_buffer,
@@ -115,14 +116,14 @@ class Page {
                 'left_sidebar' => $left_sidebar_buffer,
                 'footer' => $footer_buffer
         );
-        $body_buffer = $this->CI->load->view('template/body', $body_parts, true);
+        $body_buffer = $this->CI->load->view(TMPLPATH.'body', $body_parts, true);
         
         $page_parts = array(
                 'header_content' => $header_buffer,
                 'body_content' => $body_buffer
         );
 
-        $page_content = $this->CI->load->view('template/page', $page_parts, true);
+        $page_content = $this->CI->load->view(TMPLPATH.'page', $page_parts, true);
         echo $page_content;
     } // End func build
     

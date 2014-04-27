@@ -71,7 +71,7 @@ class Main {
             $this->CI =& get_instance();
 
             // Load drivers
-            $this->CI->load->driver("Message/Message", 'message');
+            //$this->CI->load->driver("Message/Message", 'message');
             
             // Set user email value form sessions
             $this->user_email = $this->CI->session->userdata('email');
@@ -94,7 +94,7 @@ class Main {
         // Add schoolid to credentials
         $credentials['school_id'] = $this->school_id;
         $credentials['method'] = $method;
-        $this->CI->load->driver("auth/Auth", $credentials, 'auth_prov');
+        $this->CI->load->driver("Auth/Auth", $credentials, 'auth_prov');
         $authenticated = $this->CI->auth_prov->authenticate();
         if(!$authenticated) {
             return false;
@@ -205,13 +205,11 @@ class Main {
                 $error_msg = $this->CI->lang->line('operation_error');      
                 $this->set_notification_message(MSG_TYPE_ERROR, $error_msg);
                 return MSG_TYPE_ERROR;
-                break;
             
             case DEFAULT_EXIST:
                 $error_msg = $this->CI->lang->line('reset_pending');      
                 $this->set_notification_message(MSG_TYPE_WARNING, $error_msg);
-                return MSG_TYPE_WARNING;
-                break;            
+                return MSG_TYPE_WARNING;        
         }
         
         // Build reset link
@@ -253,9 +251,8 @@ class Main {
     public function check_reset_link($uid) {
         $status = $this->CI->user_model->check_reset_link($uid);
         
-        if($status != DEFAULT_NOT_EXIST && $status != DEFAULT_EXPIRED) {
-            $user_data = array('user_id' => $status->userid);
-            $this->CI->session->set_userdata($user_data);
+        if($status !== DEFAULT_NOT_EXIST && $status !== DEFAULT_EXPIRED) {
+            $this->set('userid', $status->userid);
             return DEFAULT_EXIST;
         }
             
@@ -272,7 +269,7 @@ class Main {
     public function change_password($new_password) {
         // Set credentials
         $credentials['password'] = $new_password;
-        $credentials['userid'] = $this->get('userid');
+        $credentials['user_id'] = $this->get('userid');
         
         // Load Authentication driver
         $this->CI->load->driver("Auth/Auth", $credentials, 'auth_prov');
@@ -374,6 +371,34 @@ class Main {
 
     } // End func get
 
+    /**
+     * Set a session variable. 
+     * 
+     * @access public
+     * @param string $item
+     * @return mixed (bool | string)
+     */
+    public function set($key, $value = '', $clear = FALSE) {
+//        if(!$this->logged_in()) {
+//            return false;
+//        }
+        
+        if($clear) {
+            $this->CI->session->unset_userdata($key);
+            return;
+        }
+        
+        if(is_array($key)) {
+            $this->CI->session->set_userdata($sess_data);
+            return;
+        }
+        
+        $sess_data = array($key => $value);
+        $this->CI->session->set_userdata($sess_data);
+
+    } // End func set
+
+    
     /**
      * Redirect to user's access denied page, if user have no permission.
      * 
