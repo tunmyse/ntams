@@ -183,8 +183,7 @@ class Installation extends CI_Controller {
         return;            
     }
     
-    private function copy_files() {
-        
+    private function copy_files() {        
         
         // Copy files from installation folder to main application
         

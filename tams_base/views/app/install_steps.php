@@ -122,7 +122,7 @@
                                                         <span class="active"></span>
                                                 </span>
                                                 <span class="description">
-                                                        Create Account
+                                                        Create Admin Account
                                                 </span>
                                         </div>
                                     </li>
@@ -203,7 +203,7 @@
 
                                                         </span>
                                                         <span class="description">
-                                                                Create Account
+                                                                Create Admin Account
                                                         </span>
                                                 </div>
                                         </li>
@@ -283,7 +283,7 @@
 
                                                     </span>
                                                     <span class="description">
-                                                            Create Account
+                                                            Create Admin Account
                                                     </span>
                                             </div>
                                     </li>
@@ -364,7 +364,7 @@
 
                                                             </span>
                                                             <span class="description">
-                                                                    Create Account
+                                                                    Create Admin Account
                                                             </span>
                                                     </div>
                                             </li>

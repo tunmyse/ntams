@@ -48,7 +48,8 @@ class Installer_model extends CI_Model {
                             'email' => $sch_params['email'],
                             'phone' => $sch_params['phone'],
                             'shortname' => $sch_params['shortname'],
-                            'unitname' => $sch_params['unitname']
+                            'unitname' => $sch_params['unitname'],
+                            'domainstring' => $sch_params['shortname']
                         );      
             $this->db->insert('schools', $sch_data);
             

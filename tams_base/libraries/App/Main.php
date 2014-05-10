@@ -51,14 +51,21 @@ class Main {
     private $school_id;
 	
     /**
-     * School Id
+     * School Name
      * @var int 
      */
     
     private $school_name = NULL;
 	
     /**
-     * School Id
+     * School Shortname
+     * @var int 
+     */
+    
+    private $school_shortname = NULL;
+    
+    /**
+     * School Unitname
      * @var int 
      */
     
@@ -117,7 +124,7 @@ class Main {
 
                 default:
                     $this->school_id = $school_details[0]->schoolid;
-                    $this->school_name = $school_details[0]->shortname;
+                    echo $this->school_name = $school_details[0]->shortname;
                     $this->set('school_name', $this->school_name);
                     $this->set('school_id', $this->school_id);
             }   
@@ -209,7 +216,7 @@ class Main {
     }
     
     /**
-     * Logout method
+     * Get schools unit name
      *
      * @access public
      * @return void
@@ -218,6 +225,18 @@ class Main {
         return $this->college_name;
 
     } // End func get_college_name
+    
+    /**
+     * Get School name
+     *
+     * @access public
+     * @return void
+     **/
+    public function get_school_name() {  
+        return $this->school_name;
+
+    } // End func get_school_name
+    
     
     /**
      * Logout method

@@ -73,6 +73,9 @@ class Application extends CI_Controller {
     public function login() {
         $page_name = 'login'; 
         
+        // Set school name
+        $data['school_name'] = $this->main->get_school_name();
+        
         // Get login error message, if any.
         $data['login_error'] = $this->main->get_notification_messages(MSG_TYPE_ERROR, 1);
         
@@ -327,16 +330,26 @@ class Application extends CI_Controller {
      */
     public function complete_installation() {
         
+        // Load file helper
+        $this->load->helper('file');
         
-        $content = $this->load->views('app/installer_complete', '', TRUE);
+        $content = $this->load->view('app/install_complete', '', TRUE);
         
         // Delete all installation related files        
-        delete_files(APPPATH.'installation');
-        unlink(APPPATH.'controllers/installation.php');
-        unlink(APPPATH.'models/installer_model.php');
-        unlink(APPPATH.'views/app/installation.php');
-        unlink(APPPATH.'views/app/install_steps.php');        
-        unlink(APPPATH.'views/app/installer_complete.php');
+        delete_files(APPPATH.'installation', TRUE, 0);
+        
+        $files = array(
+            APPPATH.'controllers/installation.php',
+            APPPATH.'models/installer_model.php',
+            APPPATH.'views/app/installation.php',
+            APPPATH.'views/app/install_steps.php',
+            APPPATH.'language/installer_lang.php'
+        );
+        
+        foreach($files as $f) {
+            if(realpath($f))
+                @unlink($f);
+        }
         
         echo $content;        
     }

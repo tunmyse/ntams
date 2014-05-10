@@ -72,7 +72,11 @@
 
     <body class='login'>
 	<div class="wrapper">
-            <h1><a href="#"><img src="<?php echo site_url(); ?>img/logo2.png" alt="" class='retina-ready' width="59" height="49">TASUED</a></h1>
+            <h1>
+                <a href="#"><img src="<?php echo site_url(); ?>img/logo2.png" alt="" class='retina-ready' width="59" height="49">
+                    <?php echo $school_name?>
+                </a>
+            </h1>
             <div class="login-body" style="padding-top: 20px">
                 <p class="small text-error" style="padding: 0 30px"><?php echo $login_error?></p>
                 <form action="<?php echo site_url('authenticate')?>" method='post' class='form-validate' id="login">
