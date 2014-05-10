@@ -135,6 +135,8 @@ class Installation extends CI_Controller {
                 break;
         }
         
+        $this->copy_files();
+        
         return;            
     }
     
@@ -179,6 +181,47 @@ class Installation extends CI_Controller {
         }
         
         return;            
+    }
+    
+    private function copy_files() {
+        
+        
+        // Copy files from installation folder to main application
+        
+        // Files to copy
+        $files = array(
+                    'autoload' =>   array(
+                                        'from' => APPPATH.'installation/autoload',
+                                        'to'   => APPPATH.'config/autoload.php'
+                                    )
+                );
+        
+        foreach($files as $name => $f) {
+            
+            // Get path to file
+            $file_path = realpath($f['from']);
+
+            // Read content of the file
+            $file_contents = read_file($file_path);
+
+            // Set error and redirect if file wasn't read 
+            if(!$file_contents) {
+                $error_msg = sprintf($this->lang->line('file_read_error'), $name);
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+                redirect(site_url('installation/steps'));
+            }
+            
+            // Open destination file for writing
+            $dest_file = realpath($f['to']);
+
+            // Write contents to file, set error and redirect if there was an error
+            if(!write_file($dest_file, $file_contents, 'w')) {
+                $error_msg = sprintf($this->lang->line('file_write_error'), $name);
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+                redirect(site_url('installation/steps'));
+            }
+        }
+        
     }
     
     private function validate($expected, &$received, $defaults = array()) {
