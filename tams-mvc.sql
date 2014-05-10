@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Apr 11, 2014 at 03:27 PM
+-- Generation Time: Apr 27, 2014 at 03:31 PM
 -- Server version: 5.6.12-log
 -- PHP Version: 5.4.16
 
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `tams_reset_request` (
   PRIMARY KEY (`resetid`),
   UNIQUE KEY `uid` (`uid`),
   KEY `userid` (`userid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=26 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -9960,9 +9960,7 @@ CREATE TABLE IF NOT EXISTS `tams_user_sessions` (
 --
 
 INSERT INTO `tams_user_sessions` (`session_id`, `ip_address`, `user_agent`, `last_activity`, `user_data`) VALUES
-('7ba29f8e0fc67d50c4f00e87c613a443', '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0', 1397222876, ''),
-('b86a1121dd7b30046fc67c88e49de345', '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0', 1397153328, ''),
-('e4343c29d75dc15e9d40c27cb39a0474', '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0', 1397143228, '');
+('b39833eac013103576a9f4fff332d3e8', '127.0.0.1', 'Mozilla/5.0 (Windows NT 6.2; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0', 1398611998, '');
 
 --
 -- Constraints for dumped tables

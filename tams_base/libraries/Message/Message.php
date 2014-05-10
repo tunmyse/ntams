@@ -37,17 +37,26 @@ class Message extends CI_Driver_Library {
     } // End func __construct
  
     /**
-     * Class constructor
+     * Send email from an email template
      * 
      * @access public
      * @param string $email, array $params, string $template
      * @return bool
      */
-    public function send_email_from_template($email, $params, $template) {	
-        return true;
-
-    } // End func __construct
+    public function send_email_from_template($email, $params, $template) {
+        
+        $message = $this->CI->load->view(EMAIL_TEMPLATE_FOLDER.'/'.$template, $params, TRUE);
+        
+        $email_params = array(
+            'to'        => $email,
+            'subject'   => 'Password reset on TAMS'
+        );
+        
+        return $this->email->send($params, $message);
+        
+    } // End func send_email_from_template
     
 } // End class Message
 
 // End file Message.php
+                                                                                 

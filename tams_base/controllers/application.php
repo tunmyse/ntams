@@ -32,7 +32,7 @@ class Application extends CI_Controller {
     public function __construct() {
 
         parent::__construct();
-
+        
         /*
          * Load libraries
          */
@@ -41,7 +41,7 @@ class Application extends CI_Controller {
         /*
          * Load helpers
          */
-        $this->load->helper(array('auth'));
+        $this->load->helper(array('validation'));
         
         // Initialize class variables
         $this->user_id = $this->main->get('user_id');
@@ -108,7 +108,7 @@ class Application extends CI_Controller {
         $data['collapse']   = false;   
         
         // Check request to either show the view or initiate a password change.
-        if($this->input->server('REQUEST_METHOD') == 'POST'){
+        if($this->input->server('REQUEST_METHOD') == 'POST') {
             
             $error = false;
             
@@ -215,7 +215,7 @@ class Application extends CI_Controller {
         $page_name = 'forgot_password';
         
         // Check request to either show the view or send a reset email.
-        if($this->input->server('REQUEST_METHOD') != 'POST' || isset($query)){
+        if($this->input->server('REQUEST_METHOD') != 'POST' || isset($query)) {
             
             // Set notification message and type to the query string
             $data['msg'] = $data['msg_type'] = $query;
@@ -233,10 +233,16 @@ class Application extends CI_Controller {
             $uname = $this->input->post('uname', TRUE);
             
             // Validate user's username
-            if(!check_field($uname, FIELD_TYPE_USERNAME)) {
-                $error_msg = $this->lang->line('invalid_username');  
-                $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-                redirect(site_url('forgot_password/'.MSG_TYPE_ERROR));
+            switch(check_field($uname, FIELD_TYPE_USERNAME)) {
+                case DEFAULT_EMPTY:
+                    $error_msg = $this->lang->line('empty_form_field');  
+                    $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+                    redirect(site_url('forgot_password/'.MSG_TYPE_ERROR));
+                    
+                case DEFAULT_NOT_VALID:
+                    $error_msg = $this->lang->line('invalid_username');  
+                    $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+                    redirect(site_url('forgot_password/'.MSG_TYPE_ERROR));
             }
 
             // Send reset password email
@@ -283,7 +289,7 @@ class Application extends CI_Controller {
         $upw = $this->input->post('upw', TRUE);
         
         // Validate user's credentials
-        if(!check_field($uname, FIELD_TYPE_USERNAME) || !check_field($upw, FIELD_TYPE_PASSWORD)) {
+        if(check_field($uname, FIELD_TYPE_USERNAME) || check_field($upw, FIELD_TYPE_PASSWORD)) {
             $password_length = $this->config->item('password_min_length');
             $error_msg = $this->lang->line('invalid_credentials');  
             $this->main->set_notification_message(MSG_TYPE_ERROR, sprintf($error_msg, $password_length));
@@ -311,6 +317,29 @@ class Application extends CI_Controller {
         
     }// End of func authenticate    
     
+    /**
+     * Complete TAMS installation.
+     * Delete all installaton files
+     * 
+     * @access public
+     * @param string $method optional
+     * @return void
+     */
+    public function complete_installation() {
+        
+        
+        $content = $this->load->views('app/installer_complete', '', TRUE);
+        
+        // Delete all installation related files        
+        delete_files(APPPATH.'installation');
+        unlink(APPPATH.'controllers/installation.php');
+        unlink(APPPATH.'models/installer_model.php');
+        unlink(APPPATH.'views/app/installation.php');
+        unlink(APPPATH.'views/app/install_steps.php');        
+        unlink(APPPATH.'views/app/installer_complete.php');
+        
+        echo $content;        
+    }
 }
 
 /* End of file application.php */

@@ -2,6 +2,7 @@
 
 $lang['invalid_credentials'] = 'Invalid login credentials. Ensure your password is at least %s characters long!';
 $lang['invalid_username'] = 'Invalid username!';
+$lang['empty_form_field'] = 'One or more required fields are missing!';
 $lang['invalid_password'] = 'Invalid password!';
 $lang['invalid_email'] = 'Your email address is either invalid or hasn\'t been changed from the default!';
 $lang['invalid_auth_method'] = 'Please login using an accepted authentication method!';
@@ -17,6 +18,10 @@ $lang['reset_link_expired'] = 'The reset link you specified has expired! <a href
 $lang['password_change_error'] = 'Oops! There was a problem %s your password. %s or contact your system administrator!';
 $lang['password_change_success'] = 'Your password has been successfully changed! <a href=\'%s\'>Click here</a> to go to the login screen.';
 $lang['password_unmatch'] = 'The passwords you specified do not match!';
+$lang['no_entries'] = 'There are no %s to display!';
+$lang['create_dependency'] = 'You need to create at least one %s before you can create this entry! Create the dependency then refresh this page to proceed.';
+$lang['file_read_error'] = 'Error reading %sfile!';
+$lang['file_write_error'] = 'Error writing %sfile!';
 
 /* End of file main_lang.php */
 /* Location: ./base/language/english/main_lang.php */

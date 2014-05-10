@@ -13,7 +13,7 @@
  * @since      File available since Release 1.0.0
  */
 ?>
-<div id="left">
+<div id="left" class="sidebar-fixed hasScroll" style="overflow-y: hidden;">
     <div class="subnav">
         <div class="subnav-title">
             <span><strong><?php echo $school_name; ?></strong></span>

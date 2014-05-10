@@ -15,18 +15,49 @@
 ?>
 <div id="navigation">
     <div class="container-fluid">
+        <a href="#" class="mobile-sidebar-toggle"><i class="icon-th-list"></i></a>
         <a href="<?php echo $dashboard_url; ?>" id="brand">TAMS</a>
         <a href="#" class="toggle-nav" rel="tooltip" data-placement="bottom" title="Toggle navigation"><i class="icon-reorder"></i></a>
         <ul class='main-nav'>
             <?php echo $topmenu_content; ?>
         </ul>
         <div class="user">
-            <div class="dropdown">
+            <ul class="icon-nav">
+                <li class='dropdown' title="Messages">
+                    <a href="#" class='dropdown-toggle' data-toggle="dropdown"><i class="icon-envelope-alt"></i><span class="label label-lightred">4</span></a>
+                    <ul class="dropdown-menu pull-right message-ul">
+                        <li>						
+                            <a href="#">
+                                <img src="img/demo/user-1.jpg" alt="">
+                                <div class="details">
+                                    <div class="name">Mrs Abimbola</div>
+                                    <div class="message">
+                                            Hello admin ...
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="components-messages.html" class='more-messages'>Go to Message center <i class="icon-arrow-right"></i></a>
+                        </li>                                    								
+                    </ul>
+                </li> 
+
+                <li class="dropdown sett" rel="tooltip" data-placement="bottom" title="configuration">     
+
+                </li>
+            </ul>
+            
+            <div class="dropdown pull-right">
                 <a href="#" class='dropdown-toggle' data-toggle="dropdown">
                     <?php echo $display_name;?> 
                     <img src="<?php echo $display_img;?>" alt="">
                 </a>
                 <ul class="dropdown-menu pull-right">
+                    <li>
+                        <a href="#">Account settings</a>
+                    </li>
                     <li>
                         <a href="<?php echo $logout_url; ?>">Sign out</a>
                     </li>

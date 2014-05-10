@@ -41,6 +41,13 @@
 $route['default_controller'] = "application";
 
 /**
+ * Installation routes
+ */
+$route['installation'] = "installation";
+$route['installation/complete'] = "application/complete_installation";
+$route['installation/(:any)'] = "installation/$1";
+
+/**
  * General application routing rules.
  */
 
@@ -56,8 +63,26 @@ $route['forgot_password'] = "application/forgot_password";
 $route['reset_password/(:any)'] = "application/reset_password/$1";
 $route['reset_password'] = "application/reset_password";
     
-// Reset password rules
+// Change password rules
 $route['change_password'] = "application/change_password";
+
+// User route rules
+$route['(:any)/dashboard'] = "users/$1";
+
+// College route
+$route['college'] = "college/college";
+$route['college/(:any)'] = "college/college/$1";
+$route['college/info/(:any)'] = "college/college/details/$1";
+
+// Department route
+$route['department'] = "department/department";
+$route['department/(:any)'] = "department/department/$1";
+$route['department/info/(:any)'] = "department/department/details/$1";
+
+// Programme route
+$route['programme'] = "programme/programme";
+$route['programme/(:any)'] = "programme/programme/$1";
+$route['programme/info/(:any)'] = "programme/programme/details/$1";
 
 $route['404_override'] = '';
 

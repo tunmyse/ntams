@@ -120,8 +120,12 @@
                     <center>
                         <table border="0" width="600" cellpadding="0" cellspacing="0">
                             <tr>
-                                <td style="color:#ffffff !important; font-size:24px; font-family: Arial, Verdana, sans-serif; padding-left:10px;" height="40"><img src="../img/email-logo.png" alt="" style="display:block;" /></td>
-                                <td align="right" width="50" height="45"><a href="more-login.html"><img src="../img/email-login.jpg" alt="" style="display:block;" /></a></td>
+                                <td style="color:#ffffff !important; font-size:24px; font-family: Arial, Verdana, sans-serif; padding-left:10px;" height="40">
+                                    <img src="../img/email-logo.png" alt="" style="display:block;" />
+                                </td>
+                                <td align="right" width="50" height="45">
+                                    <img src="../img/email-login.jpg" alt="" style="display:block;" />
+                                </td>
                             </tr>
                         </table>
                     </center>
@@ -139,11 +143,16 @@
                                 <td style="color:#333333 !important; font-size:20px; font-family: Arial, Verdana, sans-serif; padding-left:10px;" height="40">
                                     <h3 style="font-weight:normal; margin: 20px 0;">Password Reset</h3>
                                     <p style="font-size:12px; line-height:18px;">
-                                        You are recieving this email due to your request to change your password in TAMS. Please confirm your verification id. <br /><br />User Name: <a href="#">JohnDoe</a><br />
-                                        Email: <a href="#">JohnDoe@johndoesemail.com</a>
+                                        You received this e-mail because a password reset request was initiated on your user account on the TAMS portal application. <br/>                           
                                     </p>
                                     <p style="font-size:12px; line-height:18px;">
-                                        <a href="#">Click here to verify account</a>
+                                        Click on the link below within the next 24 hours to reset your password. <br/>     
+                                    </p>
+                                    <p style="font-size:12px; line-height:18px;">
+                                        <?php echo $link?> <br/><br/> 
+                                    </p>
+                                    <p style="font-size:12px; line-height:18px;">
+                                        If you did not request a password reset, please ignore this email and continue using your existing password.<br/><br/> 
                                     </p>
                                 </td>
                             </tr>
@@ -160,10 +169,9 @@
                         <table border="0" width="600" cellpadding="0" cellspacing="0">
                             <tr>
                                 <td style="color:#333333 !important; font-size:20px; font-family: Arial, Verdana, sans-serif; padding-left:10px;" height="40">
-                                    <h3 style="font-weight:normal; margin: 20px 0;">Security</h3>
+                                    
                                     <p style="font-size:12px; line-height:18px;">
-                                        If you did not request a change in password just ignore this email. If you're having trouble, please refer to the TAMS Help Center. <br />
-                                        <br />									
+                                       								
                                     </p>
                                     <p style="font-size:12px; line-height:18px;">
                                         <a href="#">TAMS Help Center</a>
@@ -188,9 +196,8 @@
                                     <center>
                                         <p style="font-size:12px; line-height:18px;">
                                             <a> Powered by TAMS <img src="img/powered.png" alt=""> </a>                                                                             
-                                        <br />
-                                        <a href="#" style="color:#ffffff !important;">Click here to change email settings</a>
-                                    </p>
+                                            <br />
+                                        </p>
                                     </center>
                                 </td>
                             </tr>

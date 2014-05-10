@@ -1,6 +1,6 @@
 <?php
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-require_once BASEPATH.'libraries/Driver.php';
+
 /**
  * TAMS
  * Authentication library
@@ -17,18 +17,28 @@ require_once BASEPATH.'libraries/Driver.php';
 class Auth extends CI_Driver_Library {
 
     /**
+     *  Valid drivers for this library
+     * 
+     * @access protected
+     * @var array
+     */
+    protected $valid_drivers = array('Auth_site', 'Auth_ldap', 'Auth_facebook', 'Auth_twitter', 'Auth_google');
+    
+    /**
      * Codeigniter instance
      * 
-     * @access private
+     * @access public
      * @var object
      */
-    private $CI;
+    public $CI;
 	
     /**
      * User login credentials
+     * 
+     * @access public
      * @var array
      */
-    private $credentials;
+    public $credentials;
 	
     /**
      * Class constructor
@@ -54,10 +64,9 @@ class Auth extends CI_Driver_Library {
      * @return string
      */
     public function encrypt($str) {
-        // Only used for compartibility with existing data
-        // Should use a more secure password encrypting function
+        // Call site authentication to encrypt data
         
-        return md5($str);
+        return $this->site->encrypt($str);
     } // End func encrypt
 
     
@@ -134,14 +143,13 @@ class Auth extends CI_Driver_Library {
      * @return bool
      **/
     private function is_valid_auth_provider($name) {
-        $auth_providers = array('site', 'ldap', 'facebook', 'twitter', 'google');
         
-        if(in_array($name, $auth_providers))
+        if(in_array($name, $valid_drivers))
             return true;
         
         return false;
         
-    }// End of func _valid_auth_provider
+    }// End of func _is_valid_auth_provider
 	
         
 } // End class Auth

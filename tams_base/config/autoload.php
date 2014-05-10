@@ -52,7 +52,7 @@ $autoload['packages'] = array();
 |	$autoload['libraries'] = array('database', 'session', 'xmlrpc');
 */
 
-$autoload['libraries'] = array('session', 'App/Main', 'Page/Page', 'Message/Message', 'Logger/Logger');
+$autoload['libraries'] = array('session', 'App/Main');
 
 
 /*
@@ -96,7 +96,7 @@ $autoload['config'] = array('tams_config');
 |
 */
 
-$autoload['language'] = array('main');
+$autoload['language'] = array('main', 'installer');
 
 
 /*
@@ -109,7 +109,7 @@ $autoload['language'] = array('main');
 |
 */
 
-$autoload['model'] = array('user/user_model');
+$autoload['model'] = array('');
 
 
 /* End of file autoload.php */

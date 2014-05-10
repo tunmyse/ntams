@@ -51,6 +51,20 @@ class Main {
     private $school_id;
 	
     /**
+     * School Id
+     * @var int 
+     */
+    
+    private $school_name = NULL;
+	
+    /**
+     * School Id
+     * @var int 
+     */
+    
+    private $college_name = NULL;
+	
+    /**
      * Codeigniter instance
      * 
      * @access private
@@ -67,22 +81,82 @@ class Main {
      */
     public function __construct() {	
 
-            // Load CI object
-            $this->CI =& get_instance();
-
-            // Load drivers
-            //$this->CI->load->driver("Message/Message", 'message');
-            
-            // Set user email value form sessions
-            $this->user_email = $this->CI->session->userdata('email');
-            $this->user_id = $this->CI->session->userdata('user_id');
-            $this->user_type = $this->CI->session->userdata('user_type');
-            $this->user_type_id = $this->CI->session->userdata('user_type_id');
-            $this->school_name = "Tasued";
-            $this->school_id = 1; 
-
+        // Load CI object
+        $this->CI =& get_instance();
+        
+        // Load certain required classes that wouldnt have been loaded by the framework!        
+        // Load models
+        $this->CI->load->model('util_model');
+        
+        $this->_init();
     } // End func __construct
 
+    /**
+     * Initialize class variables from session
+     */
+    private function _init() {
+        
+        $this->user_email = $this->get('email');
+        $this->user_id = $this->get('user_id');
+        $this->user_type = $this->get('user_type');
+        $this->user_type_id = $this->get('user_type_id');
+        $this->college_name = $this->get('college_name');
+        $this->school_id = $this->get('school_id');
+        $this->school_name = $this->get('school_name');
+        
+        if(!isset($this->school_id) || $this->school_id == '') {
+            $school_details = $this->CI->util_model->get_school_name();
+            
+            switch($school_details) {
+
+                case DEFAULT_EMPTY:
+                    break;
+
+                case DEFAULT_NOT_VALID:
+                    break;
+
+                default:
+                    $this->school_id = $school_details[0]->schoolid;
+                    $this->school_name = $school_details[0]->shortname;
+                    $this->set('school_name', $this->school_name);
+                    $this->set('school_id', $this->school_id);
+            }   
+        }
+
+        if(!isset($this->college_name) || $this->college_name == '') {
+
+            $college_name = $this->CI->util_model->get_school_college();
+
+            switch($college_name) {
+
+                case DEFAULT_EMPTY:
+                    break;
+
+                case DEFAULT_NOT_VALID:
+                    break;
+
+                default:
+                    $this->college_name = $college_name[0]->unitname;
+                    $this->set('college_name', $this->college_name);
+            }                 
+        }
+    }// End func _init
+    
+    /*
+     * Encrypt passsord using Site authentication method
+     * @access public 
+     * @param string $password
+     * @return mixed (bool | array)
+     */
+    public function encrpyt($password) {
+        
+        $this->CI->load->driver("Auth/Auth", array(), 'auth_prov');      
+        $crypt_password = $this->CI->auth_prov->site->encrypt($password);
+        
+        return $crypt_password;
+        
+    }// End func authenticate  
+    
     /*
      * Authenticate a user using a specified authentication protocol
      * @access public 
@@ -133,6 +207,17 @@ class Main {
         $this->CI->session->set_userdata($user_data);
         return true;
     }
+    
+    /**
+     * Logout method
+     *
+     * @access public
+     * @return void
+     **/
+    public function get_college_name() {  
+        return $this->college_name;
+
+    } // End func get_college_name
     
     /**
      * Logout method
@@ -389,7 +474,7 @@ class Main {
         }
         
         if(is_array($key)) {
-            $this->CI->session->set_userdata($sess_data);
+            $this->CI->session->set_userdata($key);
             return;
         }
         
@@ -435,6 +520,6 @@ class Main {
         return $ret;
      }// End func have_perm
      
-} // End class user_auth
+} // End class Main
 
-// End file user_auth.php
+// End file Main.php

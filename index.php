@@ -144,31 +144,49 @@ if (defined('ENVIRONMENT'))
 // END OF USER CONFIGURABLE SETTINGS.  DO NOT EDIT BELOW THIS LINE
 // --------------------------------------------------------------------
 
+        
+/*
+ * ------------------------------------------------------------------------
+ *  Run installation
+ * ------------------------------------------------------------------------
+ * 
+ * Check if installation file exists and redirect to installation page.
+ * Do this check here to prevent framework from loading,and make application run faster.
+ */
+        
+    // Redirect to installation folder if it still exists.
+    $request = explode('/', $_SERVER['REQUEST_URI']);
+    $path_exists = realpath("{$application_folder}/controllers/installation.php");
+    
+    if($path_exists && (!isset($request[1]) || $request[1] != 'installation')) {
+        header("Location: installation");
+    }
+
 /*
  * ---------------------------------------------------------------
  *  Resolve the system path for increased reliability
  * ---------------------------------------------------------------
  */
 
-	// Set the current directory correctly for CLI requests
-	if (defined('STDIN'))
-	{
-		chdir(dirname(__FILE__));
-	}
+    // Set the current directory correctly for CLI requests
+    if (defined('STDIN'))
+    {
+            chdir(dirname(__FILE__));
+    }
 
-	if (realpath($system_path) !== FALSE)
-	{
-		$system_path = realpath($system_path).'/';
-	}
+    if (realpath($system_path) !== FALSE)
+    {
+            $system_path = realpath($system_path).'/';
+    }
 
-	// ensure there's a trailing slash
-	$system_path = rtrim($system_path, '/').'/';
+    // ensure there's a trailing slash
+    $system_path = rtrim($system_path, '/').'/';
 
-	// Is the system path correct?
-	if ( ! is_dir($system_path))
-	{
-		exit("Your system folder path does not appear to be set correctly. Please open the following file and correct this: ".pathinfo(__FILE__, PATHINFO_BASENAME));
-	}
+    // Is the system path correct?
+    if ( ! is_dir($system_path))
+    {
+            exit("Your system folder path does not appear to be set correctly. Please open the following file and correct this: ".pathinfo(__FILE__, PATHINFO_BASENAME));
+    }
 
 /*
  * -------------------------------------------------------------------
@@ -196,7 +214,7 @@ if (defined('ENVIRONMENT'))
 	if (is_dir($application_folder))
 	{
 		define('APPPATH', $application_folder.'/');
-                define('TMPLPATH', APPPATH.$template_folder.'/');
+                define('TMPLPATH', $template_folder.'/');
 	}
 	else
 	{

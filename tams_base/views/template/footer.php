@@ -13,6 +13,6 @@
  * @since      File available since Release 1.0.0
  */
 ?>
-<div id="footer" style="">
+<div id="footer" style="position: fixed; bottom: 0; top: auto">
     <p> &copy; TAMS 2012 - <?php echo date('Y');?>. All rights reserved.</p>
 </div>
