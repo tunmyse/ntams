@@ -325,19 +325,18 @@ class Application extends CI_Controller {
      * Delete all installaton files
      * 
      * @access public
-     * @param string $method optional
+     * @param string $domain_string optional
      * @return void
      */
-    public function complete_installation() {
+    public function complete_installation($domain_string = NULL) {
         
         // Load file helper
         $this->load->helper('file');
         
-        $content = $this->load->view('app/install_complete', '', TRUE);
+        // Delete files in installation folder
+        delete_files(APPPATH.'installation', TRUE, 1);
         
-        // Delete all installation related files        
-        delete_files(APPPATH.'installation', TRUE, 0);
-        
+        // Build array of all installation related files
         $files = array(
             APPPATH.'controllers/installation.php',
             APPPATH.'models/installer_model.php',
@@ -346,12 +345,14 @@ class Application extends CI_Controller {
             APPPATH.'language/installer_lang.php'
         );
         
+        // Delete other installation related files
         foreach($files as $f) {
             if(realpath($f))
                 @unlink($f);
         }
         
-        echo $content;        
+        $data['domain_string'] = $domain_string;
+        $this->load->view('app/install_complete', $data);       
     }
 }
 
