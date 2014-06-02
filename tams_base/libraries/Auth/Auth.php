@@ -144,7 +144,7 @@ class Auth extends CI_Driver_Library {
      **/
     private function is_valid_auth_provider($name) {
         
-        if(in_array($name, $valid_drivers))
+        if(in_array($name, $this->valid_drivers))
             return true;
         
         return false;

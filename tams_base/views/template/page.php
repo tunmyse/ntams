@@ -15,7 +15,7 @@
 
 ?>
 <!doctype html>
-<html>
+<html ng-app="tams-app">
     <head>
         <?php echo $header_content; ?>
     </head>

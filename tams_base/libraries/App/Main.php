@@ -124,7 +124,7 @@ class Main {
 
                 default:
                     $this->school_id = $school_details[0]->schoolid;
-                    echo $this->school_name = $school_details[0]->shortname;
+                    $this->school_name = $school_details[0]->shortname;
                     $this->set('school_name', $this->school_name);
                     $this->set('school_id', $this->school_id);
             }   

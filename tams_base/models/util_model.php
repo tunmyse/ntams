@@ -124,7 +124,7 @@ class Util_model extends CI_Model {
                             'schools', 
                             array('schoolid', 'shortname')                            
                         );
-    }// End func invalidate_reset_link
+    }// End func get_school_name
     
     /**
      * Retrieve school's college name
@@ -138,7 +138,8 @@ class Util_model extends CI_Model {
                             'schools', 
                             array('unitname')                            
                         );
-    }// End func invalidate_reset_link
+    }// End func get_school_college
+    
     
     /**
      * Get data from a table

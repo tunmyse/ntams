@@ -3,18 +3,18 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * TAMS
- * User Model
+ * Exam Model
  * 
  * @category   Model
- * @package    Users
- * @subpackage User
+ * @package    Admission
+ * @subpackage Exam
  * @author     Akinsola Tunmise <akinsolatunmise@gmail.com>
  * @copyright  Copyright © 2014 TAMS.
  * @version    1.0.0
  * @since      File available since Release 1.0.0
  */
 
-class User_model extends CI_Model {
+class Exam_model extends CI_Model {
 	
     /**
      * Class constructor
@@ -144,6 +144,7 @@ class User_model extends CI_Model {
                              array('unitname')                            
                         );
     }// End func invalidate_reset_link
-} // End class User_model
+    
+} // End class Exam_model
 
-// End file user_model.php
+// End file exam_model.php

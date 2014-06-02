@@ -101,17 +101,15 @@
         </script>
 <![endif]-->
 
-<!-- Angularjs -->
-
 <!-- Theme scripts -->
 <script src="<?php echo base_url('js/application.min.js')?>"></script>
 
-<!-- File upload -->
-<script src="<?php echo base_url('js/plugins/fileupload/bootstrap-fileupload.min.js')?>"></script>
+<!-- Angularjs -->
+<script src="<?php echo base_url('js/angular/angular.min.js')?>"></script>
+<script src="<?php echo base_url('js/angular/angular-exam.js')?>"></script>
 
 <!-- Favicon -->
 <link rel="shortcut icon" href="<?php echo base_url('img/icon.png')?>" />
+
 <!-- Apple devices Homescreen icon -->
 <link rel="apple-touch-icon-precomposed" href="<?php echo base_url('img/apple-touch-icon-precomposed.png')?>" />
-
-<?php //echo $includes;

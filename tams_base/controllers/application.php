@@ -278,7 +278,7 @@ class Application extends CI_Controller {
      * @param string $method optional
      * @return void
      */
-    public function authenticate($method='site') {
+    public function authenticate($method='Auth_site') {
         
         // Check if request method is a POST
         if($this->input->server('REQUEST_METHOD') != 'POST'){
@@ -291,8 +291,11 @@ class Application extends CI_Controller {
         $uname = $this->input->post('uname', TRUE);
         $upw = $this->input->post('upw', TRUE);
         
+        $err = array(DEFAULT_EMPTY, DEFAULT_NOT_VALID);
+        
         // Validate user's credentials
-        if(check_field($uname, FIELD_TYPE_USERNAME) || check_field($upw, FIELD_TYPE_PASSWORD)) {
+        if(in_array(check_field($uname, FIELD_TYPE_USERNAME), $err) 
+                || in_array(check_field($upw, FIELD_TYPE_PASSWORD), $err)) {
             $password_length = $this->config->item('password_min_length');
             $error_msg = $this->lang->line('invalid_credentials');  
             $this->main->set_notification_message(MSG_TYPE_ERROR, sprintf($error_msg, $password_length));
@@ -352,7 +355,7 @@ class Application extends CI_Controller {
         }
         
         $data['domain_string'] = $domain_string;
-        $this->load->view('app/install_complete', $data);       
+        $this->load->view('app/newhtml', $data);       
     }
 }
 

@@ -219,6 +219,18 @@ class Page {
                                     </li>
                             </ul>
 			</div>';
+        
+        $sidebar .= '<div class="subnav">
+                            <div class="subnav-title">
+                                    <a class="toggle-subnav" href="#"><i class="icon-angle-down"></i><span>Admission</span></a>
+                            </div>
+                            <ul class="subnav-menu">
+                                    <li>
+                                            <a href="'.site_url('admission/exam').'">Exam Management</a>
+                                    </li>
+                            </ul>
+			</div>';
+        
         return $sidebar;
         if(!is_array($nav_arr) or empty($nav_arr)) {
                 return false;

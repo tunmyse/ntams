@@ -49,7 +49,7 @@
             
             <div class="row-fluid">
                 
-                <div class="span9">
+                <div class="span9" ng-controller="PageController">
                     <?php echo $page_content;?>
                 </div>
                 
