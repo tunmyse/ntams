@@ -47,14 +47,8 @@ class Installation extends CI_Controller {
      */
     public function verify_steps() {    
 
-//        var_dump($this->session->all_userdata());
-//        echo $this->input->server('REQUEST_METHOD');
-//        exit;
         if($this->input->server('REQUEST_METHOD') == 'POST'){
             
-//            var_dump($this->input->post());
-//            exit;
-
             // Set up database config file
             $db_config = $this->input->post('db');
             $this->set_database_config($db_config);
@@ -64,11 +58,11 @@ class Installation extends CI_Controller {
             $sch_params = $this->input->post('sch');
             $this->setup_accounts($sch_params, $acct_params);  
             
-            redirect('installation/complete');
+            redirect('tams_installation/complete');
         }else {
             $error_msg = $this->lang->line('invalid_req_method');
             $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-            redirect(site_url('installation/steps'));
+            redirect(site_url('tams_installation/steps'));
         }
     }
     
@@ -97,7 +91,7 @@ class Installation extends CI_Controller {
         if(!$file_contents) {
             $error_msg = sprintf($this->lang->line('file_read_error'), 'initial config ');
             $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-            redirect(site_url('installation/steps'));
+            redirect(site_url('tams_installation/steps'));
         }
         
         // Fill placeholders with database parameters
@@ -116,7 +110,7 @@ class Installation extends CI_Controller {
         if(!write_file($config_file, $new_content, 'w')) {
             $error_msg = sprintf($this->lang->line('file_write_error'), 'main config ');
             $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-            redirect(site_url('installation/steps'));
+            redirect(site_url('tams_installation/steps'));
         }
         
         // Load database library to test config file
@@ -131,7 +125,7 @@ class Installation extends CI_Controller {
             case DEFAULT_ERROR:
                 $error_msg = $this->lang->line('database_not_created');
                 $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-                redirect(site_url('installation/steps'));
+                redirect(site_url('tams_installation/steps'));
                 break;
         }
         
@@ -155,7 +149,7 @@ class Installation extends CI_Controller {
         if($adm_params['password'] !== $adm_params['cpassword']) {
             $error_msg = $this->lang->line('password_unmatch');
             $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-            redirect(site_url('installation/steps'));
+            redirect(site_url('tams_installation/steps'));
         }
         
         // Load Authentication provider to encrypt password
@@ -170,13 +164,13 @@ class Installation extends CI_Controller {
             case DEFAULT_ERROR:
                 $error_msg = $this->lang->line('account_not_created');
                 $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-                redirect(site_url('installation/steps'));
+                redirect(site_url('tams_installation/steps'));
                 break;
             
             case DEFAULT_NOT_EXIST:
                 $error_msg = $this->lang->line('database_not_created');
                 $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-                redirect(site_url('installation/steps'));
+                redirect(site_url('tams_installation/steps'));
                 break;
         }
         
@@ -207,7 +201,7 @@ class Installation extends CI_Controller {
             if(!$file_contents) {
                 $error_msg = sprintf($this->lang->line('file_read_error'), $name);
                 $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-                redirect(site_url('installation/steps'));
+                redirect(site_url('tams_installation/steps'));
             }
             
             // Open destination file for writing
@@ -217,7 +211,7 @@ class Installation extends CI_Controller {
             if(!write_file($dest_file, $file_contents, 'w')) {
                 $error_msg = sprintf($this->lang->line('file_write_error'), $name);
                 $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-                redirect(site_url('installation/steps'));
+                redirect(site_url('tams_installation/steps'));
             }
         }
         
@@ -233,7 +227,7 @@ class Installation extends CI_Controller {
             // Set error message for incomplete form fields
             $error_msg = $this->lang->line('empty_form_field');  
             $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-            redirect(site_url('installation/steps'));
+            redirect(site_url('tams_installation/steps'));
         }  
         
         // Use default where no value is supplied
@@ -249,7 +243,7 @@ class Installation extends CI_Controller {
             // Set error message for incomplete form fields
             $error_msg = $this->lang->line('empty_form_field');  
             $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-            redirect(site_url('installation/steps'));
+            redirect(site_url('tams_installation/steps'));
         }
     }
 }

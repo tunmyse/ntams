@@ -78,14 +78,14 @@
                 <p>University administration brought down to its simplest form, 
                     <em>garnished</em> with a sleek and powerful interface .</p>
                 <p>
-                    <a href="<?php echo site_url('installation/steps')?>" class="btn btn-primary btn-large"> 
+                    <a href="<?php echo site_url('tams_installation/steps')?>" class="btn btn-primary btn-large"> 
                         Install TAMS 
                     </a>
                 </p>
                 <ul class="masthead-links">
                     <li>
                       <a><img src="<?php echo base_url('../img/logo@2x.png')?>" alt="" class='retina-ready' width="39" height="29"></a>
-                    </li><br/><br/>
+                    </li><br/><br/><br/>
                     <li>
                     <a>Tertiary Academic Management System</a>
                   </li>                 

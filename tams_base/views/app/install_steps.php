@@ -111,7 +111,7 @@
                         </h3>
                     </div>
                     <div class="box-content">       
-                        <form action="<?php echo site_url('installation/verify_steps')?>" method="POST" class='form-horizontal form-wizard' id="setup_form">
+                        <form action="<?php echo site_url('tams_installation/verify_steps')?>" method="POST" class='form-horizontal form-wizard' id="setup_form">
                             <div class="step" id="firstStep">
                                  <ul class="wizard-steps steps-4">
                                     <li class='active'>

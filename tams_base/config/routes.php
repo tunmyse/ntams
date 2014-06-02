@@ -43,9 +43,9 @@ $route['default_controller'] = "application";
 /**
  * Installation routes
  */
-$route['installation'] = "installation";
-$route['installation/complete'] = "application/complete_installation";
-$route['installation/(:any)'] = "installation/$1";
+$route['tams_installation'] = "installation";
+$route['tams_installation/complete'] = "application/complete_installation";
+$route['tams_installation/(:any)'] = "installation/$1";
 
 /**
  * General application routing rules.
@@ -83,6 +83,15 @@ $route['department/info/(:any)'] = "department/department/details/$1";
 $route['programme'] = "programme/programme";
 $route['programme/(:any)'] = "programme/programme/$1";
 $route['programme/info/(:any)'] = "programme/programme/details/$1";
+
+// Admission route
+$route['admission'] = "admission/admission";
+$route['admission/(:any)'] = "admission/$1";
+$route['admission/(:any)/(:any)'] = "admission/$1/$2";
+
+$route['exam/(:any)/create'] = "admission/exam/create_$1";
+$route['exam/(:any)/update'] = "admission/exam/update_$1";
+$route['exam/(:any)/delete'] = "admission/exam/delete_$1";
 
 $route['404_override'] = '';
 
