@@ -72,6 +72,20 @@ class Main {
     private $college_name = NULL;
 	
     /**
+     * Session Id
+     * @var int 
+     */
+    
+    private $cur_session = NULL;
+    
+    /**
+     * Session Name
+     * @var string 
+     */
+    
+    private $cur_sesname = NULL;
+    
+    /**
      * Codeigniter instance
      * 
      * @access private
@@ -110,6 +124,8 @@ class Main {
         $this->college_name = $this->get('college_name');
         $this->school_id = $this->get('school_id');
         $this->school_name = $this->get('school_name');
+        $this->cur_session = $this->get('cur_session');
+        $this->cur_sesname = $this->get('cur_sesname');
         
         if(!isset($this->school_id) || $this->school_id == '') {
             $school_details = $this->CI->util_model->get_school_name();
@@ -147,10 +163,31 @@ class Main {
                     $this->set('college_name', $this->college_name);
             }                 
         }
+        
+        if(!isset($this->cur_session) || $this->cur_session == '') {
+
+            $cur_session = $this->CI->util_model->get_current_session();
+
+            switch($cur_session) {
+
+                case DEFAULT_EMPTY:
+                    break;
+
+                case DEFAULT_NOT_VALID:
+                    break;
+
+                default:
+                    $this->cur_session = $cur_session->sesid;
+                    $this->cur_sesname = $cur_session->sesname;
+                    $this->set('cur_session', $this->cur_session);
+                    $this->set('cur_sesname', $this->cur_sesname);
+            }                 
+        }
+        
     }// End func _init
     
     /*
-     * Encrypt passsord using Site authentication method
+     * Encrypt passsord using Site authentication provider
      * @access public 
      * @param string $password
      * @return mixed (bool | array)
@@ -222,7 +259,7 @@ class Main {
      * @return void
      **/
     public function get_college_name() {  
-        return $this->college_name;
+        return $this->item('college_name');
 
     } // End func get_college_name
     
@@ -233,10 +270,20 @@ class Main {
      * @return void
      **/
     public function get_school_name() {  
-        return $this->school_name;
+        return $this->item('school_name');
 
     } // End func get_school_name
     
+    /**
+     * Get current session information
+     *
+     * @access public
+     * @return void
+     **/
+    public function get_session() {  
+        return array('name' => $this->item('cur_sesname'), 'id' => $this->item('cur_session'));
+
+    } // End func get_school_name
     
     /**
      * Logout method
@@ -467,12 +514,7 @@ class Main {
      * @return mixed (bool | string)
      */
     public function get($item) {
-//        if(!$this->logged_in()) {
-//            return false;
-//        }
-
         return $this->CI->session->userdata($item);
-
     } // End func get
 
     /**
@@ -483,9 +525,6 @@ class Main {
      * @return mixed (bool | string)
      */
     public function set($key, $value = '', $clear = FALSE) {
-//        if(!$this->logged_in()) {
-//            return false;
-//        }
         
         if($clear) {
             $this->CI->session->unset_userdata($key);
@@ -502,7 +541,19 @@ class Main {
 
     } // End func set
 
-    
+    /**
+     * Get a property in this class. 
+     * 
+     * @access public
+     * @param string $item
+     * @return string
+     */
+    public function item($item) {
+
+        return $this->$item;
+
+    } // End func item
+
     /**
      * Redirect to user's access denied page, if user have no permission.
      * 

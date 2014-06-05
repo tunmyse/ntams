@@ -1,26 +1,3 @@
-<script>
-
-    var groups = [
-        {"name": "O'level"},
-        {"name": "A'Level"}
-    ];
-
-    var exams = [
-        {"name": "O'level"},
-        {"name": "A'Level"}
-    ];
-    
-    var grades = [
-        {"name": "O'level"},
-        {"name": "A'Level"}
-    ];
-    
-    var subjects = [
-        {"name": "O'level"},
-        {"name": "A'Level"}
-    ];
-</script>
-
 <div>                   
     <div class="box">                
         <div class="box-title">
@@ -78,7 +55,7 @@
                         <tbody>
                             <tr ng-repeat="group in data.groups">
                                 <td ng-bind="$index+1"></td>
-                                <td ng-bind="group.name"></td>
+                                <td ng-bind="group.groupname"></td>
                                 <td ng-bind="group.required"></td>
                                 <td ng-bind="group.maxentries"></td> 
                                 <td ng-bind="group.status"></td>  
@@ -125,7 +102,7 @@
                         <tbody>
                             <tr ng-repeat="exam in data.exams">
                                 <td ng-bind="$index+1"></td>
-                                <td ng-bind="exam.name"></td>
+                                <td ng-bind="exam.examname"></td>
                                 <td ng-bind="exam.shortname"></td>
                                 <td ng-bind="exam.validyears"></td>
                                 <td ng-bind="exam.minsubject"></td>
@@ -169,7 +146,7 @@
                         <tbody>
                             <tr ng-repeat="subj in data.subjects">
                                 <td ng-bind="$index+1"></td>
-                                <td ng-bind="subj.name"></td>
+                                <td ng-bind="subj.subname"></td>
                                 <td>
                                     <div class="btn-group">
                                         <a class="btn dropdown-toggle" href="#" data-toggle="dropdown">
@@ -202,13 +179,17 @@
                             <tr>
                                 <th>S/N</th>                                
                                 <th>Name</th>
+                                <th>Weight</th>
+                                <th>Description</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="grade in data.grades">
                                 <td ng-bind="$index+1"></td>
-                                <td ng-bind="grade.name"></td> 
+                                <td ng-bind="grade.gradename"></td> 
+                                <td ng-bind="grade.gradeweight"></td> 
+                                <td ng-bind="grade.gradedesc"></td> 
                                 <td>
                                     <div class="btn-group">
                                         <a class="btn dropdown-toggle" href="#" data-toggle="dropdown">
@@ -227,7 +208,7 @@
                                 </td>
                             </tr>
                             <tr ng-show="data.grades.length < 1">                                
-                                <td colspan="3">
+                                <td colspan="5">
                                     <?php echo sprintf($this->lang->line('no_entries'), 'grades')?>
                                 </td>
                             </tr>
@@ -238,3 +219,13 @@
         </div>
     </div>    
 </div>
+<script>
+
+    var groups = <?php echo (is_array($groups))? json_encode($groups): '[]'?>;
+
+    var exams = <?php echo (is_array($exams))? json_encode($exams): '[]'?>;
+    
+    var grades = <?php echo (is_array($grades))? json_encode($grades): '[]'?>;
+    
+    var subjects = <?php echo (is_array($subjects))? json_encode($subjects): '[]'?>;
+</script>

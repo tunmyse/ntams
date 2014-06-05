@@ -147,7 +147,7 @@ class Installation extends CI_Controller {
         
         // Ensure passwords match
         if($adm_params['password'] !== $adm_params['cpassword']) {
-            $error_msg = $this->lang->line('password_unmatch');
+            $error_msg = $this->lang->line('password_mismatch');
             $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
             redirect(site_url('tams_installation/steps'));
         }

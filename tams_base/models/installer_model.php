@@ -35,12 +35,10 @@ class Installer_model extends CI_Model {
      */
     public function setup_accounts(array $sch_params, array $adm_params) {
         
-        $exist = true;
+        $school_exist = $this->db->table_exists($this->db->dbprefix('schools'));
+        $user_exist = $this->db->table_exists($this->db->dbprefix('users'));
         
-        $exist = $this->db->table_exists($this->db->dbprefix('schools'));
-        $exist = $this->db->table_exists($this->db->dbprefix('users'));
-        
-        if($exist) {
+        if($school_exist && $user_exist) {
             $this->db->trans_start();
             
             $sch_data = array(

@@ -6,7 +6,7 @@
  * Exam controller
  * 
  * @category   Controller
- * @package    Admission
+ * @package    Admission Management
  * @subpackage Exam
  * @author     Tunmise Akinsola <akinsolatunmise@gmail.com>
  * @copyright  Copyright © 2014 TAMS.
@@ -75,16 +75,21 @@ class Exam extends CI_Controller {
         $data = array();
         $page_name = 'manage_exam';
                         
+        $data['groups'] = $this->mdl->get_group();
+        $data['exams'] = $this->mdl->get_exam();
+        $data['grades'] = $this->mdl->get_grade();
+        $data['subjects'] = $this->mdl->get_subject();
+        
         $page_content = $this->load->view($this->folder_name.'/exam/'.$page_name, $data, true);
-        $page_content .= $this->load->view($this->folder_name.'/partials/edit_group', '', true);
-        $page_content .= $this->load->view($this->folder_name.'/partials/edit_exam', '', true);
-        $page_content .= $this->load->view($this->folder_name.'/partials/edit_subject', '', true);
-        $page_content .= $this->load->view($this->folder_name.'/partials/edit_grade', '', true);
-        $page_content .= $this->load->view($this->folder_name.'/partials/create_group', '', true);
-        $page_content .= $this->load->view($this->folder_name.'/partials/create_exam', '', true);
-        $page_content .= $this->load->view($this->folder_name.'/partials/create_subject', '', true);
-        $page_content .= $this->load->view($this->folder_name.'/partials/create_grade', '', true);
-        $page_content .= $this->load->view($this->folder_name.'/partials/delete_modal', '', true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/edit_group', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/edit_exam', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/edit_subject', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/edit_grade', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/create_group', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/create_exam', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/create_subject', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/create_grade', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/delete_modal', $data, true);
         
         $this->page->build($page_content, $this->folder_name, $page_name, 'Exam Management');       
     }// End of func index
@@ -92,26 +97,300 @@ class Exam extends CI_Controller {
     /**
      * Create new exam group.	 
      */
-    public function create_exam_group($received, $expected) {
+    public function create_group() {
         
+        // Check for valid request method
+        if($this->input->server('REQUEST_METHOD') == 'POST') {
+            
+            // Set error to true. 
+            // This should be changed only if there are no validation errors.
+            $error = false;
+                        
+            // Get all field values.
+            $form_fields = $this->input->post(NULL);
+            
+            // Validate form fields.
+            //$error = $this->validate_fields($form_fields, $fields);
+            
+            // Send fields to model if there are no errors
+            if(!$error) {
+                $params = array(
+                    'groupname'   => $form_fields['group_name'],
+                    'required'   => $form_fields['group_req'],
+                    'maxentries'    => $form_fields['group_max'],
+                    'status'   => $form_fields['group_status']
+                );
+                
+                // Call model method to perform insertion
+                $status = $this->mdl->create($params, 'group');
+                
+                // Process model response
+                switch($status) {
+                    
+                    // Unique constraint violated.
+                    case DEFAULT_EXIST:
+                        break;
+                    
+                    // There was a problem creating the entry.
+                    case DEFAULT_ERROR:
+                        break;
+                    
+                    // Entry created successfully.
+                    case DEFAULT_SUCCESS:
+                        break;
+                    
+                    default:
+                        break;
+                }
+            }
+            
+        }else{
+            // Set error message for any request other than POST
+            $error_msg = $this->lang->line('invalid_req_method');  
+            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+        }
         
+        // Redirect to exam page, showing notifiction messages if there are.
+        redirect(site_url('admission/exam'));
     }// End of func create_exam_group
     
     /**
      * Create new exam.	 
      */
-    public function create_exam($received, $expected) {
+    public function create_exam() {
+        // Check for valid request method
+        if($this->input->server('REQUEST_METHOD') == 'POST') {
+            
+            // Set error to true. 
+            // This should be changed only if there are no validation errors.
+            $error = false;
+                        
+            // Get all field values.
+            $form_fields = $this->input->post(NULL);
+            
+            // Validate form fields.
+            //$error = $this->validate_fields($form_fields, $fields);
+            
+            // Send fields to model if there are no errors
+            if(!$error) {
+                $params = array(
+                    'groupid'   => $form_fields['exam_group'],
+                    'examname'   => $form_fields['exam_name'],
+                    'shortname'   => $form_fields['exam_sname'],
+                    'validyears'   => $form_fields['exam_valid'],
+                    'minsubject'    => $form_fields['exam_min'],
+                    'scorebased'   => $form_fields['exam_score'],
+                    'status'   => $form_fields['exam_status']
+                );
+                
+                // Call model method to perform insertion
+                $status = $this->mdl->create($params, 'exam');
+                
+                // Process model response
+                switch($status) {
+                    
+                    // Unique constraint violated.
+                    case DEFAULT_EXIST:
+                        break;
+                    
+                    // There was a problem creating the entry.
+                    case DEFAULT_ERROR:
+                        break;
+                    
+                    // Entry created successfully.
+                    case DEFAULT_SUCCESS:
+                        break;
+                    
+                    default:
+                        break;
+                }
+            }
+            
+        }else{
+            // Set error message for any request other than POST
+            $error_msg = $this->lang->line('invalid_req_method');  
+            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+        }
         
-        
+        // Redirect to exam page, showing notifiction messages if there are.
+        redirect(site_url('admission/exam'));
     }// End of func create_exam
     
     /**
-     * Create new exam .	 
+     * Create new grade.	 
      */
-    public function create_grade($received, $expected) {
+    public function create_grade() {
+        // Check for valid request method
+        if($this->input->server('REQUEST_METHOD') == 'POST') {
+            
+            // Set error to true. 
+            // This should be changed only if there are no validation errors.
+            $error = false;
+                        
+            // Get all field values.
+            $form_fields = $this->input->post(NULL);
+            
+            // Validate form fields.
+            //$error = $this->validate_fields($form_fields, $fields);
+            
+            // Send fields to model if there are no errors
+            if(!$error) {
+                $params = array(
+                    'gradename'   => $form_fields['grade_name'],
+                    'gradeweight'   => $form_fields['grade_weight'],
+                    'gradedesc'   => $form_fields['grade_desc']
+                );
+                
+                // Call model method to perform insertion
+                $status = $this->mdl->create($params, 'grade');
+                
+                // Process model response
+                switch($status) {
+                    
+                    // Unique constraint violated.
+                    case DEFAULT_EXIST:
+                        break;
+                    
+                    // There was a problem creating the entry.
+                    case DEFAULT_ERROR:
+                        break;
+                    
+                    // Entry created successfully.
+                    case DEFAULT_SUCCESS:
+                        break;
+                    
+                    default:
+                        break;
+                }
+            }
+            
+        }else{
+            // Set error message for any request other than POST
+            $error_msg = $this->lang->line('invalid_req_method');  
+            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+        }
         
-        
+        // Redirect to exam page, showing notifiction messages if there are.
+        redirect(site_url('admission/exam'));
     }// End of func create_grade
+    
+    /**
+     * Create new subject.	 
+     */
+    public function create_subject() {
+        // Check for valid request method
+        if($this->input->server('REQUEST_METHOD') == 'POST') {
+            
+            // Set error to true. 
+            // This should be changed only if there are no validation errors.
+            $error = false;
+                        
+            // Get all field values.
+            $form_fields = $this->input->post(NULL);
+            
+            // Validate form fields.
+            //$error = $this->validate_fields($form_fields, $fields);
+            
+            // Send fields to model if there are no errors
+            if(!$error) {
+                $params = array(
+                    'subname'   => $form_fields['subject_name']
+                );
+                
+                // Call model method to perform insertion
+                $status = $this->mdl->create($params, 'subject');
+                
+                // Process model response
+                switch($status) {
+                    
+                    // Unique constraint violated.
+                    case DEFAULT_EXIST:
+                        break;
+                    
+                    // There was a problem creating the entry.
+                    case DEFAULT_ERROR:
+                        break;
+                    
+                    // Entry created successfully.
+                    case DEFAULT_SUCCESS:
+                        break;
+                    
+                    default:
+                        break;
+                }
+            }
+            
+        }else{
+            // Set error message for any request other than POST
+            $error_msg = $this->lang->line('invalid_req_method');  
+            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+        }
+        
+        // Redirect to exam page, showing notifiction messages if there are.
+        redirect(site_url('admission/exam'));
+        
+    }// End of func create_subject
+    
+    /**
+     * Update new exam group.	 
+     */
+    public function update_group() {
+        
+        // Check for valid request method
+        if($this->input->server('REQUEST_METHOD') == 'POST') {
+            
+            // Set error to true. 
+            // This should be changed only if there are no validation errors.
+            $error = false;
+                        
+            // Get all field values.
+            $form_fields = $this->input->post(NULL);
+            
+            // Validate form fields.
+            //$error = $this->validate_fields($form_fields, $fields);
+            
+            // Send fields to model if there are no errors
+            if(!$error) {
+                $params = array(
+                    'groupname'   => $form_fields['edit_group_name'],
+                    'required'   => $form_fields['edit_group_req'],
+                    'maxentries'    => $form_fields['edit_group_max'],
+                    'status'   => $form_fields['edit_group_status']
+                );
+                
+                $id = $form_fields['edit_group_id'];
+                // Call model method to perform insertion
+                $status = $this->mdl->update($id, $params, 'group');
+                
+                // Process model response
+                switch($status) {
+                    
+                    // Unique constraint violated.
+                    case DEFAULT_EXIST:
+                        break;
+                    
+                    // There was a problem creating the entry.
+                    case DEFAULT_ERROR:
+                        break;
+                    
+                    // Entry created successfully.
+                    case DEFAULT_SUCCESS:
+                        break;
+                    
+                    default:
+                        break;
+                }
+            }
+            
+        }else{
+            // Set error message for any request other than POST
+            $error_msg = $this->lang->line('invalid_req_method');  
+            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+        }
+        
+        // Redirect to exam page, showing notifiction messages if there are.
+        redirect(site_url('admission/exam'));
+    }// End of func create_exam_group
     
     /**
      * Validate form fields.	 

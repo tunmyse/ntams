@@ -40,15 +40,22 @@
 
 $route['default_controller'] = "application";
 
-/**
+
+/*
+ *---------------------------------------------------------------
  * Installation routes
+ *---------------------------------------------------------------
  */
+
 $route['tams_installation'] = "installation";
 $route['tams_installation/complete'] = "application/complete_installation";
 $route['tams_installation/(:any)'] = "installation/$1";
 
-/**
+
+/*
+ *---------------------------------------------------------------
  * General application routing rules.
+ *---------------------------------------------------------------
  */
 
 // Login rules
@@ -69,6 +76,13 @@ $route['change_password'] = "application/change_password";
 // User route rules
 $route['(:any)/dashboard'] = "users/$1";
 
+
+/*
+ *---------------------------------------------------------------
+ * Set-up routes.
+ *---------------------------------------------------------------
+ */
+
 // College route
 $route['college'] = "college/college";
 $route['college/(:any)'] = "college/college/$1";
@@ -84,11 +98,24 @@ $route['programme'] = "programme/programme";
 $route['programme/(:any)'] = "programme/programme/$1";
 $route['programme/info/(:any)'] = "programme/programme/details/$1";
 
+
+/*
+ *---------------------------------------------------------------
+ * Admission Management routes.
+ *---------------------------------------------------------------
+ */
+
 // Admission route
 $route['admission'] = "admission/admission";
+
+$route['admission/register'] = "admission/admission/register";
+$route['admission/application'] = "admission/admission/application";
+$route['admission/application/(:any)'] = "admission/admission/$1";
+
 $route['admission/(:any)'] = "admission/$1";
 $route['admission/(:any)/(:any)'] = "admission/$1/$2";
 
+// Exam routes
 $route['exam/(:any)/create'] = "admission/exam/create_$1";
 $route['exam/(:any)/update'] = "admission/exam/update_$1";
 $route['exam/(:any)/delete'] = "admission/exam/delete_$1";

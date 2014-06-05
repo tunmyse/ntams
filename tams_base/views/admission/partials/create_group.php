@@ -27,10 +27,10 @@
                 </div>
             </div>
             <div class="control-group">
-                <label for="qroup_req" class="control-label">Required:</label>
+                <label for="group_req" class="control-label">Required:</label>
                 <div class="controls">
                     <div class="input-xlarge">
-                        <select name="qroup_req" id="qroup_req" class='chosen-select'>
+                        <select name="group_req" id="group_req" class='chosen-select'>
                             <option value="TRUE" selected="true">True</option>
                             <option value="FALSE">False</option>
                         </select>

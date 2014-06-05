@@ -17,6 +17,11 @@ define('DEFAULT_VALID', 7);
 define('DEFAULT_NOT_VALID', 8);
 
 
+define('QUERY_ARRAY_ROW', 0);
+define('QUERY_ARRAY_RESULT', 1);
+define('QUERY_OBJECT_ROW', 2);
+define('QUERY_OBJECT_RESULT', 3);
+
 /*
 |--------------------------------------------------------------------------
 | Notification message types

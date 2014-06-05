@@ -71,7 +71,7 @@ class Util_model extends CI_Model {
      * Check if a reset link exists, or is valid
      * 
      * @access public
-     * @param array $query_fields
+     * @param string $uid
      * @return uid (string)
      */
     public function check_reset_link($uid) {
@@ -114,6 +114,44 @@ class Util_model extends CI_Model {
     }// End func invalidate_reset_link
     
     /**
+     * Check if a user value is unique
+     * 
+     * @access public
+     * @param string value, string $type
+     * @return uid (string)
+     */
+    public function is_user_unique($value, $type) {
+        
+        // Get schoolid
+        $schoolid = $this->main->item('school_id');
+        
+        $query = $this->db->get_where('users', array('schoolid' => $schoolid, $type => $value));
+        
+        return ($query->num_rows() > 0)? false: true;
+        
+    }// End func is_user_unique
+    
+    /**
+     * Retrieve school information
+     * 
+     * @access public
+     * @return void
+     */
+    public function get_current_session() {
+        return $this->get_data(
+                            'session', 
+                            array('*'), 
+                            array(
+                                array('field' => 'status', 'value' => 'Active')
+                            ),
+                            array(),
+                            array(),
+                            array(),
+                            QUERY_OBJECT_ROW
+                        );
+    }// End func get_school_name
+    
+    /**
      * Retrieve school information
      * 
      * @access public
@@ -145,8 +183,8 @@ class Util_model extends CI_Model {
      * Get data from a table
      * 
      * @access public
-     * @param string $table, array $fields, array $where, array $order, array $join, array group
-     * @return mixed (int | bool)
+     * @param string $table, array $fields, array $where, array $order, array $join, array group, int r_set, array $limit
+     * @return mixed (int | array | object)
      */
     public function get_data(
             $table, 
@@ -154,7 +192,9 @@ class Util_model extends CI_Model {
             array $where = array(), 
             array $order = array(), 
             array $join = array(), 
-            array $group = array()) {
+            array $group = array(), 
+            $r_set = 3, 
+            array $limit = array()) {
                 
         // Check if table name is supplied
         if(!isset($table) || $table == '') {            
@@ -167,7 +207,7 @@ class Util_model extends CI_Model {
         $this->db->select($select);
         $this->db->from($table);
         
-        // Prepare where clause
+        // Prepare join clause
         foreach($join as $j) {
             $this->db->join($j['table'], $j['on']);
         }
@@ -187,12 +227,38 @@ class Util_model extends CI_Model {
             $this->db->order_by($o['field'], $o['dir']);
         }
         
+        // Prepare limit clause
+        if(!empty($limit)) {
+            $size = count($limit);
+            $offset = ($size > 1)? $limit[0]: 0;
+            $count = ($size == 1)? $limit[0]: $limit[1];
+            
+            $this->db->limit($offset, $count);
+        }        
+        
         // Run query
         $query = $this->db->get();
         
         // Check if query is empty
         if($query->num_rows() > 0) {
-            return $query->result();
+            switch($r_set) {
+                case QUERY_ARRAY_ROW:
+                     $result_set = $query->row_array();
+                    break;
+                
+                case QUERY_ARRAY_RESULT:
+                    $result_set = $query->result_array();
+                    break;
+                
+                case QUERY_OBJECT_ROW:
+                    $result_set = $query->row();
+                    break;
+                    
+                default:
+                    $result_set = $query->result();
+            }
+            
+            return $result_set;
         }
         
         return DEFAULT_EMPTY;

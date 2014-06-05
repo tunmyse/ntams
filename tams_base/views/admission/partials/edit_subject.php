@@ -23,10 +23,15 @@
             <div class="control-group">
                 <label for="subject_name" class="control-label">Subject Name:</label>
                 <div class="controls">
-                    <input type="text" name="subject_name" id="edit_subject_name" class="input-xlarge" >
+                    <input type="text" 
+                           ng-model="current.subname" 
+                           name="subject_name" 
+                           id="edit_subject_name" 
+                           class="input-xlarge" >
                 </div>
             </div>
         </div>
+        <input type="hidden" name="edit_sub_id" value="{{current.subjectid}}"/>
         <div class="modal-footer">
             <button data-dismiss="modal" class="btn" aria-hidden="true">Cancel</button>
             <button class="btn btn-primary" type="submit" id="edit_subject_button">Update</button>

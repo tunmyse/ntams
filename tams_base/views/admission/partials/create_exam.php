@@ -36,8 +36,12 @@
                 <label for="exam_group" class="control-label">Group:</label>
                 <div class="controls">
                     <div class="input-xlarge">
-                        <select name="exam_group" id="exam_group" class='chosen-select'>
-                            
+                        <select name="exam_group" 
+                            id="exam_group" 
+                            class='chosen-select'>   
+                            <option ng-repeat="group in data.groups" 
+                                value="{{group.groupid}}" 
+                                ng-bind="group.groupname"></option>
                         </select>
                     </div>
                 </div>
@@ -45,13 +49,25 @@
             <div class="control-group">
                 <label for="exam_valid" class="control-label">Valid Years:</label>
                 <div class="controls">
-                    <input value="1" type="text" min="1" max="20" name="exam_valid" id="exam_valid" class="spinner input-mini uneditable-input"/>
+                    <input value="1" 
+                           type="text" 
+                           min="1" 
+                           max="20" 
+                           name="exam_valid" 
+                           id="exam_valid" 
+                           class="spinner input-mini uneditable-input"/>
                 </div>
             </div>
             <div class="control-group">
                 <label for="exam_min" class="control-label">Minimum Subjects Required:</label>
                 <div class="controls">
-                    <input value="1" type="text" min="1" max="20" name="exam_min" id="exam_min" class="spinner input-mini uneditable-input"/>
+                    <input value="1" 
+                           type="text" 
+                           min="1" 
+                           max="20" 
+                           name="exam_min" 
+                           id="exam_min" 
+                           class="spinner input-mini uneditable-input"/>
                 </div>
             </div>
             <div class="control-group">

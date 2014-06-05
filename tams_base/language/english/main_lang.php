@@ -17,11 +17,12 @@ $lang['invalid_reset_link'] = 'The reset link you specified does not exist or is
 $lang['reset_link_expired'] = 'The reset link you specified has expired! <a href=\'%s\'>Click here</a> to request for a new password reset!';
 $lang['password_change_error'] = 'Oops! There was a problem %s your password. %s or contact your system administrator!';
 $lang['password_change_success'] = 'Your password has been successfully changed! <a href=\'%s\'>Click here</a> to go to the login screen.';
-$lang['password_unmatch'] = 'The passwords you specified do not match!';
+$lang['password_mismatch'] = 'The passwords you specified do not match!';
 $lang['no_entries'] = 'There are no %s to display!';
 $lang['create_dependency'] = 'You need to create at least one %s before you can create this entry! Create the dependency then refresh this page to proceed.';
-$lang['file_read_error'] = 'Error reading %sfile!';
-$lang['file_write_error'] = 'Error writing %sfile!';
+$lang['file_read_error'] = 'Error reading %s file!';
+$lang['file_write_error'] = 'Error writing %s file!';
+$lang['duplicate_value'] = 'The %s you specified should be unique, it already exists in the system!';
 
 /* End of file main_lang.php */
 /* Location: ./base/language/english/main_lang.php */

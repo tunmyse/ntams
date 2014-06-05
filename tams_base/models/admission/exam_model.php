@@ -29,121 +29,255 @@ class Exam_model extends CI_Model {
     } // End func __construct
 
     /**
-     * Authenticate user against database
-     * Returns false if record does not exist.
+     * Create a new admission requirement
      * 
      * @access public
-     * @param array $query_fields
-     * @return mixed (bool | array)
-     */
-    public function authenticate_user(array $query_fields) {
-
-        // Build query to authenticate user against a database entry
-        $tablename = $this->db->dbprefix('users');
-        $sql = "SELECT * "
-                . "FROM {$tablename} "
-                . "WHERE schoolid = ? "
-                . "AND password = ? "
-                . "AND (email LIKE ? OR usertypeid LIKE ? OR phone LIKE ?) ";
-
-
-        $result = $this->db->query($sql, 
-                        array(
-                            $query_fields['school_id'], 
-                            $query_fields['password'], 
-                            $query_fields['username'], 
-                            $query_fields['username'], 
-                            $query_fields['username']
-                        )
-                    )->row_array();
-
-        //echo $this->db->last_query();
-        
-        if(empty($result))
-            return false;
-        
-        return $result;
-
-    } // End func authenticate_user        
-   
-    /**
-     * Change a users password
-     * 
-     * @access public
-     * @param int $userid, array $params
-     * @return bool
-     */
-    public function change_user_password($userid, $params) {
-        // Build sql
-        $this->db->where('userid', $userid);
-        $ret = $this->db->update('users', $params);
-        
-        if($ret)
-            return true;
-            
-        return false;
-    }// End func change_user_password
-    
-    /**
-     * Get user information
-     * 
-     * @access public
-     * @param (int | array) $params, bool $extended optional
-     * @return bool | array
-     */
-    public function get_user_info($params, $extended=FALSE){
-        
-        // Add prefix to table name
-        $tablename = $this->db->dbprefix('users');
-        
-        // Build query to retrieve userid and email of user 
-        if(array_key_exists('user_id', $params)) {
-            $sql = "SELECT * "
-               . "FROM {$tablename} "
-               . "WHERE schoolid = ? "
-               . "AND userid = ?";
-            $param = array($params['school_id'], $params['user_id']);
-        }else {
-            $sql = "SELECT * "
-               . "FROM {$tablename} "
-               . "WHERE schoolid = ? "
-               . "AND (email LIKE ? OR usertypeid LIKE ? OR phone LIKE ?) ";
-            $param = array($params['school_id'], $params['username'], $params['username'], $params['username']);
-        }
-        
-        $query = $this->db->query($sql, $param);
-        
-        if($query->num_rows() < 1) 
-            return false;
-        
-        $result = $query->row();
-        
-        // Get extended results from appropriate user_type table 
-        if($extended && isset($result->usertype)) {
-            $this->db->select('*');
-            $this->db->from('users u');
-            $this->db->join("{$usertype} ut", 'u.userid = ut.userid');
-            $query = $this->db->get();
-            return $query->row();
-        }else{
-            return $result;
-        }
-        
-    } // End func get_user_info      
-	
-    /**
-     * Get user's data
-     * 
-     * @access public
-     * @param int $userid
+     * @param array $params, string $type
      * @return void
      */
-    public function get_user() {
+    public function create($params, $type) {
+        
+        $status = DEFAULT_ERROR;
+        
+        switch ($type) {
+            
+            case 'group':
+                
+                // Check to an entry exists with the same 'groupname' 
+                $this->db->like('groupname', $params['groupname']);
+                $query = $this->db->get('exam_groups');
+                
+                // Set status 
+                if($query->num_rows() > 0) { 
+                    $status = DEFAULT_EXIST;
+                }else {
+                    if($this->db->insert('exam_groups', $params)) {
+                        $status = DEFAULT_SUCCESS;
+                    }
+                }
+                
+                break;
+
+            case 'exam':
+                
+                // Check to an entry exists with the same 'groupname' 
+                $this->db->like('examname', $params['examname']);                
+                $this->db->or_like('shortname', $params['shortname']);
+                $query = $this->db->get('exams');
+                
+                // Set status 
+                if($query->num_rows() > 0) { 
+                    $status = DEFAULT_EXIST;
+                }else {
+                    if($this->db->insert('exams', $params)) {
+                        $status = DEFAULT_SUCCESS;
+                    }
+                }
+
+                break;
+            
+            case 'grade':
+                
+                // Check to an entry exists with the same 'groupname' 
+                $this->db->like('gradename', $params['gradename']);
+                $query = $this->db->get('grades');
+                
+                // Set status 
+                if($query->num_rows() > 0) { 
+                    $status = DEFAULT_EXIST;
+                }else {
+                    if($this->db->insert('grades', $params)) {
+                        $status = DEFAULT_SUCCESS;
+                    }
+                }
+
+                break;
+            
+            case 'subject':
+                
+                // Check to an entry exists with the same 'groupname' 
+                $this->db->like('subname', $params['subname']);
+                $query = $this->db->get('subjects');
+                
+                // Set status 
+                if($query->num_rows() > 0) { 
+                    $status = DEFAULT_EXIST;
+                }else {
+                    if($this->db->insert('subjects', $params)) {
+                        $status = DEFAULT_SUCCESS;
+                    }
+                }
+
+                break;
+                
+            default:
+                
+                break;
+        }
+         
+        return $status;
+    }// End func create
+	
+    /**
+     * Update an admission requirement
+     * 
+     * @access public
+     * @param int $id, array $params, string $type
+     * @return void
+     */
+    public function update($id, $params, $type) {
+        
+        $status = DEFAULT_ERROR;
+        $ret;
+        
+        switch ($type) {
+            
+            case 'group':
+                
+                // Set status 
+                $ret = $this->db->update('exam_groups', $params, array('groupid' => $id));                
+                break;
+
+            case 'exam':
+                
+                // Set status 
+                $ret = $this->db->update('exams', $params, array('examid' => $id));
+                break;
+            
+            case 'grade':
+                
+                // Set status                 
+                $ret = $this->db->update('grades', $params, array('gradeid' => $id));
+                break;
+            
+            case 'subject':
+                
+                // Set status 
+                $ret = $this->db->update('subjects', $params, array('subjectid' => $id));
+                break;
+                
+            default:
+                
+                break;
+        }
+        
+        if($ret)
+            $status = DEFAULT_SUCCESS;
+        echo $this->db->last_query();
+        return $status;
+    }// End func update
+    
+    /**
+     * Get exam group(s)
+     * 
+     * @access public
+     * @param int $id
+     * @return void
+     */
+    public function get_group($id = NULL) {
+        
+        // Initialize where clause
+        $where = array();
+        
+        // Create where clause if id is set.
+        if($id != NULL) {
+            $where = array(
+                array('field' => 'groupid', 'value' => $id)
+            );
+        }
+        
+        // Call get_data from utl_model
         return $this->util_model->get_data(
-                            'schools', 
-                             array('unitname')                            
+                            'exam_groups', 
+                             array('*'),
+                             $where
                         );
-    }// End func invalidate_reset_link
+        
+    }// End func get_group
+    
+    /**
+     * Get exam(s)
+     * 
+     * @access public
+     * @param int $id
+     * @return void
+     */
+    public function get_exam($id = NULL) {
+        
+        // Initialize where clause
+        $where = array();
+        
+        // Create where clause if id is set.
+        if($id != NULL) {
+            $where = array(
+                array('field' => 'examid', 'value' => $id)
+            );
+        }
+        
+        // Call get_data from utl_model
+        return $this->util_model->get_data(
+                            'exams', 
+                             array('*'),
+                             $where
+                        );
+        
+    }// End func get_exam
+    
+    /**
+     * Get grade(s)
+     * 
+     * @access public
+     * @param int $id
+     * @return void
+     */
+    public function get_grade($id = NULL) {
+        
+        // Initialize where clause
+        $where = array();
+        
+        // Create where clause if id is set.
+        if($id != NULL) {
+            $where = array(
+                array('field' => 'gradeid', 'value' => $id)
+            );
+        }
+        
+        // Call get_data from utl_model
+        return $this->util_model->get_data(
+                            'grades', 
+                             array('*'),
+                             $where
+                        );
+        
+    }// End func get_grade
+    
+    /**
+     * Get subject(s)
+     * 
+     * @access public
+     * @param int $id
+     * @return void
+     */
+    public function get_subject($id = NULL) {
+        
+        // Initialize where clause
+        $where = array();
+        
+        // Create where clause if id is set.
+        if($id != NULL) {
+            $where = array(
+                array('field' => 'subid', 'value' => $id)
+            );
+        }
+        
+        // Call get_data from utl_model
+        return $this->util_model->get_data(
+                            'subjects', 
+                             array('*'),
+                             $where
+                        );
+        
+    }// End func get_subject
     
 } // End class Exam_model
 

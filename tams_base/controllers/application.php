@@ -135,7 +135,7 @@ class Application extends CI_Controller {
                 $error              = true;
                 
                 // Set error message and type
-                $data['msg']        = $this->lang->line('password_unmatch');    
+                $data['msg']        = $this->lang->line('password_mismatch');    
                 $data['msg_type']   = MSG_TYPE_ERROR;                               
             }
             

@@ -17,29 +17,34 @@ examModule.controller('PageController', function($scope) {
     $scope.current = null;
     
     angular.element('.modal').on('show', function() {
-        $('.chosen-select').trigger('liszt:updated');
+        angular.element(this).find('.chosen-select').each(function() {
+            return function(that) {
+                setTimeout(function(){angular.element(that).trigger('liszt:updated');},100);   
+            }(this);
+        });
     });
     
     $scope.openEditDialog = function(name, idx, e) {         
-        var href = '#edit_'+name+'_modal';        
-        $scope.current = null;
-        $scope.current = $scope.data[name+'s'][idx]; 
-        
-        if($scope.current != null)
-            angular.element(href).modal('show');
-        
-        e.preventDefault();
+        var href = '#edit_'+name+'_modal';         
+        $scope.openDialog(href, name, idx, e);
     }; 
 
     $scope.openDeleteDialog = function(name, idx, e) {         
         var href = '#delete_modal'; 
         $scope.current = null;
-        $scope.current = $scope.data[name+'s'][idx]; 
+        $scope.openDialog(href, name, idx, e);
+    }; 
+    
+    $scope.openDialog = function(href, name, idx, e) {
+        $scope.current = null;
+        $scope.current = angular.copy($scope.data[name+'s'][idx]);
         
-        if($scope.current != null)
-            angular.element(href).modal('show');
+        if($scope.current === null)
+            return;
+               
+        angular.element(href).modal('show'); 
         
         e.preventDefault();
-    }; 
+    };
     
 });
