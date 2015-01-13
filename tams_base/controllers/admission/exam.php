@@ -304,7 +304,7 @@ class Exam extends CI_Controller {
                 switch($status) {
                     
                     // Unique constraint violated.
-                    case DEFAULT_EXIST:
+                    case DEFAULT_EXIST:                        
                         break;
                     
                     // There was a problem creating the entry.
@@ -324,8 +324,8 @@ class Exam extends CI_Controller {
             // Set error message for any request other than POST
             $error_msg = $this->lang->line('invalid_req_method');  
             $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-        }
-        
+        }        
+       
         // Redirect to exam page, showing notifiction messages if there are.
         redirect(site_url('admission/exam'));
         

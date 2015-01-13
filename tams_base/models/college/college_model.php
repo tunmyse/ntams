@@ -121,11 +121,9 @@ class College_model extends CI_Model {
                     array('table' => 'colleges c', 'on' => 'd.colid = c.colid')                        
                 );
         
-        foreach($params as $field => $value) {
-            $where = array(
-                        array('field' => "c.{$field}", 'value' => $value)
-                    );
-        }
+        $where = array(
+                    array('field' => "c.{$field}", 'value' => $value)
+                );
         
         $order = array(
                     array('field' => 'u.usertypeid', 'dir' => 'asc')

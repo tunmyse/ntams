@@ -326,7 +326,6 @@ $(document).ready(function() {
 }
 
 	// Wizard
-	/*
 	if($(".form-wizard").length > 0){
 		$(".form-wizard").formwizard({ 
 			formPluginEnabled: true,
@@ -355,7 +354,6 @@ $(document).ready(function() {
 			}	
 		});
 	}
-	*/
 
 	// Validation
 	if($('.form-validate').length > 0)

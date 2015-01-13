@@ -25,6 +25,24 @@ class Main {
     private $user_email;
 
     /**
+     * User's last name
+     * 
+     * @access private
+     * @var string
+     */
+    
+    private $user_lname;
+    
+    /**
+     * User's first name
+     * 
+     * @access private
+     * @var string
+     */
+    
+    private $user_fname;
+    
+    /**
      * User type (student | staff | admin)
      * 
      * @access private
@@ -42,6 +60,14 @@ class Main {
     
     private $user_id;
 
+    /**
+     * User type id
+     * 
+     * @access private
+     * @var string
+     */
+    
+    private $user_type_id;
     
     /**
      * School Id
@@ -58,7 +84,7 @@ class Main {
     private $school_name = NULL;
 	
     /**
-     * School Shortname
+     * School shortname
      * @var int 
      */
     
@@ -86,6 +112,33 @@ class Main {
     private $cur_sesname = NULL;
     
     /**
+     * Notification Messages
+     * 
+     * @access private
+     * @var array
+     */
+    
+    private $notification = array(MSG_TYPE_ERROR => array(), MSG_TYPE_SUCCESS => array(), MSG_TYPE_WARNING => array());
+    
+    /**
+     * User permissions array
+     * 
+     * @access private
+     * @var array
+     */
+    
+    private $user_perms = array();
+    
+    /**
+     * Navigation content array
+     * 
+     * @access private
+     * @var array
+     */
+    
+    private $nav_content = array();
+    
+    /**
      * Codeigniter instance
      * 
      * @access private
@@ -109,14 +162,33 @@ class Main {
         // Load models
         $this->CI->load->model('util_model');
         
+        // Check if the user is logged in.
+        // $this->check_login();
+                
+        // Retrieve all permissions owned by logged in user.
+        $this->get_user_perms();
+        
+        // Retrieve navigation content.
+        $this->get_nav_content();
+        
+        // Initialize class properties.
         $this->_init();
     } // End func __construct
 
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Initialization functions
+    |--------------------------------------------------------------------------
+    */
+    
     /**
      * Initialize class variables from session
      */
     private function _init() {
         
+        $this->user_lname = $this->get('last_name');
+        $this->user_fname = $this->get('first_name');
         $this->user_email = $this->get('email');
         $this->user_id = $this->get('user_id');
         $this->user_type = $this->get('user_type');
@@ -126,7 +198,7 @@ class Main {
         $this->school_name = $this->get('school_name');
         $this->cur_session = $this->get('cur_session');
         $this->cur_sesname = $this->get('cur_sesname');
-        
+                
         if(!isset($this->school_id) || $this->school_id == '') {
             $school_details = $this->CI->util_model->get_school_name();
             
@@ -186,71 +258,54 @@ class Main {
         
     }// End func _init
     
-    /*
-     * Encrypt passsord using Site authentication provider
-     * @access public 
-     * @param string $password
-     * @return mixed (bool | array)
-     */
-    public function encrpyt($password) {
-        
-        $this->CI->load->driver("Auth/Auth", array(), 'auth_prov');      
-        $crypt_password = $this->CI->auth_prov->site->encrypt($password);
-        
-        return $crypt_password;
-        
-    }// End func authenticate  
-    
-    /*
-     * Authenticate a user using a specified authentication protocol
-     * @access public 
-     * @param $method (string), $credentials (array)
-     * @return mixed (bool | array)
-     */
-    public function authenticate($method, $credentials) {
-        
-        // Add schoolid to credentials
-        $credentials['school_id'] = $this->school_id;
-        $credentials['method'] = $method;
-        $this->CI->load->driver("Auth/Auth", $credentials, 'auth_prov');
-        $authenticated = $this->CI->auth_prov->authenticate();
-        if(!$authenticated) {
-            return false;
-        }
-        
-        return $this->build_user_session($authenticated );
-        
-    }// End func authenticate    	
-	
     /**
-     * Populate session with essential user information
+     * Get dashboard content.
      *
-     * @access private
-     * @param array $params
-     * @return bool
+     * @access public
+     * @return void
      **/
-    private function build_user_session($params) {
+    public function get_dashboard() {
+        return $this->nav_content;
+    }
+    
+    /**
+     * Retrieve navigation contents to build menu.
+     *
+     * @access public
+     * @return array
+     **/
+    public function get_nav_content() {
         
-        if(empty($params)) {   
-            $error_msg = $this->CI->lang->line('session_build_error');      
-            $this->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-            return false;
+        // Retrieve navigation content from model.
+        $contents = $this->CI->util_model->get_nav_content($this->user_perms['ids']);
+        
+        // Check if returned value is not empty.
+        if($contents != DEFAULT_EMPTY) {
+            
+            // Loop through each content to process it.
+            foreach($contents as $content) {
+                // If the module name doesn't already exist as a key in the array, initialize it.
+                if(!isset($this->nav_content[$content->mname])) {
+                    $this->nav_content[$content->mname] = array(
+                                                            'urlprefix' => $content->urlprefix,
+                                                            'dispname' => $content->dispname,
+                                                            'tilecolor' => $content->tilecolor,
+                                                            'tileicon' => $content->tileicon,
+                                                            'links' => array()
+                                                        );
+                }
+
+                // Populate each module with its link. 
+                $this->nav_content[$content->mname]['links'][] = array(
+                                                                  'url' => $content->url,
+                                                                  'name' => $content->name,
+                                                              );
+
+            }
+            
         }
         
-        $user_data = array(
-            'user_id' => $params['userid'],
-            'user_type_id' => $params['usertypeid'],
-            'email' => $params['email'],
-            'first_name' => $params['fname'],
-            'last_name' => $params['lname'],
-            'user_type' => $params['usertype'],
-            'school_name' => 'Tasued'
-        );
-        
-        // Add user information to session
-        $this->CI->session->set_userdata($user_data);
-        return true;
-    }
+    } // End func get_nav_content
     
     /**
      * Get schools unit name
@@ -285,6 +340,35 @@ class Main {
 
     } // End func get_school_name
     
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication functions
+    |--------------------------------------------------------------------------
+    */
+    
+    /*
+     * Authenticate a user using a specified authentication protocol
+     * 
+     * @access public 
+     * @param $method (string), $credentials (array)
+     * @return mixed (bool | array)
+     */
+    public function authenticate($method, $credentials) {
+        
+        // Add schoolid to credentials
+        $credentials['school_id'] = $this->school_id;
+        $credentials['method'] = $method;
+        $this->CI->load->driver("Auth/Auth", $credentials, 'auth_prov');
+        $authenticated = $this->CI->auth_prov->authenticate();
+        if(!$authenticated) {
+            return false;
+        }
+        
+        return $this->build_user_session($authenticated);
+        
+    }// End func authenticate    	
+	
     /**
      * Logout method
      *
@@ -309,8 +393,110 @@ class Main {
             redirect(site_url('login'), 'refresh');
         }
 
-    }
+    } // End of func check_login
 
+    /**
+     * Check if user is logged in
+     *
+     * @access public
+     * @return bool
+     **/
+    public function logged_in() {
+
+        $cdata = array(
+            'email' => $this->get('email'),
+            'type_id' => $this->get('user_type_id'),
+            'user_type' => $this->get('user_type')
+        );
+
+        foreach($cdata as $data) {
+            if(trim($data) == '') {
+                return false;
+            }
+        }
+
+        $s_k = $this->get('cs');
+        $c_k = sha1($cdata['email'] . '_' . $cdata['type_id'] . '_' . $cdata['user_type']);
+
+        if($s_k != $c_k) {
+            return false;
+        }
+
+        return true;
+
+    } // End func logged_in
+    
+    /**
+     * Populate session with essential user information
+     *
+     * @access private
+     * @param array $params
+     * @return bool
+     **/
+    private function build_user_session($params) {
+        
+        if(empty($params)) {   
+            $error_msg = $this->CI->lang->line('session_build_error');      
+            $this->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+            return false;
+        }
+        
+        $user_data = array(
+            'user_id' => $params['userid'],
+            'user_type_id' => $params['usertypeid'],
+            'email' => $params['email'],
+            'first_name' => $params['fname'],
+            'last_name' => $params['lname'],
+            'user_type' => $params['usertype'],
+            'cs' => sha1($params['email'] . '_' . $params['usertypeid'] . '_' . $params['usertype'])
+        );
+        
+        // Add user information to session
+        $this->CI->session->set_userdata($user_data);
+        return true;
+    }
+    
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Password functions
+    |--------------------------------------------------------------------------
+    */
+            
+    /*
+     * Encrypt passsord using Site authentication provider
+     * @access public 
+     * @param string $password
+     * @return mixed (bool | array)
+     */
+    public function encrpyt($password) {
+        
+        $this->CI->load->driver("Auth/Auth", array(), 'auth_prov');      
+        $crypt_password = $this->CI->auth_prov->site->encrypt($password);
+        
+        return $crypt_password;
+        
+    }// End func authenticate  
+    
+    /**
+     * Change user password
+     *
+     * @access public
+     * @param string $new_password
+     * @return int $status
+     **/
+    public function change_password($new_password) {
+        // Set credentials
+        $credentials['password'] = $new_password;
+        $credentials['user_id'] = $this->get('userid');
+        
+        // Load Authentication driver
+        $this->CI->load->driver("Auth/Auth", $credentials, 'auth_prov');
+        
+        // Change user password
+        return $this->CI->auth_prov->change_password();
+    }// End func change_password
+    
     /**
      * Send email reset email
      *
@@ -410,24 +596,12 @@ class Main {
         return $status;
     }// End func check_reset_link
     
-    /**
-     * Change user password
-     *
-     * @access public
-     * @param string $new_password
-     * @return int $status
-     **/
-    public function change_password($new_password) {
-        // Set credentials
-        $credentials['password'] = $new_password;
-        $credentials['user_id'] = $this->get('userid');
-        
-        // Load Authentication driver
-        $this->CI->load->driver("Auth/Auth", $credentials, 'auth_prov');
-        
-        // Change user password
-        return $this->CI->auth_prov->change_password();
-    }// End func change_password
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Notification functions
+    |--------------------------------------------------------------------------
+    */
     
     /**
      * Set notification messages
@@ -437,16 +611,14 @@ class Main {
      * @return void
      **/
     public function set_notification_message($msg_type, $msg) {  
-        $msg_bank = $this->CI->session->flashdata($msg_type);
-        
-        if(empty($msg_bank)) {
-            $msg_bank = array();
-        }
+        $msg_bank = $this->notification[$msg_type];
 
-        if(is_array($msg))
-            $msg_bank = array_merge($msg_bank, $msg);
-        else 
+        if(is_array($msg)) {
+            $this->notification[$msg_type] = $msg_bank = array_merge($msg_bank, $msg);            
+        }else {
             array_push($msg_bank, $msg);
+            $this->notification[$msg_type] = $msg_bank;
+        }
         
         $this->CI->session->set_flashdata($msg_type, $msg_bank);
     } // End func set_notification_message
@@ -461,51 +633,32 @@ class Main {
     public function get_notification_messages($msg_type, $limit=0) {  
         $msg_bank = $this->CI->session->flashdata($msg_type);
         
+        // Ensure $limit is a non-negative number.
+        if($limit < 0)
+            $limit = 0;
+        
         if(empty($msg_bank) && $limit == 1) {
             return '';
         }elseif(empty($msg_bank)) {
             return array();
         }
         
+        $excerpt = array_slice($msg_bank, 0, $limit);
         if($limit == 0)
             return $msg_bank;
         elseif($limit == 1) 
-            return $msg_bank[0];
-        else 
-            return array_slice($msg_bank, 0, $limit);
+            return $excerpt[0];
+        else
+            return $excerpt;
     } // End func get_notification_messages
+
     
-    /**
-     * Check if user is logged in
-     *
-     * @access public
-     * @return bool
-     **/
-    public function logged_in() {
-
-        $cdata = array(
-            'email' => $this->CI->session->userdata('email'),
-            'status' => $this->CI->session->userdata('status'),
-            'type' => $this->CI->session->userdata('user_type')
-        );
-
-        foreach($cdata as $data) {
-            if(trim($data) == '') {
-                return false;
-            }
-        }
-
-        $s_k = $this->CI->session->userdata('k');
-        $c_k = sha1($cdata['email'] . '_' . $cdata['status'] . '_' . $cdata['user_type']);
-
-        if($s_k != $c_k) {
-            return false;
-        }
-
-        return true;
-
-    } // End func logged_in
-
+    /*
+    |--------------------------------------------------------------------------
+    | Session/property functions
+    |--------------------------------------------------------------------------
+    */
+    
     /**
      * Get session variable value assigned to user. 
      * 
@@ -554,41 +707,74 @@ class Main {
 
     } // End func item
 
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Authorization functions
+    |--------------------------------------------------------------------------
+    */
+    
     /**
-     * Redirect to user's access denied page, if user have no permission.
-     * 
-     * @access public 
-     * @param type $id_perm 
-     * @return void
-     */
-    public function check_perm($id_perm) {
-        if(!$this->have_perm($id_perm)) {
-            redirect(site_url('user/access_denied'), 'refesh');
+     * Check if user is authorized to view requested resource
+     * User must have at least one permission specified by the controller for this resource.
+     *
+     * @access public
+     * @return array
+     **/
+    public function check_auth(Array $mod_perms) {
+        // User is unauthorized by default
+        $authd = false;
+        
+        // Iterate through modules in parameter array.
+        foreach($mod_perms as $mod => $perms) {
+            
+            // Iterate through permissions in each module.
+            foreach($perms as $perm) {
+                
+                // Once one permission is found, user is authorized, stop checking for any more permissions.
+                if(isset($this->user_perms[$mod]['perms'][$perm])) {
+                    $authd = true;
+                    break;
+                }
+            }            
         }
-    }
-
+        
+        // Redirect to access denied page if user is not authorized. 
+        if(!$authd) {
+            redirect(site_url("{$this->user_type}/access_denied"), 'refresh');
+        }
+    } // End func check_auth
+    
     /**
-     * Check if user has permission 
+     * Retrieve user permissions.
+     *
+     * @access private
+     **/
+    private function get_user_perms() {
+        // Retrieve all user's permission for all modules in the application.
+        $perms = $this->CI->util_model->get_user_perms($this->get('user_id'));
+        
+        $this->user_perms['ids'] = array();
+                
+        if($perms != DEFAULT_EMPTY) {
+            // Format the permissions.
+            foreach($perms as $perm) {
+                $this->user_perms[$perm->mname]['perms'][] = $perm->pname;
+                $this->user_perms['ids'][] = $perm->permid;
+            }
+        }
+    } // End func get_user_perms
+    
+    /**
+     * Check if a user has a certain permission 
      * 
      * @access public
-     * @param int $id_perm
-     * @param int user_id
+     * @param string $module, string $perm
      * @return bool
      */
-     public function have_perm($id_perm){
-            
-        if(!is_numeric($id_perm) or !is_numeric($this->user_id)) {
-            return false;
-        }
-
-        $ret = $this->CI->user_model->get_user_perm(
-                array(
-                    "user_id" => $this->user_id,
-                    "id_perm" => $id_perm
-                ));
-
-        return $ret;
-     }// End func have_perm
+    public function has_perm($module, $perm) {
+        return isset($this->user_perms[$module]['perms'][$perm]);
+    }// End func has_perm
      
 } // End class Main
 

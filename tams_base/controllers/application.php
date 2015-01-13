@@ -223,7 +223,7 @@ class Application extends CI_Controller {
             // Set notification message and type to the query string
             $data['msg'] = $data['msg_type'] = $query;
             
-            // Check if query string is set, to get appropriate notifiction message - the first message only.
+            // Check if query string is set, to get appropriate notification message - the first message only.
             if(isset($query))
                 $data['msg'] = $this->main->get_notification_messages($query, 1);
             

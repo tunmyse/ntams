@@ -2,213 +2,211 @@
 
 /**
  * TAMS
- * Admission
+ * Prospective Registartion form 
  * 
- * @category   Views
- * @package    Admission
- * @subpackage Registration
- * @author     Suleodu Adedayo <suleodu.adedayo@gmail.com>, Akinsola Tunmise <akinsolatunmise@gmail.com>
+ * @category   View
+ * @package    Prospective
+ * @subpackage Prospective registaration
+ * @author     Sule-odu Adedayo <suleodu.adedayo@gmail.com>, Akinsola Tunmise <akinsolatunmise@gmail.com>
  * @copyright  Copyright © 2014 TAMS.
  * @version    1.0.0
  * @since      File available since Release 1.0.0
  */
-
 ?>
-<!doctype html>
-<html>
-    <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<!-- Apple devices fullscreen -->
-	<meta name="apple-mobile-web-app-capable" content="yes" />
-	<!-- Apple devices fullscreen -->
-	<meta names="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-	
-	<title>TAMS - Prospective </title>
 
-	<!-- Bootstrap -->
-	<link rel="stylesheet" href="<?php echo site_url(); ?>css/bootstrap.min.css">
-	<!-- Bootstrap responsive -->
-	<link rel="stylesheet" href="<?php echo site_url(); ?>css/bootstrap-responsive.min.css">
-	<!-- icheck -->
-	<link rel="stylesheet" href="<?php echo site_url(); ?>css/plugins/icheck/all.css">
-	<!-- Theme CSS -->
-	<link rel="stylesheet" href="<?php echo site_url(); ?>css/style.css">
-	<!-- Color CSS -->
-	<link rel="stylesheet" href="<?php echo site_url(); ?>css/themes.css">
-        
-        <!-- jQuery -->
-	<script src="<?php echo site_url(); ?>js/jquery.min.js"></script>
-	
-	<!-- Nice Scroll -->
-	<script src="<?php echo site_url(); ?>js/plugins/nicescroll/jquery.nicescroll.min.js"></script>
-        
-	<!-- Validation -->
-	<script src="<?php echo site_url(); ?>js/plugins/validation/jquery.validate.min.js"></script>
-	<script src="<?php echo site_url(); ?>js/plugins/validation/additional-methods.min.js"></script>
-        
-	<!-- icheck -->
-	<script src="<?php echo site_url(); ?>js/plugins/icheck/jquery.icheck.min.js"></script>
-	<!-- Bootstrap -->
-	<script src="<?php echo site_url(); ?>js/bootstrap.min.js"></script>
-	<script src="<?php echo site_url(); ?>js/eakroko.js"></script>
+<div>
+    <div class="box box-bordered box-color">
+        <div class="box-title">
+             <h3>
+                <i class="icon-magic"></i>
+                Prospective Registration Form
+            </h3>
+        </div>
+        <div class="box-content">
+            <form novalidate="novalidate" 
+                  action="<?php echo site_url('admission/applicaton/apply')?>" 
+                  method="POST" 
+                  class="form-horizontal form-wizard ui-formwizard" 
+                  id="ss">
+                <div class="step ui-formwizard-content" id="secondStep">
+                    <ul class="wizard-steps steps-4">
+                        <li>
+                            <div class="single-step">
+                                <span class="title">1</span>
+                                <span class="circle"></span>
+                                <span class="description">Personal Information</span>
+                            </div>
+                        </li>
+                        <li class="active">
+                            <div class="single-step">
+                                <span class="title">2</span>
+                                <span class="circle">
+                                    <span class="active"></span>
+                                </span>
+                                <span class="description">Academic Information</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="single-step">
+                                <span class="title">3</span>
+                                <span class="circle"></span>
+                                <span class="description">Sponsor's Information</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="single-step">
+                                <span class="title">4</span>
+                                <span class="circle"></span>
+                                <span class="description">Check again</span>
+                            </div>
+                        </li>
+                    </ul>
+                    
+                    <div class="row-fluid">
+                        <h4><i class="icon-list"></i> Programme Choice </h4>
+                        
+                        <div class="control-group span5">
+                            <label  for="prog[]">First Choice of Programme</label> 
+                            <select name="prog[]"  class="input-xlarge" id="prog1" class="chosen-select">
+                                <option value="">--Programme 1--</option>
+                                <option value="CSC">Computer Science</option>
+                                <option value="Law">Law</option>
+                                <option value="Math">Mathematics</option>
+                            </select>
+                        </div>
+                        <div class="control-group span5">
+                           <label  for="prog[]">Second Choice of Programme</label> 
+                            <select name="prog[]"  class="input-xlarge" id="prog2" class="chosen-select">
+                                <option value="">--Programme 2--</option>
+                                <option value="CSC">Computer Science</option>
+                                <option value="Law">Law</option>
+                                <option value="Math">Mathematics</option>
+                            </select>
+                        </div>
+                    </div>
 
-	<!--[if lte IE 9]>
-		<script src="<?php echo site_url(); ?>js/plugins/placeholder/jquery.placeholder.min.js"></script>
-		<script>
-			$(document).ready(function() {
-                            $('input, textarea').placeholder();
-			});
-		</script>
-	<![endif]-->
-	
+                    <div class="row-fluid">
+                        <div class="box-title">
+                           <h3><i class="icon-list"></i> Previous Qualification Obtained </h3>
+                       </div>
+                        <p>&nbsp;</p>
+                       <?php $i = 0; do{?>
+                       <div class="row center">
+                           <div class="control-group">
+                               <input type="text" name="certobtained[]" id="certobtained" placeholder="Certificate Obtained" class="input-medium"> 
+                               <input type="text" name="schoolname[]" id="schoolname" placeholder="School Name" class="input-xlarge">
+                               <select name="from[]"  class="input-small" id="from" >
+                                   <option value="">--From--</option>
+                                   <option value="1999">1999</option>
+                                   <option value="2000">2000</option>
+                                   <option value="2001">2001</option>
+                               </select>
+                               <select name="to[]"  class="input-small" id="to" >
+                                   <option value="">--To--</option>
+                                   <option value="1999">1999</option>
+                                   <option value="2000">2000</option>
+                                   <option value="2001">2001</option>
+                               </select>
+                           </div>
 
-	<!-- Favicon -->
-	<link rel="shortcut icon" href="<?php echo site_url(); ?>img/icon.png" />
-	<!-- Apple devices Homescreen icon -->
-	<link rel="apple-touch-icon-precomposed" href="<?php echo site_url(); ?>img/apple-touch-icon-precomposed.png" />
+                       </div>
+                       <?php $i++; } while($i < PREVIOUS_QUALIFICATION_FIELD);?>
+                   </div>
 
-    </head>
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <div class="box-title">
+                               <h4><i class="icon-list"></i> 1st Sitting O'level Result </h4>
+                            </div>
+                            <p></p>
+                            <ol>
+                                <div class="row-fluid">
+                                    <select name="examtype[first]"  class="input-medium" id="religion" >
+                                        <option value="">--Exam Type--</option>
+                                        <option value="WAEC">WAEC</option>
+                                        <option value="WAEC PRIVATE">WAEC PRIVATE</option>
+                                        <option value="NECO">NECO</option>
+                                        <option value="NECO PRIVATE">NECO PRIVATE</option>
+                                    </select>
+                                    <select name="examyr[first]"  class="input-small" id="examyear" >
+                                        <option value="">--Year--</option>
+                                        <option value="1990">1990</option>
+                                        <option value="1991">1991</option>
+                                        <option value="1992">1992</option>
+                                        <option value="1993">1993</option>
+                                    </select>
+                                    <input type="text" name="examnum[first]" id="textfield" placeholder="Exam No " class="input-small">
+                                </div>
+                                <p></p>
+                                <?php $i = 0; do{?>
+                                <li>
+                                    <select name="olevel[subject][first][]">
+                                        <option value="">--Subject--</option>
+                                        <option value="maths">Math</option>
+                                        <option value="Eng">Eng</option>
+                                        <option value="Yoruba">Yor</option>
+                                    </select> 
+                                    <select name="olevel[grade][first][]" class="input-small">
+                                        <option value="">--Grade--</option>
+                                        <option value="A1">A1</option>
+                                        <option value="B2">B2</option>
+                                        <option value="C2">C2</option>
+                                    </select> 
+                                </li>
+                                <?php $i++; }while($i < OLEVEL_SUBJECT_TOTAL);?>
+                            </ol>
+                        </div>
+                        <div class="span6">
+                            <ol>
+                                <div class="box-title">
+                                    <h4><i class="icon-list"></i> 2nd Sitting O'level Result </h4>
+                                </div>
+                            <p></p>
+                                <div class="row-fluid ">
+                                    <select name="examtype[second]"  class="input-medium" id="religion" >
+                                        <option value="">--Exam Type--</option>
+                                        <option value="WAEC">WAEC</option>
+                                        <option value="WAEC PRIVATE">WAEC PRIVATE</option>
+                                        <option value="NECO">NECO</option>
+                                        <option value="NECO PRIVATE">NECO PRIVATE</option>
+                                    </select>
+                                    <select name="examyr[second]"  class="input-small" id="examyear" >
+                                        <option value="">--Year--</option>
+                                        <option value="1990">1990</option>
+                                        <option value="1991">1991</option>
+                                        <option value="1992">1992</option>
+                                        <option value="1993">1993</option>
+                                    </select>
+                                    <input type="text" name="examnum[second]" id="textfield" placeholder="Exam No " class="input-small">
+                                </div>
+                            <p></p>
+                                <?php $i = 0; do{?>
+                                <li>
+                                    <select name="olevel[subject][second][]">
+                                        <option value="">--Subject--</option>
+                                        <option value="maths">Math</option>
+                                        <option value="Eng">Eng</option>
+                                        <option value="Yoruba">Yor</option>
+                                    </select> 
+                                    <select name="olevel[grade][second][]" class="input-small">
+                                        <option value="">--Grade--</option>
+                                        <option value="A1">A1</option>
+                                        <option value="B2">B2</option>
+                                        <option value="C2">C2</option>
+                                    </select> 
+                                </li>
+                                <?php $i++; }while($i < OLEVEL_SUBJECT_TOTAL);?>
+                            </ol>
+                        </div>
 
-   <body class='login'>
-       <div class="wrapper" style="margin-left: -435px">
-            <h1>
-                <a href="#">
-                    <img src="<?php echo site_url();?>img/logo2.png" 
-                         alt="" class='retina-ready' width="59" height="49"/>TASUED
-                </a>
-            </h1>
-           
-            <div class="login-body span9"> 
-                <?php if(isset($session['id']) && $session['id'] != '') {?>
-                <div class="span3">                  
-                    <h3>
-                        <i class="icon-bullhorn"></i>
-                        INSTRUCTIONS
-                    </h3>
-                    <br/>
-                    <div class="text-info">
-                        <ul>
-                            <li>
-                                You are required to supply correct and valued information 
-                                as incorrect information will affect the success of your application
-                            </li><br/>
-                            <li>After submitting your initial application an email will be sent to you</li><br/>
-                            <li>Follow the link in your email to complete the application process</li><br/>
-                            <li>
-                                If you have already filled the <?php echo $session['name']?> 
-                                application form before, click here to check 
-                                the status of your application
-                            </li><br/>
-                        </ul>
-                    </div>  <br/><br/><br/>
-                    <div class="submit pull-left">
-                        <a href="<?php echo site_url('login?rdr=apply')?>" class="btn btn-primary" >
-                            Check App. Status
-                        </a>                                               
                     </div>
                 </div>
-                
-                <div class="span5">                    
-                    <p></p>                 
-                    <form action="<?php echo site_url('admission/application/create_account')?>" 
-                          method='post' 
-                          class='form-validate' 
-                          id="login">
-                        <h3>
-                            <i class="icon-edit"></i><?php echo " ".$session['name']?> APPLICATION FORM
-                        </h3>
-                        <br/>
-                        <div class="text-info"><?php echo validation_errors()?></div>
-                        <div class="control-group">
-                            <div class="controls">
-                                <input type="text" 
-                                       name='lname' 
-                                       placeholder="Enter your Surnname" 
-                                       class='input-block-level' 
-                                       data-rule-required="true" 
-                                       value="<?php echo set_value('lname'); ?>"/>
-                            </div>
-                        </div>                        
-                        
-                        <div class="control-group">
-                            <div class="controls">
-                                <input type="text" 
-                                       name="fname" 
-                                       placeholder="Enter your First Name" 
-                                       class='input-block-level' 
-                                       data-rule-required="true" 
-                                       value="<?php echo set_value('fname'); ?>"/>
-                            </div>
-                        </div> 
-                        
-                        <div class="control-group">
-                            <div class="controls">
-                                <input type="text" 
-                                       name="mname" 
-                                       placeholder="Enter your Middle Name" 
-                                       class='input-block-level' 
-                                       data-rule-required="true" 
-                                       value="<?php echo set_value('mname'); ?>"/>
-                            </div>
-                        </div>
-
-                        <div class="control-group">
-                            <div class="controls">
-                                <input type="text" 
-                                       name="phone" 
-                                       placeholder="Enter your Phone No" 
-                                       class='input-block-level' 
-                                       data-rule-required="true" 
-                                       value="<?php echo set_value('phone'); ?>"/>
-                            </div>
-                        </div> 
-                        <div class="control-group">
-                            <div class="email controls">
-                                <input type="text" 
-                                       name="email" 
-                                       placeholder="Enter your valid Email" 
-                                       class='input-block-level' 
-                                       data-rule-required="true" 
-                                       value="<?php echo set_value('email'); ?>"/>
-                            </div>
-                        </div> 
-                        <div class="control-group">
-                            <div class="pw controls">
-                                <input type="password" 
-                                       name="password" 
-                                       placeholder="Enter your Password" 
-                                       class='input-block-level' 
-                                       data-rule-required="true"/>
-                            </div>
-                        </div> 
-                        <div class="control-group">
-                            <div class="pw controls">
-                                <input type="password" 
-                                       name="confPassword" 
-                                       placeholder="Confirm Password" 
-                                       class='input-block-level' 
-                                       data-rule-required="true"/>
-                            </div>
-                        </div> 
-
-                        <div class="submit">
-                            <input type="submit" value="Submit Application" class='btn btn-primary'/>                      
-                        </div>
-                        <br/><br/>
-                    </form>  
-                </div> 
-                <?php }else {?>
-                <div class="well-large">
-                    Application cannot take place at the moment, please check back at a later date!
+                <div class="form-actions">
+                    <input class="btn ui-wizard-content ui-formwizard-button" value="Back" id="back" type="reset">
+                    <input class="btn btn-primary ui-wizard-content ui-formwizard-button" value="Next" id="next" type="submit">
                 </div>
-                <?php }?>
-            </div>
-           
-             <div class="forget">
-                 <a href="#">Powered by TAMS.<img src="<?php echo site_url(); ?>img/powered.png" alt=""></a>                                                                  
-             </div>  
-	</div>	
-    </body>
-
-</html>
+            </form>
+        </div>
+    </div>
+</div>
+			

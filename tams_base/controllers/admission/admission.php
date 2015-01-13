@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+ <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 
 /**
@@ -74,132 +74,7 @@ class Admission extends CI_Controller {
     public function index() {
          
     }// End of func index
-    
-    
-    /**
-     * Create a new college.	 
-     */
-    public function create() {
-        
-        // Check for valid request method
-        if($this->input->server('REQUEST_METHOD') == 'POST') {
-            
-            // Set error to true. 
-            // This should be changed only if there are no validation errors.
-            $error = false;
-            
-            // Set expected form field names
-            $fields = array(
-                'college_name'      => array(
-                    'required' => true
-                ),
-                'college_title'     => array(
-                    'required' => true
-                ),
-                'college_code'      => array(
-                    'required' => true
-                ),
-                'college_remark'    => array(
-                    'required' => true
-                ),
-                'special'          => array(
-                    'required' => true
-                )
-            );
-            
-            // Get all field values.
-            $form_fields = $this->input->post(NULL);
-            
-            // Validate form fields.
-            //$error = $this->validate_fields($form_fields, $fields);
-            
-            // Send fields to model if there are no errors
-            if(!$error) {
-                $params = array(
-                    'colname'   => $form_fields['college_name'],
-                    'coltitle'  => $form_fields['college_title'],
-                    'colcode'   => $form_fields['college_code'],
-                    'remark'    => $form_fields['college_remark'],
-                    'special'   => $form_fields['special']
-                );
-                
-                // Call model method to perform insertion
-                $status = $this->mdl->create($params);
-                
-                // Process model response
-                switch($status) {
-                    
-                    // Unique constraint violated.
-                    case DEFAULT_EXIST:
-                        break;
-                    
-                    // There was a problem creating the entry.
-                    case DEFAULT_ERROR:
-                        break;
-                    
-                    // Entry created successfully.
-                    case DEFAULT_SUCCESS:
-                        break;
-                    
-                    default:
-                        break;
-                }
-            }
-            
-        }else{
-            // Set error message for any request other than POST
-            $error_msg = $this->lang->line('invalid_req_method');  
-            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-        }
-        
-        // Redirect to college page, showing notifiction messages if there are.
-        redirect('college');
-    }// End of func create
-    
-    /**
-     * Validate form fields.	 
-     */
-    public function validate_fields($received, $expected) {
-        
-        // Check which of the expected fields are present in the received fields array.
-        $present = array_intersect(array_keys($expected), array_keys($received));
-        
-        // Compare size of present fields to expected fields.
-        if(count($present) !== count($expected)) {
-            // Set error message for incomplete form fields
-            $error_msg = $this->lang->line('invalid_req_method');  
-            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-            return true;
-        }        
-            
-        foreach($expected as $exp) {
-            if($exp['required']) {
-                
-            }
-        }
-        
-        if(true) {
-            // Set error message for any request other than POST
-            $error_msg = $this->lang->line('invalid_req_method');  
-            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);            
-            return true;
-        }
-        
-        return false;
-    }// End of func validate_fields
-    
-    /**
-     * College information.	 
-     */
-    public function info($college_name) {
-        $data = array();
-        $page_name = 'college_info';
-        
-        
-        $this->page->build($page_content, $this->folder_name, $page_name, ucfirst($data['college_name']));    
-    }// End of func info
-    
-    
+                        
     /*
      *---------------------------------------------------------------
      * Sule's Registration function
@@ -207,9 +82,10 @@ class Admission extends CI_Controller {
      */
     
     /**
-     * Prospective Registration.	 
+     * Prospective Registration.
+     * Renamed to apply from register	 
      */
-    public function register(){
+    public function apply(){
         //set page title 
         $this->page_title = 'Prospective Registration';
         
@@ -249,7 +125,9 @@ class Admission extends CI_Controller {
     } // End of func register
     
     /**
-     * Prospective Application page .	 
+     * @author Tunmise Akinsola <akinsolatunmise@gmail.com>
+     * Prospective registration page .	 
+     * Removed and renamed to register from application
      */
     public function application() {             
         
@@ -259,14 +137,16 @@ class Admission extends CI_Controller {
         $page_name = 'application'; 
         $data['session'] = $this->main->get_session(); 
         
-        $this->load->view($this->folder_name.'/prospective/'.$page_name, $data);  
-            
+        $page_content = $this->load->view($this->folder_name.'/prospective/'.$page_name, $data, true);
+        $this->page->build($page_content, $this->folder_name, $page_name, 'Application'); 
+        
     }// End of func application
     
     /**
+     * Removed and renamed to create_account from index
      * Process application
      */
-    public function apply() {
+    public function create_account() {
         // Check for valid request method
         if($this->input->server('REQUEST_METHOD') == 'POST') {
             
@@ -305,7 +185,9 @@ class Admission extends CI_Controller {
                             break;
 
                         case DEFAULT_SUCCESS:
-                            // TODO::Send notification email
+                            /**
+                             * @todo Send notification email
+                             */
                             
                             $success_msg = $this->lang->line('account_created');  
                             $this->main->set_notification_message(MSG_TYPE_SUCCESS, $success_msg);
@@ -329,8 +211,23 @@ class Admission extends CI_Controller {
         // Redirect to application page, showing notifiction messages if there are.
         redirect(site_url('admission/application'));        
         
-    }// End of func apply
+    }// End of func create_account
     
+    /**
+     * Prospective registration (account creation) page .	 
+     * Removed and renamed to register from application
+     */
+    public function register() {             
+        
+        // Load form helper.
+        $this->load->helper('form');
+        
+        $page_name = 'create_account'; 
+        $data['session'] = $this->main->get_session();       
+        
+        $this->load->view($this->folder_name.'/prospective/'.$page_name, $data);  
+            
+    }// End of func register
 }
 
 /* End of file admission.php */

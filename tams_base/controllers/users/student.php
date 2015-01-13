@@ -39,7 +39,9 @@ class Student extends Users {
         
         $this->check_user_type();
         
-        $data = array();
+        $data = array(
+            'tiles' => $this->dashboard_tiles()
+        );
         
         $page_name = 'dashboard';
         $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);

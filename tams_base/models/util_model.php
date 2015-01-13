@@ -39,10 +39,10 @@ class Util_model extends CI_Model {
         
         // Check if user has a pending reset request
         $query = $this->db->get_where('reset_request', array('userid' => $query_fields['userid']));
-        $result = $query->row();
         
         if($query->num_rows() > 0) {
             
+            $result = $query->row();
             // Get reset link expiration time
             $expiration_time = $this->config->item('password_expiration_time');
 
@@ -132,7 +132,7 @@ class Util_model extends CI_Model {
     }// End func is_user_unique
     
     /**
-     * Retrieve school information
+     * Retrieve session information
      * 
      * @access public
      * @return void
@@ -142,14 +142,10 @@ class Util_model extends CI_Model {
                             'session', 
                             array('*'), 
                             array(
-                                array('field' => 'status', 'value' => 'Active')
-                            ),
-                            array(),
-                            array(),
-                            array(),
-                            QUERY_OBJECT_ROW
+                                array('field' => 'status', 'value' => 'active')
+                            )
                         );
-    }// End func get_school_name
+    }// End func get_current_session
     
     /**
      * Retrieve school information
@@ -176,8 +172,102 @@ class Util_model extends CI_Model {
                             'schools', 
                             array('unitname')                            
                         );
-    }// End func get_school_college
+    }// End func get_school_college    
     
+    /**
+     * Retrieve all user's permission.
+     *
+     * @access public
+     * @return array
+     **/
+    public function get_user_perms($userid) {
+        
+        $table_name = 'permissions p';
+        
+        $select = array(
+                    'p.permid',
+                    'p.name as pname',
+                    'm.name as mname'
+                );
+        
+        $joins = array(
+                    array('table' => 'role_perms r', 'on' => 'r.permid = p.permid'),
+                    array('table' => 'group_roles g', 'on' => 'g.roleid = r.roleid'),
+                    array('table' => 'group_users gu', 'on' => 'gu.groupid = g.groupid'),
+                    array('table' => 'modules m', 'on' => 'm.moduleid = p.moduleid')                     
+                );
+        
+        
+        $where = array(
+                    array('field' => "gu.userid", 'value' => $userid)
+                );
+                
+        return $this->get_data($table_name, $select, $where, array(), $joins);
+        
+        
+    } // End func get_user_perms
+       
+    /**
+     * Retrieve navigation contents to build menu
+     *
+     * @access public
+     * @param array $perms
+     * @return array
+     **/
+    public function get_nav_content(Array $perms) {
+        
+        $perms = empty($perms)? ['0']: $perms;
+        
+   
+//         "SELECT `ml`.`url`, `ml`.`name`, `m`.`dispname`, `m`.`urlprefix` "
+//                . "FROM ".$this->db->protect_identifiers('module_links', TRUE)." ml "
+//                //. "JOIN `tams_link_perms` l ON `l`.`linkid` = `ml`.`linkid` AND l.permid IN ( 1, 2, 3 ) "
+//                . "JOIN ".$this->db->protect_identifiers('modules', TRUE)." m ON `m`.`moduleid` = `ml`.`moduleid` "
+//                . "AND m.status = 'active' "
+//                . "AND ml.status = 'active' "
+//                . "AND ml.linkid IN "
+//                . "()";
+        
+
+//        $table_name = 'module_links ml';
+//        $select = array(
+//                    'ml.url',
+//                    'ml.name',
+//                    'm.dispname',
+//                    'm.urlprefix'
+//                ); 
+//        
+//        $on['l'] = 'l.linkid = ml.linkid ';
+//        $on['l'] .= empty($perms)? 'AND l.permid IS NULL': 'AND l.permid IN ('.implode(',', $perms).') ';
+//        $on['l'] .= "AND ml.status = 'active'";
+//        
+//        $on['m'] = 'm.moduleid = ml.moduleid ';
+//        $on['m'] .= "AND m.status = 'active'";
+//        
+//        $joins = array(
+//                    array('table' => 'link_perms l', 'on' => $on['l'], 'type' => 'left'),
+//                    array('table' => 'modules m', 'on' => $on['m'])                     
+//                );
+//        
+//                
+//        return $this->get_data($table_name, $select, [], [], $joins);
+        
+        $query = "SELECT `ml`.`url`, `ml`.`name`, `m`.`name` as `mname`, `m`.`dispname`,"
+                . " `m`.`tilecolor`, `m`.`tileicon`, `m`.`urlprefix` "
+                . "FROM ".$this->db->protect_identifiers('module_links', TRUE)." ml "
+                . "JOIN ".$this->db->protect_identifiers('link_perms', TRUE)." l ON `l`.`linkid` = `ml`.`linkid` "
+                . "JOIN ".$this->db->protect_identifiers('modules', TRUE)." m ON `m`.`moduleid` = `ml`.`moduleid` "
+                . "WHERE `ml`.`status` = 'active' AND `m`.`status` = 'active' AND `l`.`permid` IN (".implode(',', $perms).") "
+                . "UNION "
+                . "SELECT `ml`.`url`, `ml`.`name`, `m`.`name` as `mname`, `m`.`dispname`, "
+                . "`m`.`tilecolor`, `m`.`tileicon`, `m`.`urlprefix` "
+                . "FROM ".$this->db->protect_identifiers('module_links', TRUE)." ml "
+                . "JOIN ".$this->db->protect_identifiers('modules', TRUE)." m ON `m`.`moduleid` = `ml`.`moduleid` "
+                . "WHERE `ml`.`status` = 'active' AND `m`.`status` = 'active' "
+                . "AND NOT EXISTS (SELECT linkid FROM tams_link_perms".$this->db->protect_identifiers('link_perms', TRUE).")";
+             
+        return $this->get_query_data($query);
+    } // End func get_nav_content
     
     /**
      * Get data from a table
@@ -209,12 +299,31 @@ class Util_model extends CI_Model {
         
         // Prepare join clause
         foreach($join as $j) {
-            $this->db->join($j['table'], $j['on']);
+            $type = isset($j['type'])? $j['type']: '';
+            
+            $this->db->join($j['table'], $j['on'], $type);
         }
         
         // Prepare where clause
         foreach($where as $w) {
-            $this->db->where($w['field'], $w['value']);
+            
+            $quote = isset($w['quote'])? false: true;
+            $logic = isset($w['logic']);
+            $mod = isset($w['mod'])? $w['mod']: '';
+            switch($mod) {
+                case 'in':
+                    $logic? $this->db->or_where_in($w['field'], $w['value']): $this->db->where_in($w['field'], $w['value']);
+                    break;
+                      
+                case 'like':
+                    $logic? $this->db->or_like($w['field'], $w['value']): $this->db->like($w['field'], $w['value']);
+                    break;
+                
+                default:
+                    $logic? $this->db->or_where($w['field'], $w['value']): $this->db->where($w['field'], $w['value']);
+                    
+            }
+            
         }
         
         // Prepare group by clause
@@ -264,6 +373,48 @@ class Util_model extends CI_Model {
         return DEFAULT_EMPTY;
     }
     
+    
+    /**
+     * Get data from a table
+     * 
+     * @access public
+     * @param string $table, array $fields, array $where, array $order, array $join, array group, int r_set, array $limit
+     * @return mixed (int | array | object)
+     */
+    public function get_query_data($query, $r_set = 3) {
+        
+        // Check if query is supplied
+        if(!isset($query) || $query == '') {            
+            return DEFAULT_NOT_VALID;
+        }
+        
+        // Run query
+        $result = $this->db->query($query);
+        
+        // Check if result is empty
+        if($result->num_rows() > 0) {
+            switch($r_set) {
+                case QUERY_ARRAY_ROW:
+                     $result_set = $result->row_array();
+                    break;
+                
+                case QUERY_ARRAY_RESULT:
+                    $result_set = $result->result_array();
+                    break;
+                
+                case QUERY_OBJECT_ROW:
+                    $result_set = $result->row();
+                    break;
+                    
+                default:
+                    $result_set = $result->result();
+            }
+            
+            return $result_set;
+        }
+        
+        return DEFAULT_EMPTY;
+    }
 } // End class Util_model
 
 // End file util_model.php

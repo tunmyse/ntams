@@ -1,0 +1,36 @@
+{
+    "all": {
+        "feedbar": false
+    },
+    "create_account": {
+        "js": [
+            
+        ],
+        
+        "css": [
+            
+        ]
+    },    
+    "application": {
+        "js": [
+            "plugins/wizard/jquery.form.wizard.min.js"
+        ],
+        
+        "css": [
+            
+        ],
+        "feedbar": false
+    },
+    "manage_exam": {
+        "js": [
+            "angular/angular.min.js",
+            "angular/angular-exam.js",
+            "plugins/jquery-ui/jquery.ui.spinner.js"
+        ],
+        
+        "css": [
+            
+        ],
+        "feedbar": true
+    }
+}

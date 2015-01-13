@@ -42,8 +42,10 @@
 <link rel="stylesheet" href="<?php echo base_url('css/style.css')?>">
 <!-- Color CSS -->
 <link rel="stylesheet" href="<?php echo base_url('css/themes.css')?>">
-<!-- TalenBase CSS -->
+<!-- Custom CSS -->
 <link rel="stylesheet" href="<?php echo base_url('css/tams.css')?>">
+
+<?php echo $includes['css']?>
 
 <!-- jQuery -->
 <script src="<?php echo base_url('js/jquery.min.js')?>"></script>
@@ -57,7 +59,6 @@
 <script src="<?php echo base_url('js/plugins/jquery-ui/jquery.ui.draggable.min.js')?>"></script>
 <script src="<?php echo base_url('js/plugins/jquery-ui/jquery.ui.resizable.min.js')?>"></script>
 <script src="<?php echo base_url('js/plugins/jquery-ui/jquery.ui.sortable.min.js')?>"></script>
-<script src="<?php echo base_url('js/plugins/jquery-ui/jquery.ui.spinner.js')?>"></script>
 <!-- Touch enable for jquery UI -->
 <script src="<?php echo base_url('js/plugins/touch-punch/jquery.touch-punch.min.js')?>"></script>
 <!-- slimScroll -->
@@ -76,21 +77,17 @@
 
 <!-- Chosen -->
 <script src="<?php echo base_url('js/plugins/chosen/chosen.jquery.min.js')?>"></script>
-<!-- dataTables -->
-<script src="<?php echo base_url('js/plugins/datatable/jquery.dataTables.min.js')?>"></script>
-<script src="<?php echo base_url('js/plugins/datatable/TableTools.min.js')?>"></script>
-<script src="<?php echo base_url('js/plugins/datatable/ColReorder.min.js')?>"></script>
-<script src="<?php echo base_url('js/plugins/datatable/ColVis.min.js')?>"></script>
-<script src="<?php echo base_url('js/plugins/datatable/jquery.dataTables.columnFilter.js')?>"></script>
+
 <!-- select2 -->
 <script src="<?php echo base_url('js/plugins/select2/select2.min.js')?>"></script>
+
+<?php echo $includes['js']?>
 
 <!-- Theme framework -->
 <script src="<?php echo base_url('js/eakroko.js')?>"></script>
 
 <!-- JQuery Validation Plugin -->
 <script src="<?php echo base_url('js/jquery.validate.js')?>"></script>
-<script src="<?php echo base_url('js/jquery.form.js')?>"></script>
 
 <!--[if lte IE 9]>
         <script src="<?php echo base_url('js/plugins/placeholder/jquery.placeholder.min.js')?>"></script>
@@ -103,10 +100,6 @@
 
 <!-- Theme scripts -->
 <script src="<?php echo base_url('js/application.min.js')?>"></script>
-
-<!-- Angularjs -->
-<script src="<?php echo base_url('js/angular/angular.min.js')?>"></script>
-<script src="<?php echo base_url('js/angular/angular-exam.js')?>"></script>
 
 <!-- Favicon -->
 <link rel="shortcut icon" href="<?php echo base_url('img/icon.png')?>" />

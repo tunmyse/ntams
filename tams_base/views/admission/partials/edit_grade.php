@@ -47,11 +47,12 @@
             <div class="control-group">
                 <label for="grade_desc" class="control-label">Grade Description:</label>
                 <div class="controls">
-                    <input ng-model="current.gradedesc"                            
+                    <input ng-model="current.gradedesc" 
+                           type="text"
                            name="edit_grade_desc" 
                            id="edit_grade_desc" 
-                           class="input-xlarge">
-                </div>                           
+                           class="input-xlarge"/>
+                </div>   
             </div>
         </div>
         <input type="hidden" name="edit_grade_id" value="{{current.gradeid}}"/>

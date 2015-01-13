@@ -15,6 +15,7 @@ define('DEFAULT_EMPTY', 5);
 define('DEFAULT_NOT_EMPTY', 6);
 define('DEFAULT_VALID', 7);
 define('DEFAULT_NOT_VALID', 8);
+//define('DEFAULT_NOT_VALID', 8);
 
 
 define('QUERY_ARRAY_ROW', 0);

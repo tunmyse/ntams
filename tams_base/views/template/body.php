@@ -14,15 +14,21 @@
  */
 ?>
 <?php echo $top_nav; ?>
-<div class="container-fluid" id="content">
+<div class="container-fluid nav-fixed" id="content">
     
     <?php echo $left_sidebar; ?>
     
     <div id="main" style="margin-bottom: 50px">
         <div class="container-fluid">
+            <?php foreach($notification as $type => $not) {?>
+            <div class='alert alert-<?php echo $type;?>' style='margin-top: 10px'>
+                <?php echo $not['msg']?>
+            </div>
+            <?php }?>
+            
             <div class="page-header">
                 <div class="pull-left">                                
-                    <input id="logo" type="image" src="/img/logo.jpg" name="logo">
+                    <img id="logo" type="image" src="<?php echo base_url("img/logo.jpg")?>" name="logo"/>
                 </div>
 
                 <div class="pull-right">
@@ -38,6 +44,7 @@
                 </div>
             </div>    
 
+            <?php if(!$dashboard) {?>
             <div class="breadcrumbs">
                 <ul>                                
                     <li>
@@ -46,13 +53,16 @@
                     </li>                              
                 </ul>                              
             </div>
+            <?php }?>
             
             <div class="row-fluid">
                 
-                <div class="span9" ng-controller="PageController">
+                <div class="span<?php echo $width?>" ng-controller="PageController">
                     <?php echo $page_content;?>
                 </div>
                 
+                <!-- Show feedbar only if width is 9 -->
+                <?php if($width != 12) {?>
                 <div class="span3">                                
                     <div class="box">
                         <div class="box-title">
@@ -98,6 +108,7 @@
                         </div>                                    
                     </div>                               
                 </div>
+                <?php }?>
             </div>  
         </div>
     </div>

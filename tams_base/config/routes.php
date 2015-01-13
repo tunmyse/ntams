@@ -1,4 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php  if ( !defined('BASEPATH')) exit('No direct script access allowed');
 /*
 | -------------------------------------------------------------------------
 | URI ROUTING
@@ -109,6 +109,7 @@ $route['programme/info/(:any)'] = "programme/programme/details/$1";
 $route['admission'] = "admission/admission";
 
 $route['admission/register'] = "admission/admission/register";
+$route['admission/create_account'] = "admission/admission/create_account";
 $route['admission/application'] = "admission/admission/application";
 $route['admission/application/(:any)'] = "admission/admission/$1";
 

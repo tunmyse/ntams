@@ -16,14 +16,6 @@
 class Page {
     
     /**
-     * Codeigniter instance
-     * 
-     * @access private
-     * @var object
-     */
-    private $CI;
-    
-    /**
      * User id
      * 
      * @access private
@@ -32,12 +24,12 @@ class Page {
     private $user_id;
     
     /**
-     * User id
+     * User name
      * 
      * @access private
      * @var string
      */
-    private $school_name;
+    private $user_name;
     
     /**
      * User account_type
@@ -46,6 +38,22 @@ class Page {
      * @var string
      */
     private $user_type;
+    
+    /**
+     * School name
+     * 
+     * @access private
+     * @var string
+     */
+    private $school_name;
+    
+    /**
+     * Codeigniter instance
+     * 
+     * @access private
+     * @var object
+     */
+    private $CI;
     
     /**
      * Class constructor
@@ -59,21 +67,22 @@ class Page {
         $this->CI =& get_instance();
         
         // Initialize class variables
-        $this->user_id = $this->CI->main->get('user_id');
-        $this->user_type = $this->CI->main->get('user_type');
-        $this->school_name = "Tasued";//$this->CI->main->get('school_name');
+        $this->user_id = $this->CI->main->item('user_id');
+        $this->user_name = $this->CI->main->item('user_lname');
+        $this->user_type = $this->CI->main->item('user_type');
+        $this->school_name = $this->CI->main->item('school_name');
         
     }
 
     /**
-     * Retrieve contents to build menu
+     * Retrieve navigation contents to build menu
      *
      * @access private
-     * @return mixed (bool | array)
+     * @return array
      **/
-    private function get_menu_content() {
-        
-    } // End func get_menu_content
+    private function get_nav_content() {
+        return $this->CI->main->item('nav_content');
+    } // End func get_nav_content
 	
     /*
      * Build page
@@ -82,46 +91,76 @@ class Page {
      * @return void
      */
     public function build($page_content_buffer, $folder_name, $page_name, $title = '') {
-
-        $header_data['page_title'] = 'TAMS - '.$title;
+        // Do not display activity feed
+        $feedbar = false;
         
+        // Set page title.
+        $title = ($title == '')? 'TAMS': 'TAMS - '.$title;
+        $header_data['page_title'] = $title;        
+        $header_data['includes'] = array('css' => '', 'js' => '');
         
-        if(file_exists(APPPATH.'views/'.$folder_name.'/include.json')) {
-            $includes = $this->CI->load->file(APPPATH.'views/'.$folder_name.'/include.json', TRUE);
+        // Get page specific styles and scripts to include in the page. 
+        $param_file = APPPATH.'views/'.$folder_name.'/include.json';
+        if(file_exists($param_file)) {
+            $includes = $this->CI->load->file($param_file, TRUE);
             $incl_array = json_decode($includes, TRUE);
+            $all_incl = array();
+            
+            if(array_key_exists('all', $incl_array)) {
+                $all_incl = isset($incl_array['all'])? $incl_array['all']: array();
+                $feedbar = isset($incl_array['all']['feedbar'])? $incl_array['all']['feedbar']: $feedbar;                
+            }
+            
             if(array_key_exists($page_name, $incl_array)) {
-                $header_data['includes'] = $this->build_includes($incl_array[$page_name]);
+                $feedbar = isset($incl_array[$page_name]['feedbar'])? $incl_array[$page_name]['feedbar']: $feedbar;
+                $header_data['includes'] = $this->build_includes($all_incl, $incl_array[$page_name]);
+            }else {
+                $header_data['includes'] = $this->build_includes($all_incl);
             }
         }
         
+        //
         $header_buffer = $this->CI->load->view(TMPLPATH.'header', $header_data, true);
 
-        $nav_menu = $this->get_menu_content();
+        // Get all modules and associated links to build application menu.
+        $nav_content = $this->get_nav_content();
         
-        $top_menu_build = $this->build_top_menu($nav_menu, $this->user_type);
+        // Generate menu from navigation content.
+        $menu_content = $this->build_menu($nav_content, $this->user_type);
+        
+        
         $top_menu = array(
-            'topmenu_content' => $top_menu_build,
+            'topmenu_content' => $menu_content['top'],
             'dashboard_url' => '/'.$this->user_type.'/dashboard',
             'logout_url' => '/logout',
-            'display_name' => 'Test',
-            'display_img' => '/img/demo/user-avatar.jpg'
+            'message_count' => 2,
+            'display_name' => $this->user_name,
+            'display_img' => base_url('img/demo/user-avatar.jpg')
         );
         $top_menu_buffer = $this->CI->load->view(TMPLPATH.'top_menu', $top_menu, true);        
 
-        $left_sidebar_content = $this->build_sidebar_menu($nav_menu);
         $left_sidebar = array(
             'school_name' => $this->school_name,
-            'sidemenu_content' => $left_sidebar_content
+            'sidemenu_content' => $menu_content['side']
         );        
         $left_sidebar_buffer = $this->CI->load->view(TMPLPATH.'left_sidebar', $left_sidebar, true);
         
         $footer_buffer = $this->CI->load->view(TMPLPATH.'footer', '', true);
 
+        // Set width to determine whether to show or hide feedbar.
+        $width = ($feedbar)? 9: 12;        
+        
+        // Set notification message       
+        $notification = $this->build_notification();
+        
         $body_parts = array(
             'page_content' => $page_content_buffer,
             'top_nav' => $top_menu_buffer,
             'left_sidebar' => $left_sidebar_buffer,
-            'footer' => $footer_buffer
+            'footer' => $footer_buffer,
+            'width' => $width,
+            'dashboard' => true,
+            'notification' => $notification
         );
         $body_buffer = $this->CI->load->view(TMPLPATH.'body', $body_parts, true);
         
@@ -135,156 +174,194 @@ class Page {
     } // End func build
     
     /*
-     * Build page
+     * Build additional style/script for the page
      * 
-     * @access public 
-     * @return void
+     * @access private 
+     * @return array
      */
-    private function build_includes($includes) {
+    private function build_includes($all, $includes = array()) {
+        $css_files = '';
+        $js_files = '';
         
-        return array();
+        // Build css file include for all pages in this module
+        if(isset($all['css'])) {
+            foreach($all['css'] as $css) {
+                $url = base_url("css/{$css}");
+                $css_files .=  "<link rel='stylesheet' href='{$url}'>\n";                
+            }
+        }
+        
+        // Build specific css file include
+        if(isset($includes['css'])) {
+            foreach($includes['css'] as $css) {
+                $url = base_url("css/{$css}");
+                $css_files .=  "<link rel='stylesheet' href='{$url}'>\n";                
+            }
+        }
+        
+        // Build js file include for all pages in this module
+        if(isset($all['js'])) {
+            foreach($all['js'] as $js) {
+                $url = base_url("js/{$js}");
+                $js_files .=  "<script src='{$url}'></script>\n";              
+            }
+        }
+        
+        // Build specific js file include
+        if(isset($includes['js'])) {
+            foreach($includes['js'] as $js) {
+                $url = base_url("js/{$js}");
+                $js_files .=  "<script src='{$url}'></script>\n";
+            }
+        }
+        
+        return array(
+            'css' => $css_files,
+            'js' => $js_files
+        );
     } // End func build_includes
     
-    private function build_top_menu($nav_arr, $main_link = NULL) {		
-		
-        $buffer = '<li><a href="'.site_url($main_link.'/dashboard').'">Dashboard</a></li>';
-
-//        if(!is_array($nav_arr) or empty($nav_arr)) { 
-//            return $buffer;
-//        }
-//
-//        foreach($nav_arr as $label => $modules) {
-//
-//            $buffer .= '<li>
-//                            <a href="#" data-toggle="dropdown" class="dropdown-toggle">
-//                                    <span>'.$label.'</span>
-//                                    <span class="caret"></span>
-//                            </a>
-//                            <ul class="dropdown-menu">';
-//
-//            foreach($modules as $id => $item) {
-//
-//                    if(count($modules) == 1) {
-//
-//                        foreach($item['items'] as $a => $c) {
-//                            if($c['in_menu'] == 1) {
-//                                $buffer .= '<li><a href="'.site_url($c['module_id_string'].'/'.$c['perm_id_string']).'">'.$c['perm_subject'].'</a></li>';
-//                            }	
-//                        }	
-//
-//                    } else {
-//
-//                    $buffer .= '<li class="dropdown-submenu">
-//                                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">
-//                                            <span>'.$item['subject'].'</span>
-//                                    </a>
-//                                    <ul class="dropdown-menu">';
-//
-//                    foreach($item['items'] as $i => $v) {
-//
-//                        if($v['in_menu'] == 1) {
-//                            $buffer .= '<li><a href="'.site_url($v['module_id_string'].'/'.$v['perm_id_string']).'">'.$v['perm_subject'].'</a></li>';
-//                        }
-//                    }
-//
-//                    $buffer .= '</ul>';
-//                    $buffer .= '</li>';
-//                }
-//            } // End modules
-//
-//            $buffer .= '</ul></li>';
-//
-//        } // End nav_arr
-
-        return $buffer;
-    } // End func build_top_menu
+    /*
+     * Build notification message set by different parts of the application
+     * Note: All other message types are ignored if an error is found!
+     * 
+     * @access private 
+     * @return array
+     */
+    private function build_notification() {
+        
+        // Array to hold processed notification messages.
+        $ret = array();
+                
+        // All notification message types.
+        $msg_types = array(MSG_TYPE_ERROR, MSG_TYPE_WARNING, MSG_TYPE_SUCCESS);
+        
+        // Get all error messages.
+        $errors = $this->CI->main->get_notification_messages($msg_types[0]);        
+        
+        // Process messages for all message types except 'MSG_TYPE_ERROR'.
+        if(empty($errors)) {            
+            
+            // Loop through all message types, skipping 'MSG_TYPE_ERROR'
+            for($idx = 1; $idx < count($msg_types); $idx++) {                
+            
+                // Get messages for the specific message type.
+                $messages = $this->CI->main->get_notification_messages($msg_types[$idx]);
+                
+                // End processing if there are no messages for this message type.
+                if(empty($messages)) {
+                    continue;
+                }
+                
+                $ret[$msg_types[$idx]]['msg'] = implode('<br/>', $messages);           
+            }            
+            
+        } else { // Processing for error messages.
+            $ret[$msg_types[0]]['msg'] = implode('<br/>', $errors);            
+        }
+        
+        return $ret;
+    } // End func build_notification
     
-    private function build_sidebar_menu($nav_arr) {
-        $sidebar = '<div class="subnav">
-                            <div class="subnav-title">
-                                    <a class="toggle-subnav" href="#"><i class="icon-angle-down"></i><span>Academic Set-up</span></a>
-                            </div>
-                            <ul class="subnav-menu">
-                                    <li>
-                                            <a href="'.site_url('college').'">College</a>
-                                    </li>
-                                    <li>
-                                            <a href="'.site_url('department').'">Departments</a>
-                                    </li>
-                                    <li>
-                                            <a href="'.site_url('programme').'">Programmes</a>
-                                    </li>
-                                    <li>
-                                            <a href="'.site_url('course').'">Courses</a>
-                                    </li>
-                            </ul>
-			</div>';
+    /*
+     * Build menu structure for both the top menu and the sidebar.
+     * 
+     * @access private 
+     * @return string
+     */
+    private function build_menu($nav_content, $user_type = NULL) {	
         
-        $sidebar .= '<div class="subnav">
-                            <div class="subnav-title">
-                                    <a class="toggle-subnav" href="#"><i class="icon-angle-down"></i><span>Admission</span></a>
-                            </div>
-                            <ul class="subnav-menu">
-                                    <li>
-                                            <a href="'.site_url('admission/exam').'">Exam Management</a>
-                                    </li>
-                            </ul>
-			</div>';
+        // Array to hold menu content for both the top and side menu.
+        $menu = array('top' => '', 'side' => '');
         
-        return $sidebar;
-        if(!is_array($nav_arr) or empty($nav_arr)) {
-                return false;
+        // 'Dashboard' menu is always shown on the top menu.
+        $menu['top'] = '<li><a href="'.site_url($user_type.'/dashboard').'">Dashboard</a></li>';
+            
+        // If navigation content is empty, return only the dashboard menu
+        if(!is_array($nav_content) or empty($nav_content)) { 
+            return $menu;
         }
 
-        $buffer = '';
+        // Loop through navigation content to build application menu.
+        foreach($nav_content as $module) {
+            // Process each module in the nav content, and append to its holding array (top and side).
+            
+            $processed_module = $this->process_module($module);
+            
+            $menu['top'] .= $processed_module['top'];
+            
+            $menu['side'] .= $processed_module['side'];
+        }  
 
-//        foreach($nav_arr as $subject => $modules) {
-//
-//                $buffer .= '<div class="subnav">
-//                        <div class="subnav-title">
-//                                <a href="#" class="toggle-subnav"><i class="icon-angle-down"></i><span>'.$subject.'</span></a>
-//                        </div>
-//                        <ul class="subnav-menu">';
-//
-//                foreach($modules as $item => $value) {
-//
-//                        if(count($modules) == 1) {
-//
-//                                foreach($value['items'] as $i) {
-//
-//                                        if($i['in_menu'] == 1) {
-//                                                $buffer .= '<li>
-//                                                                        <a href="'.site_url($i['module_id_string'].'/'.$i['perm_id_string']).'">'.$i['perm_subject'].'</a>
-//                                                                </li>';
-//                                        }	
-//                                }	
-//
-//                        } else {
-//
-//                                $buffer .= '<li class="dropdown">
-//                                                                <a href="#" data-toggle="dropdown">'.$value['subject'].'</a>
-//                                                                <ul class="dropdown-menu">';
-//
-//                                foreach($value['items'] as $p) {
-//                                        if($p['in_menu'] == 1) {
-//                                                $buffer .= '<li>
-//                                                                        <a href="'.site_url($p['module_id_string'].'/'.$p['perm_id_string']).'">'.$p['perm_subject'].'</a>
-//                                                                </li>';
-//                                        }	
-//                                }
-//
-//                                $buffer .= '</ul></li>';
-//
-//                        }
-//
-//                }	
-//
-//                $buffer .= '</ul></div>';
-//
-//        } // End groups
+        return $menu;
+    } // End func build_menu
+        
+    /*
+     * Build menu structure for a module.
+     * 
+     * @access private
+     * @param array $module 
+     * @return string
+     */
+    private function process_module($module) {
+        
+        $module_buffer = array('top' => '', 'side' => '');
+        
+        $processed_links = $this->process_module_links($module['links'], $module['urlprefix']);        
+        
+        if(empty($module['links'])) {
 
-        return $buffer;
-    } // End func build_sidebar_menu
+        }else {
+            $module_buffer['top'] = '<li>
+                                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                                            <span>'.$module['dispname'].'</span>
+                                            <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu">';
+
+            $module_buffer['top'] .= $processed_links;
+
+            $module_buffer['top'] .= '</ul></li>';
+        }
+
+
+        $module_buffer['side'] = '<div class="subnav">
+                                    <div class="subnav-title">
+                                        <a class="toggle-subnav" href="#">
+                                            <i class="icon-angle-down"></i>
+                                            <span>'.$module['dispname'].'</span>
+                                        </a>
+                                    </div>
+                                    <ul class="subnav-menu">';
+
+        $module_buffer['side'] .= $processed_links;
+
+        $module_buffer['side'] .= '</ul></div>';        
+        
+        return $module_buffer;
+    } // End func process_module
     
-}
+    /*
+     * Build menu link structure for a module.
+     * 
+     * @access private
+     * @param array $links 
+     * @return string
+     */
+    private function process_module_links($links, $url_prefix) {
+       
+        $link_buffer = '';
+        
+        if(is_array($links)) {
+            foreach($links as $link) {
+                $link_buffer .= '<li>
+                                    <a href="'.site_url("{$url_prefix}/{$link['url']}").'">'.$link['name'].'</a>
+                                </li>';
+            }
+        }
+                
+        return $link_buffer;
+    } // End func process_module_links
     
+}// End of class Page
+// End of file Page.php
