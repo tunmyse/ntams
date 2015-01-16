@@ -90,7 +90,7 @@ class Page {
      * @access public 
      * @return void
      */
-    public function build($page_content_buffer, $folder_name, $page_name, $title = '') {
+    public function build($page_content_buffer, $folder_name, $page_name, $title = '', $dashboard = TRUE) {
         // Do not display activity feed
         $feedbar = false;
         
@@ -159,7 +159,7 @@ class Page {
             'left_sidebar' => $left_sidebar_buffer,
             'footer' => $footer_buffer,
             'width' => $width,
-            'dashboard' => true,
+            'dashboard' => $dashboard,
             'notification' => $notification
         );
         $body_buffer = $this->CI->load->view(TMPLPATH.'body', $body_parts, true);

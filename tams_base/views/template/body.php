@@ -44,7 +44,7 @@
                 </div>
             </div>    
 
-            <?php if(!$dashboard) {?>
+            <?php if($dashboard) {?>
             <div class="breadcrumbs">
                 <ul>                                
                     <li>

@@ -45,7 +45,7 @@ class Student extends Users {
         
         $page_name = 'dashboard';
         $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
-        $this->page->build($page_content, $this->folder_name, $page_content, 'Dashboard');       
+        $this->page->build($page_content, $this->folder_name, $page_content, 'Dashboard', false);       
     }// End of func index
     
 }
