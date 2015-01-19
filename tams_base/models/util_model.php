@@ -264,7 +264,7 @@ class Util_model extends CI_Model {
                 . "FROM ".$this->db->protect_identifiers('module_links', TRUE)." ml "
                 . "JOIN ".$this->db->protect_identifiers('modules', TRUE)." m ON `m`.`moduleid` = `ml`.`moduleid` "
                 . "WHERE `ml`.`status` = 'active' AND `m`.`status` = 'active' "
-                . "AND NOT EXISTS (SELECT linkid FROM tams_link_perms".$this->db->protect_identifiers('link_perms', TRUE).")";
+                . "AND `ml`.linkid NOT IN (SELECT linkid FROM ".$this->db->protect_identifiers('link_perms', TRUE).")";
              
         return $this->get_query_data($query);
     } // End func get_nav_content

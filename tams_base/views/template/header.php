@@ -29,15 +29,10 @@
 <!-- jQuery UI -->
 <link rel="stylesheet" href="<?php echo base_url('css/plugins/jquery-ui/smoothness/jquery-ui.css')?>">
 <link rel="stylesheet" href="<?php echo base_url('css/plugins/jquery-ui/smoothness/jquery.ui.theme.css')?>">
-<!-- PageGuide -->
-<link rel="stylesheet" href="<?php echo base_url('css/plugins/pageguide/pageguide.css')?>">
-<link rel="stylesheet" href="<?php echo base_url('css/plugins/datepicker/datepicker.css')?>">
-<!-- chosen -->
-<link rel="stylesheet" href="<?php echo base_url('css/plugins/chosen/chosen.css')?>">
-<!-- select2 -->
-<link rel="stylesheet" href="<?php echo base_url('css/plugins/select2/select2.css')?>">
-<!-- icheck -->
-<link rel="stylesheet" href="<?php echo base_url('css/plugins/icheck/all.css')?>">
+<?php 
+    // Specific styles for a page generated from include.json
+    echo $includes['css']
+?>
 <!-- Theme CSS -->
 <link rel="stylesheet" href="<?php echo base_url('css/style.css')?>">
 <!-- Color CSS -->
@@ -45,11 +40,8 @@
 <!-- Custom CSS -->
 <link rel="stylesheet" href="<?php echo base_url('css/tams.css')?>">
 
-<?php echo $includes['css']?>
-
 <!-- jQuery -->
 <script src="<?php echo base_url('js/jquery.min.js')?>"></script>
-
 <!-- Nice Scroll -->
 <script src="<?php echo base_url('js/plugins/nicescroll/jquery.nicescroll.min.js')?>"></script>
 <!-- jQuery UI -->
@@ -65,29 +57,17 @@
 <script src="<?php echo base_url('js/plugins/slimscroll/jquery.slimscroll.min.js')?>"></script>
 <!-- Bootstrap -->
 <script src="<?php echo base_url('js/bootstrap.min.js')?>"></script>
-
 <!-- Bootbox -->
 <script src="<?php echo base_url('js/plugins/bootbox/jquery.bootbox.js')?>"></script>
-
 <!-- imagesLoaded -->
 <script src="<?php echo base_url('js/plugins/imagesLoaded/jquery.imagesloaded.min.js')?>"></script>
-
-<!-- DatePicker -->
-<script src="<?php echo base_url('js/plugins/datepicker/bootstrap-datepicker.js')?>"></script>
-
-<!-- Chosen -->
 <script src="<?php echo base_url('js/plugins/chosen/chosen.jquery.min.js')?>"></script>
 
-<!-- select2 -->
-<script src="<?php echo base_url('js/plugins/select2/select2.min.js')?>"></script>
-
 <?php echo $includes['js']?>
-
 <!-- Theme framework -->
 <script src="<?php echo base_url('js/eakroko.js')?>"></script>
-
-<!-- JQuery Validation Plugin -->
-<script src="<?php echo base_url('js/jquery.validate.js')?>"></script>
+<!-- Theme scripts -->
+<script src="<?php echo base_url('js/application.min.js')?>"></script>
 
 <!--[if lte IE 9]>
         <script src="<?php echo base_url('js/plugins/placeholder/jquery.placeholder.min.js')?>"></script>
@@ -97,9 +77,6 @@
                 });
         </script>
 <![endif]-->
-
-<!-- Theme scripts -->
-<script src="<?php echo base_url('js/application.min.js')?>"></script>
 
 <!-- Favicon -->
 <link rel="shortcut icon" href="<?php echo base_url('img/icon.png')?>" />

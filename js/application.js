@@ -270,8 +270,22 @@ function resizeContent(){
     }
 }
 
-$(document).ready(function () {
+function currentTime(){
+		var $el = $(".stats .icon-calendar").parent(),
+		currentDate = new Date(),
+		monthNames = [ "January", "February", "March", "April", "May", "June",
+		"July", "August", "September", "October", "November", "December" ],
+		dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
+		$el.find(".details .big").html(monthNames[currentDate.getMonth()] + " " + currentDate.getDate() + ", " + currentDate.getFullYear());
+		$el.find(".details span").last().html(dayNames[currentDate.getDay()] + ", " + currentDate.getHours()+":"+ ("0" + currentDate.getMinutes()).slice(-2));
+		setTimeout(function(){
+			currentTime();
+		}, 10000);
+	}
+        
+$(document).ready(function () {
+    currentTime();
     resizeContent();
 
     if($(".gallery-dynamic").length > 0){

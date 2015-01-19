@@ -161,15 +161,21 @@ class Main {
         // Load certain required classes that wouldnt have been loaded by the framework!        
         // Load models
         $this->CI->load->model('util_model');
+                       
+        // Get the string representation of this uri
+        $uri = $this->CI->uri->uri_string();
+        
+        // Flag to determine whether this request requires authentication.
+        $req = isset($this->CI->router->routes["{$uri}_require"])? false: true;
         
         // Check if the user is logged in.
-        // $this->check_login();
-                
+         $this->check_login($req);
+         
         // Retrieve all permissions owned by logged in user.
         $this->get_user_perms();
         
         // Retrieve navigation content.
-        $this->get_nav_content();
+        $this->get_nav_content($uri);
         
         // Initialize class properties.
         $this->_init();
@@ -198,7 +204,7 @@ class Main {
         $this->school_name = $this->get('school_name');
         $this->cur_session = $this->get('cur_session');
         $this->cur_sesname = $this->get('cur_sesname');
-                
+        
         if(!isset($this->school_id) || $this->school_id == '') {
             $school_details = $this->CI->util_model->get_school_name();
             
@@ -240,20 +246,21 @@ class Main {
 
             $cur_session = $this->CI->util_model->get_current_session();
 
-            switch($cur_session) {
+            if(is_object($cur_session)) {
+                $this->cur_session = $cur_session->sesid;
+                $this->cur_sesname = $cur_session->sesname;
+                $this->set('cur_session', $this->cur_session);
+                $this->set('cur_sesname', $this->cur_sesname);
+            }else {
+                switch($cur_session) {
 
-                case DEFAULT_EMPTY:
-                    break;
+                    case DEFAULT_EMPTY:
+                        break;
 
-                case DEFAULT_NOT_VALID:
-                    break;
-
-                default:
-                    $this->cur_session = $cur_session->sesid;
-                    $this->cur_sesname = $cur_session->sesname;
-                    $this->set('cur_session', $this->cur_session);
-                    $this->set('cur_sesname', $this->cur_sesname);
-            }                 
+                    case DEFAULT_NOT_VALID:
+                        break;
+                }                 
+            }
         }
         
     }// End func _init
@@ -274,7 +281,10 @@ class Main {
      * @access public
      * @return array
      **/
-    public function get_nav_content() {
+    public function get_nav_content($uri) {
+        
+        // Get first segment of the uri (module's urlprefix)
+        $uri_parts = explode('/', $uri);
         
         // Retrieve navigation content from model.
         $contents = $this->CI->util_model->get_nav_content($this->user_perms['ids']);
@@ -286,6 +296,7 @@ class Main {
             foreach($contents as $content) {
                 // If the module name doesn't already exist as a key in the array, initialize it.
                 if(!isset($this->nav_content[$content->mname])) {
+                    
                     $this->nav_content[$content->mname] = array(
                                                             'urlprefix' => $content->urlprefix,
                                                             'dispname' => $content->dispname,
@@ -293,6 +304,9 @@ class Main {
                                                             'tileicon' => $content->tileicon,
                                                             'links' => array()
                                                         );
+                    if($uri_parts[0] == $content->urlprefix) {
+                        $this->nav_content[$content->mname]['active'] = true;
+                    }
                 }
 
                 // Populate each module with its link. 
@@ -385,11 +399,11 @@ class Main {
      * Redirect to login page if user is not logged in.
      * 
      * @access public
+     * @param bool $require_login
      * @return void
      */
-    public function check_login() {
-
-        if(!$this->logged_in()) {
+    public function check_login($require_login) {
+        if(!$this->logged_in() && $require_login) {
             redirect(site_url('login'), 'refresh');
         }
 

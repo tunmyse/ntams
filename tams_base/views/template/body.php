@@ -27,7 +27,8 @@
             <?php }?>
             
             <div class="page-header">
-                <div class="pull-left">                                
+                <div class="pull-left">    
+                    <!--<h1><?php //echo $page_header?></h1>-->
                     <img id="logo" type="image" src="<?php echo base_url("img/logo.jpg")?>" name="logo"/>
                 </div>
 
@@ -61,8 +62,10 @@
                     <?php echo $page_content;?>
                 </div>
                 
-                <!-- Show feedbar only if width is 9 -->
-                <?php if($width != 12) {?>
+                <?php 
+                    // Show feedbar only if width is 9
+                    if($width != 12) {?>
+                
                 <div class="span3">                                
                     <div class="box">
                         <div class="box-title">
@@ -79,8 +82,8 @@
                             </div>
                         </div>
 
-                        <div class="box-content nopadding scrollable" data-height="400" data-visible="true">
-                            <table id="randomFeed" class="table table-nohead">
+                        <div class="box-content nopadding scrollable" data-visible="true">
+                            <table class="table table-nohead">
                                 <tbody>
                                     <tr>
                                         <td><span class="label"><i class="icon-plus"></i></span> <a href="#">Admin</a> added a new H.O.D</td>

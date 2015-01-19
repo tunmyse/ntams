@@ -119,20 +119,19 @@ class Page {
             }
         }
         
-        //
+        // Header content
         $header_buffer = $this->CI->load->view(TMPLPATH.'header', $header_data, true);
 
         // Get all modules and associated links to build application menu.
         $nav_content = $this->get_nav_content();
         
         // Generate menu from navigation content.
-        $menu_content = $this->build_menu($nav_content, $this->user_type);
-        
+        $menu_content = $this->build_menu($nav_content, $this->user_type);        
         
         $top_menu = array(
             'topmenu_content' => $menu_content['top'],
-            'dashboard_url' => '/'.$this->user_type.'/dashboard',
-            'logout_url' => '/logout',
+            'dashboard_url' => site_url('/'.$this->user_type.'/dashboard'),
+            'logout_url' => site_url('/logout'),
             'message_count' => 2,
             'display_name' => $this->user_name,
             'display_img' => base_url('img/demo/user-avatar.jpg')
@@ -284,9 +283,12 @@ class Page {
 
         // Loop through navigation content to build application menu.
         foreach($nav_content as $module) {
-            // Process each module in the nav content, and append to its holding array (top and side).
             
-            $processed_module = $this->process_module($module);
+            // Add class to sidebar menu to expand only the subnav with the active link.
+            $subnav_class = isset($module['active'])? '': 'subnav-hidden';
+            
+            // Process each module in the nav content, and append to its holding array (top and side).
+            $processed_module = $this->process_module($module, $subnav_class);
             
             $menu['top'] .= $processed_module['top'];
             
@@ -303,7 +305,7 @@ class Page {
      * @param array $module 
      * @return string
      */
-    private function process_module($module) {
+    private function process_module($module, $hidden) {
         
         $module_buffer = array('top' => '', 'side' => '');
         
@@ -325,7 +327,7 @@ class Page {
         }
 
 
-        $module_buffer['side'] = '<div class="subnav">
+        $module_buffer['side'] = '<div class="subnav '.$hidden.'">
                                     <div class="subnav-title">
                                         <a class="toggle-subnav" href="#">
                                             <i class="icon-angle-down"></i>
