@@ -157,16 +157,16 @@ class Main {
 
         // Load CI object
         $this->CI =& get_instance();
-        
+        var_dump($this->CI);
         // Load certain required classes that wouldnt have been loaded by the framework!        
         // Load models
         $this->CI->load->model('util_model');
                        
-        // Get the string representation of this uri
-        $uri = $this->CI->uri->uri_string();
+        // Get the first segment of this uri
+        $segment = $this->CI->uri->segment(1, '');
         
         // Flag to determine whether this request requires authentication.
-        $req = isset($this->CI->router->routes["{$uri}_require"])? false: true;
+        $req = isset($this->CI->router->routes["{$segment}_require"])? false: true;
         
         // Check if the user is logged in.
          $this->check_login($req);
@@ -175,7 +175,7 @@ class Main {
         $this->get_user_perms();
         
         // Retrieve navigation content.
-        $this->get_nav_content($uri);
+        $this->get_nav_content($segment);
         
         // Initialize class properties.
         $this->_init();
@@ -281,10 +281,7 @@ class Main {
      * @access public
      * @return array
      **/
-    public function get_nav_content($uri) {
-        
-        // Get first segment of the uri (module's urlprefix)
-        $uri_parts = explode('/', $uri);
+    public function get_nav_content($prefix) {
         
         // Retrieve navigation content from model.
         $contents = $this->CI->util_model->get_nav_content($this->user_perms['ids']);
@@ -304,7 +301,9 @@ class Main {
                                                             'tileicon' => $content->tileicon,
                                                             'links' => array()
                                                         );
-                    if($uri_parts[0] == $content->urlprefix) {
+                    
+                    // Check if this module contains the active link.
+                    if($prefix == $content->urlprefix) {
                         $this->nav_content[$content->mname]['active'] = true;
                     }
                 }
