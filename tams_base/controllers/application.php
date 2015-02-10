@@ -55,14 +55,7 @@ class Application extends CI_Controller {
     public function index() {        
         /**
          * Calls login method to display login page.
-         * In a multi-school environment, this should link to either the login page or TAMS homepage.
-         * This is based on the subdomain name (tasued).tams.com.ng
          * 
-         * if($this->main->check_domain()) {
-         *     $this->login(); 
-         * }else {
-         *     $this->load->view('tams/tams');
-         * }
          */ 
         $this->login();        
     }// End of func index
@@ -73,8 +66,17 @@ class Application extends CI_Controller {
     public function login() {
         $page_name = 'login'; 
         
+        // Logged in, NO neeed to log in anymore, redirect.
+        if($this->main->logged_in()) {
+            redirect("$this->user_type/dashboard");
+        }
         // Set school name
-        $data['school_name'] = $this->main->get_school_name();
+        $school_names = $this->main->get_school_name();
+        $data['school_name'] = $school_names['short'];
+        
+        // Set redirection url if any.
+        $redirect_uri = $this->input->get('rdr');
+        $data['redirect'] = $redirect_uri == ''? '': '?rdr='.urlencode($redirect_uri);
         
         // Get login error message, if any.
         $data['login_error'] = $this->main->get_notification_messages(MSG_TYPE_ERROR, 1);
@@ -103,7 +105,7 @@ class Application extends CI_Controller {
      * @param string $uid
      * @return void	 
      */
-    public function reset_password($uid=NULL) {
+    public function reset_password($uid = NULL) {
         $page_name = 'change_password';
         
          // Set page parameters. 
@@ -278,13 +280,16 @@ class Application extends CI_Controller {
      * @param string $method optional
      * @return void
      */
-    public function authenticate($method='Auth_site') {
+    public function authenticate($method = 'Auth_site') {
+        // Get redirect uri, if any.
+        $redirect_uri = $this->input->get('rdr');
+        $dest_uri = $redirect_uri == ''? "login": 'login?rdr='.urlencode($redirect_uri);
         
         // Check if request method is a POST
         if($this->input->server('REQUEST_METHOD') != 'POST'){
             $error_msg = $this->lang->line('invalid_req_method');
             $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-            redirect(site_url('login'));
+            redirect(site_url($dest_uri));
         }
         
         // Retrieve user's login credential
@@ -299,7 +304,7 @@ class Application extends CI_Controller {
             $password_length = $this->config->item('password_min_length');
             $error_msg = $this->lang->line('invalid_credentials');  
             $this->main->set_notification_message(MSG_TYPE_ERROR, sprintf($error_msg, $password_length));
-            redirect(site_url('login'));
+            redirect(site_url($dest_uri));
         }
         
         $credentials = array(
@@ -312,14 +317,16 @@ class Application extends CI_Controller {
         
         // Redirect back to login screen if login fails
         if(!$authenticated) {
-            redirect(site_url('login'));
+            redirect(site_url($dest_uri));
         }        
         
         // Retrieve user_type from session
         $this->user_type = $this->main->get('user_type');
         
-        // Redirect to user's dashboard based on user type (student | staff | admin)
-        redirect(site_url("{$this->user_type}/dashboard"));
+        // Redirect to user's dashboard based on user type (student | staff | admin) or redirect_url       
+        $dest_uri = $redirect_uri == ''? "{$this->user_type}/dashboard": $redirect_uri;
+        
+        redirect(site_url($dest_uri));
         
     }// End of func authenticate    
     

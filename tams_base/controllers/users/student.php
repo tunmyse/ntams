@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-require_once APPPATH.'controllers/users/Users.php';
+require_once APPPATH.'controllers/users/users.php';
 
 /**
  * Student controller
@@ -33,7 +33,7 @@ class Student extends Users {
     }// End func __construct
     
     /**
-     * Index page for the application.	 
+     * Index page for the student.	 
      */
     public function index() { 
         
@@ -50,5 +50,5 @@ class Student extends Users {
     
 }
 
-/* End of file admin.php */
-/* Location: ./application/controllers/admin.php */
+/* End of file users.php */
+/* Location: ./application/controllers/users.php */

@@ -23,6 +23,9 @@ $lang['create_dependency'] = 'You need to create at least one %s before you can 
 $lang['file_read_error'] = 'Error reading %s file!';
 $lang['file_write_error'] = 'Error writing %s file!';
 $lang['duplicate_value'] = 'The %s you specified should be unique, it already exists in the system!';
+$lang['create_error'] = 'There was an error creating the entry you specified. Please try again or contact your system administrator!';
+$lang['update_error'] = 'There was an error updating the entry you specified. Please try again or contact your system administrator!';
+$lang['delete_error'] = 'There was an error deleting the entry you specified. Please try again or contact your system administrator!';
 
 /* End of file main_lang.php */
 /* Location: ./base/language/english/main_lang.php */

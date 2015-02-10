@@ -79,7 +79,7 @@
             </h1>
             <div class="login-body" style="padding-top: 20px">
                 <p class="small text-error" style="padding: 0 30px"><?php echo $login_error?></p>
-                <form action="<?php echo site_url('authenticate')?>" method='post' class='form-validate' id="login">
+                <form action="<?php echo site_url('authenticate'.$redirect)?>" method='post' class='form-validate' id="login">
                     <div class="control-group">
                         <div class="email controls">
                             <input type="text" name='uname' placeholder="Enter your username" class='input-block-level' data-rule-required="true">

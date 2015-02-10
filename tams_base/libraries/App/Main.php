@@ -78,24 +78,24 @@ class Main {
 	
     /**
      * School Name
-     * @var int 
+     * @var string 
      */
     
     private $school_name = NULL;
 	
     /**
      * School shortname
-     * @var int 
+     * @var string 
      */
     
     private $school_shortname = NULL;
     
     /**
      * School Unitname
-     * @var int 
+     * @var string
      */
     
-    private $college_name = NULL;
+    private $unit_name = NULL;
 	
     /**
      * Session Id
@@ -110,6 +110,14 @@ class Main {
      */
     
     private $cur_sesname = NULL;
+    
+    /**
+     * Session Name
+     * @var string 
+     */
+    
+    private $domain_string = 'tasued';
+    
     
     /**
      * Notification Messages
@@ -139,6 +147,31 @@ class Main {
     private $nav_content = array();
     
     /**
+     * Current request uri.
+     * 
+     * @access private
+     * @var string
+     */
+    
+    private $uri = '';
+    
+    /**
+     * Url prefix of the module.
+     * 
+     * @access private
+     * @var string
+     */
+    private $segment = '';
+    
+    /**
+     * Hold user's logged_in status.
+     * 
+     * @access private
+     * @var boolean
+     */
+    private $logged_in = NULL;
+    
+    /**
      * Codeigniter instance
      * 
      * @access private
@@ -157,25 +190,47 @@ class Main {
 
         // Load CI object
         $this->CI =& get_instance();
-        var_dump($this->CI);
+        
         // Load certain required classes that wouldnt have been loaded by the framework!        
         // Load models
         $this->CI->load->model('util_model');
-                       
+        
+        // Check the domain before any other action
+        switch($this->check_domain()) {
+            
+            case DEFAULT_NOT_EXIST:
+                // Account doesn't exist
+                echo 'no such account';
+                break;      
+            
+            case DEFAULT_MISMATCH:
+                // subdomain doesn't match value in the session.
+                echo 'mismatch';
+                break;    
+            
+            case DEFAULT_NOT_VALID:
+                
+                break;
+            
+            default :
+        }
+        
         // Get the first segment of this uri
-        $segment = $this->CI->uri->segment(1, '');
+        $this->segment = $this->CI->uri->segment(1, '');
+        
+        $this->uri = filter_input(INPUT_SERVER, 'REQUEST_URI');//$this->CI->uri->uri_string();
         
         // Flag to determine whether this request requires authentication.
-        $req = isset($this->CI->router->routes["{$segment}_require"])? false: true;
+        $req = isset($this->CI->router->routes["{$this->segment}_require"])? false: true;
         
         // Check if the user is logged in.
-         $this->check_login($req);
+        $this->check_login($req);
          
         // Retrieve all permissions owned by logged in user.
         $this->get_user_perms();
         
         // Retrieve navigation content.
-        $this->get_nav_content($segment);
+        $this->get_nav_content();
         
         // Initialize class properties.
         $this->_init();
@@ -192,67 +247,33 @@ class Main {
      * Initialize class variables from session
      */
     private function _init() {
-        
-        $this->user_lname = $this->get('last_name');
-        $this->user_fname = $this->get('first_name');
-        $this->user_email = $this->get('email');
-        $this->user_id = $this->get('user_id');
-        $this->user_type = $this->get('user_type');
-        $this->user_type_id = $this->get('user_type_id');
-        $this->college_name = $this->get('college_name');
-        $this->school_id = $this->get('school_id');
-        $this->school_name = $this->get('school_name');
-        $this->cur_session = $this->get('cur_session');
-        $this->cur_sesname = $this->get('cur_sesname');
-        
-        if(!isset($this->school_id) || $this->school_id == '') {
-            $school_details = $this->CI->util_model->get_school_name();
+        if($this->logged_in()) {
+            $this->user_lname = $this->get('last_name');
+            $this->user_fname = $this->get('first_name');
+            $this->user_email = $this->get('email');
+            $this->user_id = $this->get('user_id');
+            $this->user_type = $this->get('user_type');
+            $this->user_type_id = $this->get('user_type_id');
+            $this->unit_name = $this->get('unit_name');
+            $this->school_id = $this->get('school_id');
+            $this->school_name = $this->get('school_name');        
+            $this->school_shortname = $this->get('school_shortname');
+            $this->cur_session = $this->get('cur_session');
+            $this->cur_sesname = $this->get('cur_sesname');
             
-            switch($school_details) {
+            if(!isset($this->cur_session) || $this->cur_session == '') {
 
-                case DEFAULT_EMPTY:
-                    break;
+                $result = $this->CI->util_model->get_current_session();
 
-                case DEFAULT_NOT_VALID:
-                    break;
+                switch($result['status']) {
 
-                default:
-                    $this->school_id = $school_details[0]->schoolid;
-                    $this->school_name = $school_details[0]->shortname;
-                    $this->set('school_name', $this->school_name);
-                    $this->set('school_id', $this->school_id);
-            }   
-        }
-
-        if(!isset($this->college_name) || $this->college_name == '') {
-
-            $college_name = $this->CI->util_model->get_school_college();
-
-            switch($college_name) {
-
-                case DEFAULT_EMPTY:
-                    break;
-
-                case DEFAULT_NOT_VALID:
-                    break;
-
-                default:
-                    $this->college_name = $college_name[0]->unitname;
-                    $this->set('college_name', $this->college_name);
-            }                 
-        }
-        
-        if(!isset($this->cur_session) || $this->cur_session == '') {
-
-            $cur_session = $this->CI->util_model->get_current_session();
-
-            if(is_object($cur_session)) {
-                $this->cur_session = $cur_session->sesid;
-                $this->cur_sesname = $cur_session->sesname;
-                $this->set('cur_session', $this->cur_session);
-                $this->set('cur_sesname', $this->cur_sesname);
-            }else {
-                switch($cur_session) {
+                    case DEFAULT_SUCCESS:
+                        $rs_obj = $result['rs'];
+                        $this->cur_session = $rs_obj->sesid;
+                        $this->cur_sesname = $rs_obj->sesname;
+                        $this->set('cur_session', $this->cur_session);
+                        $this->set('cur_sesname', $this->cur_sesname);
+                        break;
 
                     case DEFAULT_EMPTY:
                         break;
@@ -260,10 +281,66 @@ class Main {
                     case DEFAULT_NOT_VALID:
                         break;
                 }                 
+                
             }
+        
+        }
+    }// End func _init
+    
+    /**
+     * Get the subdomain the request is for.
+     *
+     */ 
+    private function check_domain() {
+        
+        // Build list of subdomain exceptions.
+        $exceptions = array('www');
+        
+        // Get full domain, and split into parts. 
+        $host_part = explode('.', filter_input(INPUT_SERVER, 'HTTP_HOST')); 
+        $count = count($host_part);
+        
+        // return false if there is no subdomain string
+        if($count < 3) {
+            return DEFAULT_NOT_VALID ;
         }
         
-    }// End func _init
+        // Retrieve the first section of the domain.
+        // NOTE: Default should be an empty string in production.
+        $this->domain_string = $count < 3? 'tasued': $host_part[0];
+        
+        // If user is logged in, subdomain details should exists in the session,
+        // check that it does and ensure it is the same as the one in the url.
+        if($this->logged_in() && $this->domain_string == $this->get('domain_string')) {
+            return DEFAULT_VALID;
+        }elseif($this->logged_in() && $this->domain_string != $this->get('domain_string')) {
+            return DEFAULT_MISMATCH;
+        }
+        
+        // Get the information for the valid domain_string.
+        $result = $this->CI->util_model->get_school_details($this->domain_string);
+
+        switch($result['status']) {
+
+            case DEFAULT_SUCCESS:
+                $rs_obj = $result['rs'];
+                $this->school_id = $rs_obj->schoolid;
+                $this->school_name = $rs_obj->schoolname;
+                $this->school_shortname = $rs_obj->shortname;
+                $this->unit_name = $rs_obj->unitname;
+                return DEFAULT_VALID;
+                break;
+
+            case DEFAULT_EMPTY:
+                return DEFAULT_NOT_EXIST;
+                break;
+
+            case DEFAULT_NOT_VALID:
+                return DEFAULT_NOT_VALID;
+                break;
+        }         
+        
+    }// End func check_domain
     
     /**
      * Get dashboard content.
@@ -281,16 +358,16 @@ class Main {
      * @access public
      * @return array
      **/
-    public function get_nav_content($prefix) {
+    public function get_nav_content() {
         
         // Retrieve navigation content from model.
-        $contents = $this->CI->util_model->get_nav_content($this->user_perms['ids']);
+        $result = $this->CI->util_model->get_nav_content($this->user_perms['ids']);
         
         // Check if returned value is not empty.
-        if($contents != DEFAULT_EMPTY) {
+        if($result['status'] != DEFAULT_EMPTY) {
             
             // Loop through each content to process it.
-            foreach($contents as $content) {
+            foreach($result['rs'] as $content) {
                 // If the module name doesn't already exist as a key in the array, initialize it.
                 if(!isset($this->nav_content[$content->mname])) {
                     
@@ -303,7 +380,7 @@ class Main {
                                                         );
                     
                     // Check if this module contains the active link.
-                    if($prefix == $content->urlprefix) {
+                    if($this->segment == $content->urlprefix) {
                         $this->nav_content[$content->mname]['active'] = true;
                     }
                 }
@@ -313,7 +390,7 @@ class Main {
                                                                   'url' => $content->url,
                                                                   'name' => $content->name,
                                                               );
-
+                // var_dump($this->nav_content[$content->mname]['links']);
             }
             
         }
@@ -326,10 +403,10 @@ class Main {
      * @access public
      * @return void
      **/
-    public function get_college_name() {  
-        return $this->item('college_name');
+    public function get_unit_name() {  
+        return $this->item('unit_name');
 
-    } // End func get_college_name
+    } // End func get_unit_name
     
     /**
      * Get School name
@@ -338,7 +415,7 @@ class Main {
      * @return void
      **/
     public function get_school_name() {  
-        return $this->item('school_name');
+        return array('full' => $this->school_name, 'short' => $this->school_shortname);
 
     } // End func get_school_name
     
@@ -402,8 +479,12 @@ class Main {
      * @return void
      */
     public function check_login($require_login) {
+        
         if(!$this->logged_in() && $require_login) {
-            redirect(site_url('login'), 'refresh');
+            // Get request uri to redirect to on successful login.
+            $referer = $this->uri == ''? '': '?rdr='.urlencode($this->uri);
+        
+            redirect(site_url('login'.$referer), 'refresh');
         }
 
     } // End of func check_login
@@ -415,27 +496,35 @@ class Main {
      * @return bool
      **/
     public function logged_in() {
-
+        
+        // Check if the logged_in variable has been initialized. If it has, no need checking in the session anymore.
+        if($this->logged_in != NULL) {
+            return $this->logged_in;
+        }
+        
+        // Get the information used to determine logged_in status.
         $cdata = array(
             'email' => $this->get('email'),
             'type_id' => $this->get('user_type_id'),
             'user_type' => $this->get('user_type')
         );
 
+        // Check that no value is empty.
         foreach($cdata as $data) {
             if(trim($data) == '') {
-                return false;
+                return $this->logged_in = false;
             }
         }
 
+        // Get the hashed value in the session and compare with the hash of the concatenated retrieved values.
         $s_k = $this->get('cs');
         $c_k = sha1($cdata['email'] . '_' . $cdata['type_id'] . '_' . $cdata['user_type']);
 
         if($s_k != $c_k) {
-            return false;
+            return $this->logged_in = false;
         }
 
-        return true;
+        return $this->logged_in = true;
 
     } // End func logged_in
     
@@ -461,7 +550,12 @@ class Main {
             'first_name' => $params['fname'],
             'last_name' => $params['lname'],
             'user_type' => $params['usertype'],
-            'cs' => sha1($params['email'] . '_' . $params['usertypeid'] . '_' . $params['usertype'])
+            'cs' => sha1($params['email'] . '_' . $params['usertypeid'] . '_' . $params['usertype']),
+            'school_id' => $this->school_id,
+            'school_name' => $this->school_name,    
+            'school_shortname' => $this->school_shortname,
+            'unit_name' => $this->unit_name,
+            'domain_string' => $this->domain_string
         );
         
         // Add user information to session
@@ -738,6 +832,9 @@ class Main {
         // User is unauthorized by default
         $authd = false;
         
+        //TODO: Include extra compulsory parameter to check if a permission is compulsory for a resource.
+        
+
         // Iterate through modules in parameter array.
         foreach($mod_perms as $mod => $perms) {
             
@@ -765,17 +862,18 @@ class Main {
      **/
     private function get_user_perms() {
         // Retrieve all user's permission for all modules in the application.
-        $perms = $this->CI->util_model->get_user_perms($this->get('user_id'));
+        $result = $this->CI->util_model->get_user_perms($this->get('user_id'));
         
         $this->user_perms['ids'] = array();
                 
-        if($perms != DEFAULT_EMPTY) {
+        if($result['status'] != DEFAULT_EMPTY) {
             // Format the permissions.
-            foreach($perms as $perm) {
+            foreach($result['rs'] as $perm) {
                 $this->user_perms[$perm->mname]['perms'][] = $perm->pname;
                 $this->user_perms['ids'][] = $perm->permid;
             }
         }
+        
     } // End func get_user_perms
     
     /**

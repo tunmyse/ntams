@@ -66,7 +66,7 @@ $route['logout'] = "application/logout";
 $route['login_require'] = false;
 $route['authenticate_require'] = false;
 $route['logout_require'] = false;
-
+$route['_require'] = false;
 
 // Forgot password rules
 $route['forgot_password/(:any)'] = "application/forgot_password/$1";
@@ -109,45 +109,21 @@ $route['programme/info/(:any)'] = "setup/programme/details/$1";
 
 /*
  *---------------------------------------------------------------
- * Admission Management routes.
- *---------------------------------------------------------------
- */
-
-// Admission route
-$route['admission'] = "admission/admission";
-
-$route['admission/register'] = "admission/admission/register";
-$route['admission/create_account'] = "admission/admission/create_account";
-$route['admission/application'] = "admission/admission/application";
-$route['admission/application/(:any)'] = "admission/admission/$1";
-
-$route['admission/(:any)'] = "admission/$1";
-$route['admission/(:any)/(:any)'] = "admission/$1/$2";
-
-// Exam routes
-$route['exam/(:any)/create'] = "admission/exam/create_$1";
-$route['exam/(:any)/update'] = "admission/exam/update_$1";
-$route['exam/(:any)/delete'] = "admission/exam/delete_$1";
-
-
-/*
- *---------------------------------------------------------------
  * Access Control routes.
  *---------------------------------------------------------------
  */
 $route['access'] = "access_control/group";
 $route['access/groups'] = "access_control/group";
-$route['access/group/(:any)'] = "access_control/group/details/$1";
-
+$route['access/group'] = "access_control/group/details";
+$route['access/group/(:any)'] = "access_control/group/$1";
 
 $route['access/roles'] = "access_control/role";
-$route['access/role/(:any)'] = "access_control/role/details/$1";
+$route['access/role'] = "access_control/role/details";
+$route['access/role/(:any)'] = "access_control/role/$1";
 
 $route['access/permissions'] = "access_control/permission";
+$route['access/permission'] = "access_control/permission/details";
 $route['access/permission/(:any)'] = "access_control/permission/details/$1";
-
-$route['access/groups'] = "access_control/group";
-$route['access/group/(:any)'] = "access_control/group/details/$1";
 
 $route['404_override'] = '';
 

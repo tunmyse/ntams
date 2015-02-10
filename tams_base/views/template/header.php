@@ -61,7 +61,6 @@
 <script src="<?php echo base_url('js/plugins/bootbox/jquery.bootbox.js')?>"></script>
 <!-- imagesLoaded -->
 <script src="<?php echo base_url('js/plugins/imagesLoaded/jquery.imagesloaded.min.js')?>"></script>
-<script src="<?php echo base_url('js/plugins/chosen/chosen.jquery.min.js')?>"></script>
 
 <?php echo $includes['js']?>
 <!-- Theme framework -->

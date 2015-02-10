@@ -13,7 +13,7 @@
  * @version    1.0.0
  * @since      File available since Release 1.0.0
  */
-class group extends CI_Controller {
+class Group extends CI_Controller {
 
     /**
      * Folder Name
@@ -73,7 +73,7 @@ class group extends CI_Controller {
      */
     public function index() {
         $data = array();
-        $page_name = 'view_college';
+        $page_name = 'group_view';
         
 //        $data['college_name'] = $this->main->get_college_name();
 //        
@@ -82,81 +82,62 @@ class group extends CI_Controller {
 //        // Retrieve all colleges 
 //        $data['colleges'] = $this->mdl->get_college();
 //        
-//        $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
-//        $page_content .= $this->load->view($this->folder_name.'/partials/edit_college', $data['college_name'], true);
+        $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/create_group', $data, true);
         
-        $this->page->build('dhbkdkfkjhk', $this->folder_name, $page_name, 'User Groups');       
+        $this->page->build($page_content, $this->folder_name, $page_name, 'User Groups');       
     }// End of func index
-    
-    
+        
     /**
-     * Create a new college.	 
+     * Create a new user group.	 
      */
     public function create() {
+        $dest = $this->main->item('uri');
         
         // Check for valid request method
         if($this->input->server('REQUEST_METHOD') == 'POST') {
             
-            // Set error to true. 
-            // This should be changed only if there are no validation errors.
-            $error = false;
+            // Load the validation library
+            $this->load->library('form_validation');
             
-            // Set expected form field names
-            $fields = array(
-                'college_name'      => array(
-                    'required' => true
-                ),
-                'college_title'     => array(
-                    'required' => true
-                ),
-                'college_code'      => array(
-                    'required' => true
-                ),
-                'college_remark'    => array(
-                    'required' => true
-                ),
-                'special'          => array(
-                    'required' => true
-                )
-            );
-            
-            // Get all field values.
-            $form_fields = $this->input->post(NULL);
-            
-            // Validate form fields.
-            //$error = $this->validate_fields($form_fields, $fields);
-            
-            // Send fields to model if there are no errors
-            if(!$error) {
-                $params = array(
-                    'colname'   => $form_fields['college_name'],
-                    'coltitle'  => $form_fields['college_title'],
-                    'colcode'   => $form_fields['college_code'],
-                    'remark'    => $form_fields['college_remark'],
-                    'special'   => $form_fields['special']
-                );
+            // Run validation and process request if fields are valid.
+            if($this->form_validation->run('access_create_group')) {
                 
                 // Call model method to perform insertion
-                $status = $this->mdl->create($params);
+                $result = $this->mdl->create_group($this->input->post(NULL));
                 
                 // Process model response
-                switch($status) {
+                switch($result['status']) {
                     
                     // Unique constraint violated.
                     case DEFAULT_EXIST:
+                        // Set error message for unique constraint violation.
+                        $error_msg = sprintf($this->lang->line('duplicate_value'), 'group name');  
+                        $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
                         break;
                     
                     // There was a problem creating the entry.
                     case DEFAULT_ERROR:
+                        // Set error message for problem creating entry.
+                        $error_msg = $this->lang->line('create_error');  
+                        $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
                         break;
                     
                     // Entry created successfully.
                     case DEFAULT_SUCCESS:
+                        // Set error message for unique constraint violation.
+                        $error_msg = $this->lang->line('name_exist');  
+                        $this->main->set_notification_message(MSG_TYPE_SUCCESS, $error_msg);
+                        $dest = 'access/group?id='.$result['rs'];
                         break;
                     
                     default:
                         break;
                 }
+            }else {
+                // Set error message for invalid/incomplete fields
+                $error_msg = $this->lang->line('invalid_req_method');  
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
             }
             
         }else{
@@ -165,9 +146,31 @@ class group extends CI_Controller {
             $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
         }
         
-        // Redirect to college page, showing notifiction messages if there are.
-        redirect('college');
+        // Redirect to appropriate page, showing notifiction messages if there are.
+        redirect($dest);
     }// End of func create
+    
+    /**
+     * User group information.	 
+     */
+    public function details() {
+        $data = array();
+        $page_name = 'group_details';
+                
+//        // Retrieve all groups 
+//        $data['groups'] = $this->mdl->get_groups();
+//        
+//        // Retrieve groups roles 
+//        $data['students'] = $this->mdl->get_roles();
+//        
+//        // Retrieve groups permissions 
+//        $data['staffs'] = $this->mdl->get_perms();
+        
+        $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/create_group', $data, true);
+        
+        $this->page->build($page_content, $this->folder_name, $page_name, 'User Groups');    
+    }// End of func details
     
     /**
      * Validate form fields.	 
@@ -200,50 +203,6 @@ class group extends CI_Controller {
         
         return false;
     }// End of func validate_fields
-    
-    /**
-     * College information.	 
-     */
-    public function info($college_name) {
-        $data = array();
-        $page_name = 'college_info';
-        
-        // Format college name from url
-        // Format department name from url
-        $link_paths = explode('-', $college_name);
-        $colid = (int)$link_paths[count($link_paths)-1];
-        
-        $params = array(
-            'colid' => $colid
-        );
-        // Retrieve all department students 
-        $data['info'] = $this->mdl->get_college($params);
-        
-        if($data['info'] == DEFAULT_NOT_EXIST) {
-            redirect('error/errorNum');
-        }
-        
-        $data['college_name'] = $this->main->get_college_name();
-        
-        // Retrieve all colleges 
-        $data['colleges'] = $this->mdl->get_college();
-        
-        // Retrieve all colleges 
-        $data['students'] = $this->mdl->get_college_students($params);
-        
-        // Retrieve all colleges 
-        $data['staffs'] = $this->mdl->get_college_staffs($params);
-        
-        // Retrieve all colleges 
-        $data['depts'] = $this->mdl->get_college_depts($params);
-        
-        
-        $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
-        $page_content .= $this->load->view($this->folder_name.'/partials/edit_college', $data['college_name'], true);
-        $page_content .= $this->load->view('department/partials/create_dept', $data['college_name'], true);
-        
-        $this->page->build($page_content, $this->folder_name, $page_name, ucfirst($data['college_name']));    
-    }// End of func info
     
 }
 

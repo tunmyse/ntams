@@ -70,6 +70,7 @@ class Page {
         $this->user_id = $this->CI->main->item('user_id');
         $this->user_name = $this->CI->main->item('user_lname');
         $this->user_type = $this->CI->main->item('user_type');
+        $this->school_shortname = $this->CI->main->item('school_shortname');
         $this->school_name = $this->CI->main->item('school_name');
         
     }
@@ -139,7 +140,7 @@ class Page {
         $top_menu_buffer = $this->CI->load->view(TMPLPATH.'top_menu', $top_menu, true);        
 
         $left_sidebar = array(
-            'school_name' => $this->school_name,
+            'school_name' => $this->school_shortname,
             'sidemenu_content' => $menu_content['side']
         );        
         $left_sidebar_buffer = $this->CI->load->view(TMPLPATH.'left_sidebar', $left_sidebar, true);
@@ -153,6 +154,7 @@ class Page {
         $notification = $this->build_notification();
         
         $body_parts = array(
+            'school_name' => $this->school_name,
             'page_content' => $page_content_buffer,
             'top_nav' => $top_menu_buffer,
             'left_sidebar' => $left_sidebar_buffer,

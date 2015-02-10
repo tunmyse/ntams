@@ -3,24 +3,24 @@
 
 /**
  * TAMS
- * Access Control controller
+ * User Permission controller
  * 
  * @category   Controller
  * @package    Acess Control
- * @subpackage 
+ * @subpackage Permission
  * @author     Tunmise Akinsola <akinsolatunmise@gmail.com>
  * @copyright  Copyright © 2014 TAMS.
  * @version    1.0.0
  * @since      File available since Release 1.0.0
  */
-class AccessControl extends CI_Controller {
+class Permission extends CI_Controller {
 
     /**
      * Folder Name
      * 
      * @access private
      * @var string
-     */ 
+     */
     
     private $folder_name = 'access_control';
     
@@ -69,30 +69,22 @@ class AccessControl extends CI_Controller {
     }// End func __construct
     
     /**
-     * Index page for the college module.	 
+     * Index page for the role module.	 
      */
     public function index() {
         $data = array();
-        $page_name = 'view_college';
-        
-        $data['college_name'] = $this->main->get_college_name();
-        
-        $data['dept_count'] = $this->mdl->get_department_count();
-        
-        // Retrieve all colleges 
-        $data['colleges'] = $this->mdl->get_college();
+        $page_name = 'view_perm';
         
         $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
-        $page_content .= $this->load->view($this->folder_name.'/partials/edit_college', $data['college_name'], true);
         
-        $this->page->build($page_content, $this->folder_name, $page_name, ucfirst($data['college_name']));       
+        $this->page->build($page_content, $this->folder_name, $page_name, 'User Permissions');       
     }// End of func index
     
     
     /**
      * Create a new college.	 
      */
-    public function create() {
+    public function details() {
         
         // Check for valid request method
         if($this->input->server('REQUEST_METHOD') == 'POST') {
@@ -247,5 +239,5 @@ class AccessControl extends CI_Controller {
     
 }
 
-/* End of file accesscontrol.php */
-/* Location: ./application/controllers/accesscontrol.php */
+/* End of file permission.php */
+/* Location: ./application/controllers/permission.php */

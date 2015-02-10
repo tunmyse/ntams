@@ -1,5 +1,15 @@
 {
     "all": {
+        "js": [
+            "plugins/datatable/jquery.dataTables.min.js",
+            "plugins/chosen/chosen.jquery.min.js",
+            "plugins/datatable/jquery.dataTables.columnFilter.min.js"
+        ],
+        
+        "css": [
+            "plugins/chosen/chosen.css"
+        ],
+        
         "feedbar": false
     },
     "create_account": {
@@ -10,26 +20,5 @@
         "css": [
             
         ]
-    },    
-    "application": {
-        "js": [
-            "plugins/wizard/jquery.form.wizard.min.js"
-        ],
-        
-        "css": [
-            
-        ]
-    },
-    "manage_exam": {
-        "js": [
-            "angular/angular.min.js",
-            "angular/angular-exam.js",
-            "plugins/jquery-ui/jquery.ui.spinner.js"
-        ],
-        
-        "css": [
-            
-        ],
-        "feedbar": true
     }
 }

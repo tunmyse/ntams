@@ -143,7 +143,11 @@ class Util_model extends CI_Model {
                             array('*'), 
                             array(
                                 array('field' => 'status', 'value' => 'active')
-                            )
+                            ),
+                            array(),
+                            array(),
+                            array(),
+                            QUERY_OBJECT_ROW
                         );
     }// End func get_current_session
     
@@ -153,10 +157,17 @@ class Util_model extends CI_Model {
      * @access public
      * @return void
      */
-    public function get_school_name() {
+    public function get_school_details($domain) {
         return $this->get_data(
                             'schools', 
-                            array('schoolid', 'shortname')                            
+                            array('schoolid', 'shortname', 'schoolname', 'unitname'), 
+                            array(
+                                array('field' => "domainstring", 'value' => strtolower($domain))
+                            ),
+                            array(),
+                            array(),
+                            array(),
+                            QUERY_OBJECT_ROW
                         );
     }// End func get_school_name
     
@@ -288,7 +299,7 @@ class Util_model extends CI_Model {
                 
         // Check if table name is supplied
         if(!isset($table) || $table == '') {            
-            return DEFAULT_NOT_VALID;
+            return array('status' => DEFAULT_NOT_VALID);
         }
         
         // Prepare select fields 
@@ -367,10 +378,10 @@ class Util_model extends CI_Model {
                     $result_set = $query->result();
             }
             
-            return $result_set;
+            return array('status' => DEFAULT_SUCCESS, 'rs' => $result_set);
         }
         
-        return DEFAULT_EMPTY;
+        return array('status' => DEFAULT_EMPTY);
     }
     
     
@@ -385,7 +396,7 @@ class Util_model extends CI_Model {
         
         // Check if query is supplied
         if(!isset($query) || $query == '') {            
-            return DEFAULT_NOT_VALID;
+            return array('status' => DEFAULT_NOT_VALID);
         }
         
         // Run query
@@ -410,10 +421,10 @@ class Util_model extends CI_Model {
                     $result_set = $result->result();
             }
             
-            return $result_set;
+            return array('status' => DEFAULT_SUCCESS, 'rs' => $result_set);
         }
         
-        return DEFAULT_EMPTY;
+        return array('status' => DEFAULT_EMPTY);
     }
 } // End class Util_model
 

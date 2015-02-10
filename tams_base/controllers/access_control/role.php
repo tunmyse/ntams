@@ -3,24 +3,24 @@
 
 /**
  * TAMS
- * Access Control controller
+ * User Role controller
  * 
  * @category   Controller
  * @package    Acess Control
- * @subpackage 
+ * @subpackage Role
  * @author     Tunmise Akinsola <akinsolatunmise@gmail.com>
  * @copyright  Copyright © 2014 TAMS.
  * @version    1.0.0
  * @since      File available since Release 1.0.0
  */
-class AccessControl extends CI_Controller {
+class Role extends CI_Controller {
 
     /**
      * Folder Name
      * 
      * @access private
      * @var string
-     */ 
+     */
     
     private $folder_name = 'access_control';
     
@@ -69,104 +69,39 @@ class AccessControl extends CI_Controller {
     }// End func __construct
     
     /**
-     * Index page for the college module.	 
+     * Index page for the role module.	 
      */
     public function index() {
         $data = array();
-        $page_name = 'view_college';
+        $page_name = 'role_view';
         
-        $data['college_name'] = $this->main->get_college_name();
+        $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);        
+        $this->page->build($page_content, $this->folder_name, $page_name, 'User Roles', false);       
         
-        $data['dept_count'] = $this->mdl->get_department_count();
-        
-        // Retrieve all colleges 
-        $data['colleges'] = $this->mdl->get_college();
-        
-        $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
-        $page_content .= $this->load->view($this->folder_name.'/partials/edit_college', $data['college_name'], true);
-        
-        $this->page->build($page_content, $this->folder_name, $page_name, ucfirst($data['college_name']));       
     }// End of func index
     
     
     /**
      * Create a new college.	 
      */
-    public function create() {
+    public function details() {
         
-        // Check for valid request method
-        if($this->input->server('REQUEST_METHOD') == 'POST') {
-            
-            // Set error to true. 
-            // This should be changed only if there are no validation errors.
-            $error = false;
-            
-            // Set expected form field names
-            $fields = array(
-                'college_name'      => array(
-                    'required' => true
-                ),
-                'college_title'     => array(
-                    'required' => true
-                ),
-                'college_code'      => array(
-                    'required' => true
-                ),
-                'college_remark'    => array(
-                    'required' => true
-                ),
-                'special'          => array(
-                    'required' => true
-                )
-            );
-            
-            // Get all field values.
-            $form_fields = $this->input->post(NULL);
-            
-            // Validate form fields.
-            //$error = $this->validate_fields($form_fields, $fields);
-            
-            // Send fields to model if there are no errors
-            if(!$error) {
-                $params = array(
-                    'colname'   => $form_fields['college_name'],
-                    'coltitle'  => $form_fields['college_title'],
-                    'colcode'   => $form_fields['college_code'],
-                    'remark'    => $form_fields['college_remark'],
-                    'special'   => $form_fields['special']
-                );
+        $data = array();
+        $page_name = 'role_details';
                 
-                // Call model method to perform insertion
-                $status = $this->mdl->create($params);
-                
-                // Process model response
-                switch($status) {
-                    
-                    // Unique constraint violated.
-                    case DEFAULT_EXIST:
-                        break;
-                    
-                    // There was a problem creating the entry.
-                    case DEFAULT_ERROR:
-                        break;
-                    
-                    // Entry created successfully.
-                    case DEFAULT_SUCCESS:
-                        break;
-                    
-                    default:
-                        break;
-                }
-            }
-            
-        }else{
-            // Set error message for any request other than POST
-            $error_msg = $this->lang->line('invalid_req_method');  
-            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-        }
+//        // Retrieve all groups 
+//        $data['groups'] = $this->mdl->get_groups();
+//        
+//        // Retrieve groups roles 
+//        $data['students'] = $this->mdl->get_roles();
+//        
+//        // Retrieve groups permissions 
+//        $data['staffs'] = $this->mdl->get_perms();
         
-        // Redirect to college page, showing notifiction messages if there are.
-        redirect('college');
+        $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/create_role', $data, true);
+        
+        $this->page->build($page_content, $this->folder_name, $page_name, 'User Roles');    
     }// End of func create
     
     /**
@@ -247,5 +182,5 @@ class AccessControl extends CI_Controller {
     
 }
 
-/* End of file accesscontrol.php */
-/* Location: ./application/controllers/accesscontrol.php */
+/* End of file role.php */
+/* Location: ./application/controllers/role.php */

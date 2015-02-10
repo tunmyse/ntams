@@ -4,10 +4,9 @@
  * Router Override Class
  * 
  * Overrides the _set_routing method.
- * Enables loading of route definitions from each module's route files
+ * Enables loading of route files from custom route directory.
  * 
  * @category   CodeIgniter
- * @package    Router
  * @author     Akinsola Tunmise <akinsolatumise@gmail.com>
  * @copyright  Copyright © 2014 TAMS.
  * @version    1.0.0
@@ -15,6 +14,7 @@
  */
 
 class TAMS_Router extends CI_Router {
+    
     /**
      * Set the route mapping
      *
@@ -24,64 +24,66 @@ class TAMS_Router extends CI_Router {
      * @access	private
      * @return	void
      */
+    
     function _set_routing() {
+        
+        // load the Loader class
+        // In order to load the file helper
+        $this->load =& load_class('Loader', 'core');
+        
+        // Load the file helper
+        $this->load->helper('file');
+        
         // Are query strings enabled in the config file?  Normally CI doesn't utilize query strings
         // since URI segments are more search-engine friendly, but they can optionally be used.
         // If this feature is enabled, we will gather the directory/class/method a little differently
         $segments = array();
-        if ($this->config->item('enable_query_strings') === TRUE AND isset($_GET[$this->config->item('controller_trigger')]))
-        {
-                if (isset($_GET[$this->config->item('directory_trigger')]))
-                {
-                        $this->set_directory(trim($this->uri->_filter_uri($_GET[$this->config->item('directory_trigger')])));
-                        $segments[] = $this->fetch_directory();
-                }
+        if ($this->config->item('enable_query_strings') === TRUE AND isset($_GET[$this->config->item('controller_trigger')])) {
+            if (isset($_GET[$this->config->item('directory_trigger')])) {
+                $this->set_directory(trim($this->uri->_filter_uri($_GET[$this->config->item('directory_trigger')])));
+                $segments[] = $this->fetch_directory();
+            }
 
-                if (isset($_GET[$this->config->item('controller_trigger')]))
-                {
-                        $this->set_class(trim($this->uri->_filter_uri($_GET[$this->config->item('controller_trigger')])));
-                        $segments[] = $this->fetch_class();
-                }
+            if (isset($_GET[$this->config->item('controller_trigger')])) {
+                    $this->set_class(trim($this->uri->_filter_uri($_GET[$this->config->item('controller_trigger')])));
+                    $segments[] = $this->fetch_class();
+            }
 
-                if (isset($_GET[$this->config->item('function_trigger')]))
-                {
-                        $this->set_method(trim($this->uri->_filter_uri($_GET[$this->config->item('function_trigger')])));
-                        $segments[] = $this->fetch_method();
-                }
+            if (isset($_GET[$this->config->item('function_trigger')])) {
+                $this->set_method(trim($this->uri->_filter_uri($_GET[$this->config->item('function_trigger')])));
+                $segments[] = $this->fetch_method();
+            }
         }
 
         // Load the routes.php file.
-        if (defined('ENVIRONMENT') AND is_file(APPPATH.'config/'.ENVIRONMENT.'/routes.php'))
-        {			
+        if (defined('ENVIRONMENT') AND is_file(APPPATH.'config/'.ENVIRONMENT.'/routes.php')) {			
 
-                // Custom tams modularized implementation of routes
-                // Route definition for each module is placed in the routes directory.
-                if(is_dir(APPPATH.ENVIRONMENT.'/routes')) {
-                    $files = get_filenames(APPPATH.ENVIRONMENT.'/routes', TRUE);
+            // Custom tams modularized implementation of routes
+            // Route definition for each module is placed in the custom route directory.
+            if(is_dir(APPPATH.ENVIRONMENT.'/custom/route')) {
+                $files = get_filenames(APPPATH.ENVIRONMENT.'/custom/route', TRUE);
 
-                    foreach ($files as $file) {
-                        include($file);
-                    }
-
+                foreach ($files as $file) {
+                    include($file);
                 }
 
-                include(APPPATH.'config/'.ENVIRONMENT.'/routes.php');
+            }
 
-        }
-        elseif (is_file(APPPATH.'config/routes.php'))
-        {
-                // Custom tams modularized implementation of routes
-                // Route definition for each module is placed in the routes directory.
-                if(is_dir(APPPATH.'/routes')) {
-                    $files = get_filenames(APPPATH.'/routes', TRUE);
+            include(APPPATH.'config/'.ENVIRONMENT.'/routes.php');
 
-                    foreach ($files as $file) {
-                        include($file);
-                    }
+        }elseif (is_file(APPPATH.'config/routes.php')) {
+            // Custom tams modularized implementation of routes
+            // Route definition for each module is placed in the custom route directory.
+            if(is_dir(APPPATH.'/custom/route')) {
+                $files = get_filenames(APPPATH.'/custom/route', TRUE);
 
+                foreach ($files as $file) {
+                    include($file);
                 }
 
-                include(APPPATH.'config/routes.php');
+            }
+
+            include(APPPATH.'config/routes.php');
 
         }
 
@@ -93,18 +95,16 @@ class TAMS_Router extends CI_Router {
         $this->default_controller = ( ! isset($this->routes['default_controller']) OR $this->routes['default_controller'] == '') ? FALSE : strtolower($this->routes['default_controller']);
 
         // Were there any query string segments?  If so, we'll validate them and bail out since we're done.
-        if (count($segments) > 0)
-        {
-                return $this->_validate_request($segments);
+        if (count($segments) > 0) {
+            return $this->_validate_request($segments);
         }
 
         // Fetch the complete URI string
         $this->uri->_fetch_uri_string();
 
         // Is there a URI string? If not, the default controller specified in the "routes" file will be shown.
-        if ($this->uri->uri_string == '')
-        {
-                return $this->_set_default_controller();
+        if ($this->uri->uri_string == '') {
+            return $this->_set_default_controller();
         }
 
         // Do we need to remove the URL suffix?
@@ -120,8 +120,7 @@ class TAMS_Router extends CI_Router {
         $this->uri->_reindex_segments();
     }
 
-}
-// END TAMS_Router Class
+} // END TAMS_Router Class
 
 /* End of file Router.php */
 /* Location: ./application/core/Router.php */

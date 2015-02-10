@@ -27,9 +27,9 @@
             <?php }?>
             
             <div class="page-header">
-                <div class="pull-left">    
-                    <!--<h1><?php //echo $page_header?></h1>-->
+                <div class="pull-left">
                     <img id="logo" type="image" src="<?php echo base_url("img/logo.jpg")?>" name="logo"/>
+                    <h2 class="pull-right" style="margin-left: 10px"><?php echo $school_name?></h2>
                 </div>
 
                 <div class="pull-right">
