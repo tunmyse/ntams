@@ -28,48 +28,142 @@ class Access_Control_model extends CI_Model {
 
     } // End func __construct
  
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Group related functions
+    |--------------------------------------------------------------------------
+    */
+    
     /**
-     * Create a new prospective student
+     *  Get groups belonging to a user
+     * 
+     * @access public
+     * @param int $owner
+     * @return array
+     */
+    public function get_groups($owner) {
+        $table_name = 'groups g';
+        
+        $select = array(
+                    'g.groupid',
+                    'g.name',
+                    'g.owner',
+                    'u.lname',
+                    'u.fname',
+                    'u.userid',
+                    'u.usertype'
+                );
+        
+        $joins = array(
+                    array('table' => 'users u', 'on' => 'u.userid = g.owner')                  
+                );
+        
+        $where = [];
+        if(is_int($owner)) {
+            $where = array(
+                        array('field' => "g.owner", 'value' => $owner)
+                    );
+        }
+        return $this->util_model->get_data($table_name, $select, $where, array(), $joins);
+    }// end func get_groups
+    
+    /**
+     *  Get associations for a certain group
+     * 
+     * @access public
+     * @param int $groupid
+     * @return array
+     */
+    public function get_group_assoc($groupid) {
+        $table_name = 'groups g';
+        
+        $select = array(
+                    'g.groupid',
+                    'g.name',
+                    'g.owner',
+                    'u.lname',
+                    'u.fname',
+                    'u.userid'
+                );
+        
+        $joins = array(
+                    array('table' => 'users u', 'on' => 'u.userid = g.owner')                  
+                );
+        
+        $where = [];
+        if(is_int($owner)) {
+            $where = array(
+                        array('field' => "g.owner", 'value' => $owner)
+                    );
+        }
+        return $this->get_data($table_name, $select, $where, array(), $joins);
+    }// end func get_group_assoc
+    /**
+     * Create a new user group
      * 
      * @access public
      * @param array $param
-     * @return int
+     * @return array
      */
-    public function create($param) {
+    public function create_group($param) {
+        // Set response message.
+        $resp = array('status' => DEFAULT_ERROR);  
         
-        //Initiate transaction 
-        $this->db->trans_start();
-        
-        $this->db->insert('tams_users', $param['user']);
+        // Perform insert.
+        $ret = $this->db->insert('groups', $param);
 
-        $param['pros']['userid'] = $this->db->insert_id();
-        
-        $this->db->insert('tams_prospective',$param['pros']);
-        
-        // End transaction
-        $this->db->trans_complete();
-        
-        if ($this->db->trans_status() === FALSE) {
-            return DEFAULT_ERROR;
+        // Set success response message
+        if($ret) {
+            $resp['status'] = DEFAULT_SUCCESS;
+            $resp['rs'] = $this->db->insert_id();
+        }else {
+            if($this->db->_error_number() == 1062) {
+                $resp['status'] = DEFAULT_EXIST;
+            }else {
+                $resp['status'] = DEFAULT_ERROR;
+            }
         }
 
-        return DEFAULT_SUCCESS;
-    } //End of func create
+        return $resp;
+    } //End of func create_group
     
-    /** 
-     * Get subject(s)
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Role related functions
+    |--------------------------------------------------------------------------
+    */
+    
+    /**
+     * Create a new user role
      * 
      * @access public
-     * @param int $id
-     * @return void
+     * @param array $param
+     * @return array
      */
-    public function verifyRegPayment($id){
-        $query = $this->db->get_where('reg_payment', array('pstdid' => $id, 'status' => 'paid'));
-        if($query->num_rows()> 0){
-            return $query->result_array(); 
+    public function create_role($param) {
+        // Set response message.
+        $resp = array('status' => DEFAULT_ERROR);  
+        
+        // Perform insert.
+        $ret = $this->db->insert('roles', $param);
+
+        // Set success response message
+        if($ret) {
+            $resp['status'] = DEFAULT_SUCCESS;
+            $resp['rs'] = $this->db->insert_id();
+        }else {
+            if($this->db->_error_number() == 1062) {
+                $resp['status'] = DEFAULT_EXIST;
+            }else {
+                $resp['status'] = DEFAULT_ERROR;
+            }
         }
-        return FALSE;
-    }
+
+        return $resp;
+    } //End of func create_role
+    
 } // End class Access_Control_model
 
 // End file access_control_model.php

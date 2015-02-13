@@ -36,10 +36,18 @@ class TAMS_Form_validation extends CI_Form_validation {
             // Get url prefix for current executing module.
             $prefix = $this->CI->main->item('segment');
             
+            $config_path = "{$prefix}_form_validation";
+            
             // Load form validation config file for the current module and merge it with the existing config rules.
-            if($this->CI->config->load("{$prefix}_form_validation", false, true)) {
-                array_merge($this->_config_rules, $config);
+            if(!isset($this->_config_rules[$group]) && 
+                    $this->CI->config->load($config_path, true, true) && 
+                    is_array($config = $this->CI->config->item($config_path))) {
+                
+                $this->_config_rules = array_merge($this->_config_rules, $config);
                 unset($config);
+                
+                // This is NOT advisable, but expedient!
+                unset($this->CI->config->config[$config_path]);
             }
             
             // No validation rules?  We're done...

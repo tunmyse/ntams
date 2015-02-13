@@ -12,13 +12,27 @@
                 <thead>
                     <tr>
                         <th>Group Name</th>
+                        <th>Owner</th>
                         <th>Roles</th>
                         <th>Actions</th>
                     </tr>                                        
                 </thead>
                 <tbody>
+                    <?php 
+                        if(!empty($groups)) {
+                            foreach($groups as $group) {
+                    ?>
                     <tr>                                                 
-                        <td><a href="/access/group?id=1"><h4>Lecturer</h4></a></td>    
+                        <td>
+                            <a href="<?php echo site_url("access/group?id={$group->groupid}")?>">
+                                <h4><?php echo $group->name?></h4>
+                            </a>
+                        </td>  
+                        <td>
+                            <a href="<?php echo site_url("{$group->usertype}/profile/{$group->userid}")?>">
+                                <?php echo "{$group->lname} {$group->fname}"?>
+                            </a>, 
+                        </td> 
                         <td>
                             <a href="/access/role?id=1">Upload result</a>, 
                             <a>Edit Profile</a>, 
@@ -33,65 +47,29 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="#">View Details</a>
+                                        <a href="<?php echo site_url("access/group?id={$group->groupid}")?>">
+                                            View Details
+                                        </a>
                                     </li>
                                     <li>
-                                        <a href="#">Edit Group</a>
+                                        <a href="<?php echo site_url("access/group/edit?id={$group->groupid}")?>">
+                                            Edit Group
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="<?php echo site_url("access/group/delete?id={$group->groupid}")?>">
+                                            Delete Group
+                                        </a>
                                     </li>
                                 </ul>
                             </div>
                         </td>                         
                     </tr>
+                    <?php }}else {?>
                     <tr>                                                 
-                        <td><a><h4>Lecturer</h4></a></td>    
-                        <td>
-                            <a href="/access/role?id=1">Upload result</a>, 
-                            <a>Edit Profile</a>, 
-                            <a>Messaging</a><br/>
-                            <a>View all roles</a>
-                        </td> 
-                        <td>
-                            <div class="btn-group">
-                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <i class="icon-cog"></i> 
-                                    <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a href="#">View Details</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Edit Group</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>                         
+                        <td colspan="3"><?php echo sprintf($this->lang->line('no_entries'), 'user groups')?></td>                         
                     </tr>
-                    <tr>                                                 
-                        <td><a><h4>Leturer</h4></a></td>    
-                        <td>
-                            <a href="/access/role?id=1">result</a>, 
-                            <a>Edit Profile</a>, 
-                            <a>Messaging</a><br/>
-                            <a>View all roles</a>
-                        </td> 
-                        <td>
-                            <div class="btn-group">
-                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <i class="icon-cog"></i> 
-                                    <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a href="#">View Details</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Edit Group</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>                         
-                    </tr>
+                    <?php }?>
                 </tbody>
             </table>
         </div>

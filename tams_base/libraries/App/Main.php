@@ -68,6 +68,14 @@ class Main {
      */
     
     private $user_type_id;
+        
+    /**
+     * Is user super admin.
+     * 
+     * @access private
+     * @var bool
+     */
+    private $super_admin = false;
     
     /**
      * School Id
@@ -280,8 +288,7 @@ class Main {
 
                     case DEFAULT_NOT_VALID:
                         break;
-                }                 
-                
+                }               
             }
         
         }
@@ -549,7 +556,8 @@ class Main {
             'email' => $params['email'],
             'first_name' => $params['fname'],
             'last_name' => $params['lname'],
-            'user_type' => $params['usertype'],
+            'user_type' => $params['usertype'],            
+            'super_admin' => true, // @todo Get this from login authenication.
             'cs' => sha1($params['email'] . '_' . $params['usertypeid'] . '_' . $params['usertype']),
             'school_id' => $this->school_id,
             'school_name' => $this->school_name,    
@@ -717,17 +725,26 @@ class Main {
      * @param string $msg_type, (string | array) $msg 
      * @return void
      **/
-    public function set_notification_message($msg_type, $msg) {  
-        $msg_bank = $this->notification[$msg_type];
+    public function set_notification_message($msg_type, $msg, $current = FALSE) {  
+        
+        // If notification is for current request
+        if(!$current) {
+            $msg_bank = $this->notification[$msg_type];
 
-        if(is_array($msg)) {
-            $this->notification[$msg_type] = $msg_bank = array_merge($msg_bank, $msg);            
+            if(is_array($msg)) {
+                $this->notification[$msg_type] = $msg_bank = array_merge($msg_bank, $msg);            
+            }else {
+                array_push($msg_bank, $msg);
+                $this->notification[$msg_type] = $msg_bank;
+            }
+
         }else {
-            array_push($msg_bank, $msg);
-            $this->notification[$msg_type] = $msg_bank;
+            if(!is_array($msg)) {
+                $msg_bank = [$msg];
+            }
         }
         
-        $this->CI->session->set_flashdata($msg_type, $msg_bank);
+        $this->CI->session->set_flashdata($msg_type, $msg_bank, $current);
     } // End func set_notification_message
 	
     /**
@@ -737,7 +754,7 @@ class Main {
      * @param $msg_type (string), $limit (int)
      * @return mixed (string | array)
      **/
-    public function get_notification_messages($msg_type, $limit=0) {  
+    public function get_notification_messages($msg_type, $limit = 0) {  
         $msg_bank = $this->CI->session->flashdata($msg_type);
         
         // Ensure $limit is a non-negative number.

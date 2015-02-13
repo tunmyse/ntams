@@ -30,9 +30,7 @@
                 <label for="group_desc" class="control-label">Group Description:</label>
                 <div class="controls">
                     <div class="input-xlarge">
-                        <textarea name="group_desc" class="" rows="5" placeholder="Enter description here">
-                            
-                        </textarea>
+                        <textarea name="group_desc" class="" rows="5" placeholder="Enter description here"></textarea>
                     </div>
                 </div>
             </div>

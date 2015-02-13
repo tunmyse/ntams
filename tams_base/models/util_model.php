@@ -357,31 +357,37 @@ class Util_model extends CI_Model {
         }        
         
         // Run query
-        $query = $this->db->get();
+        $ret = $this->db->get();
         
-        // Check if query is empty
-        if($query->num_rows() > 0) {
-            switch($r_set) {
-                case QUERY_ARRAY_ROW:
-                     $result_set = $query->row_array();
-                    break;
-                
-                case QUERY_ARRAY_RESULT:
-                    $result_set = $query->result_array();
-                    break;
-                
-                case QUERY_OBJECT_ROW:
-                    $result_set = $query->row();
-                    break;
-                    
-                default:
-                    $result_set = $query->result();
+        if($ret) {
+            // Check if query is empty
+            if($ret->num_rows() > 0) {
+                switch($r_set) {
+                    case QUERY_ARRAY_ROW:
+                         $result_set = $ret->row_array();
+                        break;
+
+                    case QUERY_ARRAY_RESULT:
+                        $result_set = $ret->result_array();
+                        break;
+
+                    case QUERY_OBJECT_ROW:
+                        $result_set = $ret->row();
+                        break;
+
+                    default:
+                        $result_set = $ret->result();
+                }
+
+                $resp = array('status' => DEFAULT_SUCCESS, 'rs' => $result_set);
+            }else {
+                $resp = array('status' => DEFAULT_EMPTY);
             }
-            
-            return array('status' => DEFAULT_SUCCESS, 'rs' => $result_set);
+        }else {
+            $resp = array('status' => DEFAULT_ERROR);
         }
         
-        return array('status' => DEFAULT_EMPTY);
+        return $resp;
     }
     
     

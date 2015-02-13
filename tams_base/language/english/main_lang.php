@@ -18,6 +18,7 @@ $lang['reset_link_expired'] = 'The reset link you specified has expired! <a href
 $lang['password_change_error'] = 'Oops! There was a problem %s your password. %s or contact your system administrator!';
 $lang['password_change_success'] = 'Your password has been successfully changed! <a href=\'%s\'>Click here</a> to go to the login screen.';
 $lang['password_mismatch'] = 'The passwords you specified do not match!';
+$lang['validation_error'] = 'One or more values you entered are not valid or are missing. Enter the correct data and try again!';
 $lang['no_entries'] = 'There are no %s to display!';
 $lang['create_dependency'] = 'You need to create at least one %s before you can create this entry! Create the dependency then refresh this page to proceed.';
 $lang['file_read_error'] = 'Error reading %s file!';
@@ -26,6 +27,9 @@ $lang['duplicate_value'] = 'The %s you specified should be unique, it already ex
 $lang['create_error'] = 'There was an error creating the entry you specified. Please try again or contact your system administrator!';
 $lang['update_error'] = 'There was an error updating the entry you specified. Please try again or contact your system administrator!';
 $lang['delete_error'] = 'There was an error deleting the entry you specified. Please try again or contact your system administrator!';
+$lang['create_success'] = '%s created successfully! %s';
+$lang['update_success'] = '%s updated successfully! %s';
+$lang['delete_success'] = '%s deleted successfully! %s';
 
 /* End of file main_lang.php */
 /* Location: ./base/language/english/main_lang.php */
