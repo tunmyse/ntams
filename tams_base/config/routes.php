@@ -84,7 +84,6 @@ $route['change_password'] = "application/change_password";
 // User route rules
 $route['(:any)/dashboard'] = "users/$1";
 
-
 /*
  *---------------------------------------------------------------
  * Set-up routes.
@@ -112,6 +111,8 @@ $route['programme/info/(:any)'] = "setup/programme/details/$1";
  * Access Control routes.
  *---------------------------------------------------------------
  */
+
+$route['(:any)/access_denied'] = "accesscontrol/access_denied/$1";
 $route['access'] = "access_control/group";
 $route['access/groups'] = "access_control/group";
 $route['access/group'] = "access_control/group/details";

@@ -49,10 +49,10 @@ class Access_Control_model extends CI_Model {
                     'g.groupid',
                     'g.name',
                     'g.owner',
-                    'u.lname',
-                    'u.fname',
+                    'CONCAT(u.lname, " ", u.fname) AS ownername',
                     'u.userid',
-                    'u.usertype'
+                    'u.usertype',
+                    FALSE
                 );
         
         $joins = array(
@@ -69,13 +69,45 @@ class Access_Control_model extends CI_Model {
     }// end func get_groups
     
     /**
+     *  Get groups belonging to a user
+     * 
+     * @access public
+     * @param int $group_id
+     * @return array
+     */
+    public function get_group_info($group_id) {
+        $table_name = 'groups g';
+        
+        $select = array(
+                    'g.groupid',
+                    'g.name',
+                    'g.owner',
+                    'g.description',
+                    'CONCAT(u.lname, " ", u.fname) AS ownername',
+                    'u.userid',
+                    'u.usertype',
+                    FALSE
+                );
+        
+        $joins = array(
+                    array('table' => 'users u', 'on' => 'u.userid = g.owner')                  
+                );
+        
+        $where = array(
+                    array('field' => "g.groupid", 'value' => $group_id)
+                );
+        
+        return $this->util_model->get_data($table_name, $select, $where, [], $joins, [], QUERY_OBJECT_ROW);
+    }// end func get_group_info
+    
+    /**
      *  Get associations for a certain group
      * 
      * @access public
-     * @param int $groupid
+     * @param int $group_id
      * @return array
      */
-    public function get_group_assoc($groupid) {
+    public function get_group_assoc($group_id) {
         $table_name = 'groups g';
         
         $select = array(
@@ -99,6 +131,7 @@ class Access_Control_model extends CI_Model {
         }
         return $this->get_data($table_name, $select, $where, array(), $joins);
     }// end func get_group_assoc
+    
     /**
      * Create a new user group
      * 

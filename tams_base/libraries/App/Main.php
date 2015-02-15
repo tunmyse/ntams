@@ -427,7 +427,7 @@ class Main {
     } // End func get_school_name
     
     /**
-     * Get current session information
+     * Get current session information for a school 
      *
      * @access public
      * @return void
@@ -444,12 +444,13 @@ class Main {
     |--------------------------------------------------------------------------
     */
     
-    /*
+    /**
      * Authenticate a user using a specified authentication protocol
      * 
      * @access public 
-     * @param $method (string), $credentials (array)
-     * @return mixed (bool | array)
+     * @param string $method The authentication provider
+     * @param array $credentials The authentication credentials
+     * @return mixed 
      */
     public function authenticate($method, $credentials) {
         
@@ -550,21 +551,21 @@ class Main {
             return false;
         }
         
-        $user_data = array(
-            'user_id' => $params['userid'],
-            'user_type_id' => $params['usertypeid'],
-            'email' => $params['email'],
-            'first_name' => $params['fname'],
-            'last_name' => $params['lname'],
-            'user_type' => $params['usertype'],            
-            'super_admin' => true, // @todo Get this from login authenication.
-            'cs' => sha1($params['email'] . '_' . $params['usertypeid'] . '_' . $params['usertype']),
-            'school_id' => $this->school_id,
-            'school_name' => $this->school_name,    
-            'school_shortname' => $this->school_shortname,
-            'unit_name' => $this->unit_name,
-            'domain_string' => $this->domain_string
-        );
+        $user_data = [
+                        'user_id' => $params['userid'],
+                        'user_type_id' => $params['usertypeid'],
+                        'email' => $params['email'],
+                        'first_name' => $params['fname'],
+                        'last_name' => $params['lname'],
+                        'user_type' => $params['usertype'],            
+                        'super_admin' => true, //TODO Get this from login authentication.
+                        'cs' => sha1($params['email'] . '_' . $params['usertypeid'] . '_' . $params['usertype']),
+                        'school_id' => $this->school_id,
+                        'school_name' => $this->school_name,    
+                        'school_shortname' => $this->school_shortname,
+                        'unit_name' => $this->unit_name,
+                        'domain_string' => $this->domain_string
+                    ];
         
         // Add user information to session
         $this->CI->session->set_userdata($user_data);
@@ -843,13 +844,14 @@ class Main {
      * User must have at least one permission specified by the controller for this resource.
      *
      * @access public
+     * @param array $mod_perms
      * @return array
      **/
     public function check_auth(Array $mod_perms) {
         // User is unauthorized by default
         $authd = false;
         
-        //TODO: Include extra compulsory parameter to check if a permission is compulsory for a resource.
+        //TODO Include extra compulsory parameter to check if a permission is compulsory for a resource.
         
 
         // Iterate through modules in parameter array.
@@ -901,7 +903,7 @@ class Main {
      * @return bool
      */
     public function has_perm($module, $perm) {
-        return isset($this->user_perms[$module]['perms'][$perm]);
+        return $this->super_admin || isset($this->user_perms[$module]['perms'][$perm]);
     }// End func has_perm
      
 } // End class Main

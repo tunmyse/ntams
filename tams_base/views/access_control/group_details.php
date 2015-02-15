@@ -1,6 +1,7 @@
 <div>
-    <h2>Group Name</h2>
-    <p>Group description</p>
+    <h2><?php echo $info->name?></h2>
+    <p><?php echo $info->description?></p>
+    <p><?php echo $info->ownername?></p>
     <div class="box box-color box-bordered">
         <div class="box-title">
             <h3>
@@ -30,77 +31,64 @@
                             </tr>                                        
                         </thead>
                         <tbody>
+                            <?php 
+                                if(!empty($assoc['roles'])) {
+                                    foreach($roles as $role) {
+                            ?>
                             <tr>                                                 
-                                <td><a href="/access/role?id=1"><h4>Administer Department</h4></a></td>
+                                <td>
+                                    <a href='<?php echo site_url("access/role?id={$role->id}")?>'>
+                                        <h4><?php echo $role->name?></h4>
+                                    </a>
+                                </td>
                                 <td>
                                     <div class="btn-group">
                                         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                            <i class="icon-cog"></i> 
-                                            <span class="caret"></span>
+                                            <i class="icon-cog"></i><span class="caret"></span>
                                         </a>
                                         <ul class="dropdown-menu">
                                             <li>
-                                                <a href="#">View Details</a>
+                                                <a href='<?php echo site_url("access/role?id={$role->id}")?>'>
+                                                    View Details
+                                                </a>
                                             </li>
                                             <li>
-                                                <a href="#">Remove</a>
+                                                <a href="#">Remove Role</a>
                                             </li>
                                         </ul>
                                     </div>
                                 </td>                         
                             </tr>
+                            <?php }}else {?>
                             <tr>                                                 
-                                <td><a href="/access/role?id=1"><h4>Administer Department</h4></a></td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                            <i class="icon-cog"></i> 
-                                            <span class="caret"></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="#">View Details</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">Remove</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>                         
+                                <td colspan="2"><?php echo sprintf($this->lang->line('no_entries'), 'roles')?></td>                         
                             </tr>
-                            <tr>                                                 
-                                <td><a href="/access/role?id=1"><h4>Administer Department</h4></a></td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                            <i class="icon-cog"></i> 
-                                            <span class="caret"></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="#">View Details</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">Remove</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>                         
-                            </tr>
+                            <?php }?>
                         </tbody>
                     </table>
                 </div>
+                
                 <div id="perms" class="tab-pane">
                     <table class="table table-striped table-hover dataTable dataTable-columnfilter">
                         <thead>
                             <tr>
-                                <th>Role</th>
+                                <th>Permission</th>
+                                <th>Module</th>
                                 <th>Actions</th>
                             </tr>                                        
                         </thead>
                         <tbody>
+                            <?php 
+                                if(!empty($assoc['perms'])) {
+                                    foreach($perms as $perm) {
+                            ?>
                             <tr>                                                 
-                                <td><a href="/access/permission?id=1"><h4>Permission Name</h4></a></td>
+                                <td>
+                                    <a href='<?php echo site_url("access/permission?id={$perm->id}")?>'>
+                                        <h4><?php echo $perm->name?></h4>
+                                    </a>
+                                </td>
+                                <th><?php echo $perm->module?></th>
                                 <td>
                                     <div class="btn-group">
                                         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -112,64 +100,42 @@
                                                 <a href="#">View Details</a>
                                             </li>
                                             <li>
-                                                <a href="#">Remove</a>
+                                                <a href="">Remove Permission</a>
                                             </li>
                                         </ul>
                                     </div>
                                 </td>                         
                             </tr>
+                            <?php }}else {?>
                             <tr>                                                 
-                                <td><a href="/access/permission?id=1"><h4>Permission Name</h4></a></td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                            <i class="icon-cog"></i> 
-                                            <span class="caret"></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="#">View Details</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">Remove</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>                         
+                                <td colspan="3"><?php echo sprintf($this->lang->line('no_entries'), 'permissions')?></td>                         
                             </tr>
-                            <tr>                                                 
-                                <td><a href="/access/permission?id=1"><h4>Permission Name</h4></a></td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                            <i class="icon-cog"></i> 
-                                            <span class="caret"></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="#">View Details</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">Remove</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>                         
-                            </tr>
+                            <?php }?>
                         </tbody>
                     </table>
                 </div>
+                
                 <div id="users" class="tab-pane">
                     <table class="table table-striped table-hover dataTable dataTable-columnfilter">
                         <thead>
                             <tr>
                                 <th>Users</th>
+                                <th>Type</th>
                                 <th>Actions</th>
                             </tr>                                        
                         </thead>
                         <tbody>
+                            <?php 
+                                if(!empty($assoc['users'])) {
+                                    foreach($users as $user) {
+                            ?>
                             <tr>                                                 
-                                <td><a href="/profile?id=1"><h4>User Name</h4></a></td>
+                                <td>
+                                    <a href='<?php echo site_url("{$user->usertype}/profile?id={$user->id}")?>'>
+                                        <h4><?php echo $user->name?></h4>
+                                    </a>
+                                </td>
+                                <td><?php echo ucfirst($user->usertype)?></td>
                                 <td>
                                     <div class="btn-group">
                                         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -178,53 +144,23 @@
                                         </a>
                                         <ul class="dropdown-menu">
                                             <li>
-                                                <a href="#">View Profile</a>
+                                                <a href='<?php echo site_url("{$user->usertype}/profile?id={$user->id}")?>'>
+                                                    View Profile
+                                                </a>
                                             </li>
                                             <li>
-                                                <a href="#">Remove</a>
+                                                <a href="#">Remove User</a>
                                             </li>
                                         </ul>
                                     </div>
                                 </td>                         
                             </tr>
+                            <?php }}else {?>
                             <tr>                                                 
-                                <td><a href="/profile?id=1"><h4>User Name</h4></a></td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                            <i class="icon-cog"></i> 
-                                            <span class="caret"></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="#">View Profile</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">Remove</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>                         
+                                <td colspan="3"><?php echo sprintf($this->lang->line('no_entries'), 'users')?></td>                         
                             </tr>
-                            <tr>                                                 
-                                <td><a href="/profile?id=1"><h4>User Name</h4></a></td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                            <i class="icon-cog"></i> 
-                                            <span class="caret"></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="#">View Profile</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">Remove</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>                         
-                            </tr>
+                            <?php }?>
+                            
                         </tbody>
                     </table>
                 </div>

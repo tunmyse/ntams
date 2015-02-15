@@ -11,6 +11,10 @@
 |
 */
 
+$config['config']          = TRUE;
+$config['queries']         = TRUE;
+$config['benchmarks']          = TRUE;
+$config['memory_usage']         = TRUE;
 
 
 /* End of file profiler.php */

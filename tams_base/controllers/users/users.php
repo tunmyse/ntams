@@ -202,8 +202,8 @@ abstract class Users extends CI_Controller {
         if($this->user_type == $url) {
             return true;
         }
-        /* TODO: Insert error into notification and retreive on redirect. Should remove the extra slash on the redict*/
-        redirect('error/error_ErrorNum');
+        /* TODO: Insert error into notification and retreive on redirect. Should remove the extra slash on the redirect*/
+        // redirect('error/error_ErrorNum');
     }// End of func reset_pasword
     
     /**

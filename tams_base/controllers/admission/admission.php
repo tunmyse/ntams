@@ -125,9 +125,12 @@ class Admission extends CI_Controller {
     } // End of func register
     
     /**
-     * @author Tunmise Akinsola <akinsolatunmise@gmail.com>
-     * Prospective registration page .	 
+     * 
+     * Prospective registration page.	 
+     * 
      * Removed and renamed to register from application
+     * 
+     * @author Tunmise Akinsola <akinsolatunmise@gmail.com>
      */
     public function application() {             
         

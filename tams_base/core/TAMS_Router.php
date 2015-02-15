@@ -54,46 +54,7 @@ class TAMS_Router extends CI_Router {
                 $segments[] = $this->fetch_method();
             }
         }
-
-        // Load the routes.php file.
-        if (defined('ENVIRONMENT') AND is_file(APPPATH.'config/'.ENVIRONMENT.'/routes.php')) {			
-
-            // Custom tams modularized implementation of routes
-            // Route definition for each module is placed in the custom route directory.
-            if(is_dir(APPPATH.ENVIRONMENT.'/custom/route')) {
-                $files = get_filenames(APPPATH.ENVIRONMENT.'/custom/route', TRUE);
-
-                foreach ($files as $file) {
-                    include($file);
-                }
-
-            }
-
-            include(APPPATH.'config/'.ENVIRONMENT.'/routes.php');
-
-        }elseif (is_file(APPPATH.'config/routes.php')) {
-            // Custom tams modularized implementation of routes
-            // Route definition for each module is placed in the custom route directory.
-            if(is_dir(APPPATH.'/custom/route')) {
-                $files = get_filenames(APPPATH.'/custom/route', TRUE);
-
-                foreach ($files as $file) {
-                    include($file);
-                }
-
-            }
-
-            include(APPPATH.'config/routes.php');
-
-        }
-
-        $this->routes = ( ! isset($route) OR ! is_array($route)) ? array() : $route;
-        unset($route);
-
-        // Set the default controller so we can display it in the event
-        // the URI doesn't correlated to a valid controller.
-        $this->default_controller = ( ! isset($this->routes['default_controller']) OR $this->routes['default_controller'] == '') ? FALSE : strtolower($this->routes['default_controller']);
-
+        
         // Were there any query string segments?  If so, we'll validate them and bail out since we're done.
         if (count($segments) > 0) {
             return $this->_validate_request($segments);
@@ -113,6 +74,63 @@ class TAMS_Router extends CI_Router {
         // Compile the segments into an array
         $this->uri->_explode_segments();
 
+        
+        /*
+        |---------------------------------------------------------------------------------------
+        | This block is moved down here in order to access the exploded url string values. 
+         * This allows loading only the route file for a particular module.
+        |---------------------------------------------------------------------------------------
+        */
+        
+        // The segments are still incorrectly index, so the first segment is accessed with 0.
+        $prefix = $this->uri->segment(0);
+        
+        // Load the routes.php file.
+        if (defined('ENVIRONMENT') AND is_file(APPPATH.'config/'.ENVIRONMENT.'/routes.php')) {			
+
+            // Custom tams modularized implementation of routes
+            // Route definition for each module is placed in the custom route directory.
+            $file = APPPATH."custom/route/{$prefix}.php";
+            if(realpath($file)) {
+                include($file);
+            }
+
+            include(APPPATH.'config/'.ENVIRONMENT.'/routes.php');
+
+        }elseif (is_file(APPPATH.'config/routes.php')) {
+            // Custom tams modularized implementation of routes
+            // Route definition for each module is placed in the custom route directory.
+            $file = APPPATH."custom/route/{$prefix}.php";
+            if(realpath($file)) {
+                include($file);
+            }
+//            
+//            if(is_dir(APPPATH.'custom/route')) {
+//                $files = get_filenames(APPPATH.'/custom/route', TRUE);
+//
+//                foreach ($files as $file) {
+//                    include($file);
+//                }
+//
+//            }
+
+            include(APPPATH.'config/routes.php');
+
+        }
+
+        $this->routes = ( ! isset($route) OR ! is_array($route)) ? array() : $route;
+        unset($route);
+
+        // Set the default controller so we can display it in the event
+        // the URI doesn't correlated to a valid controller.
+        $this->default_controller = ( ! isset($this->routes['default_controller']) OR $this->routes['default_controller'] == '') ? FALSE : strtolower($this->routes['default_controller']);
+
+        /*
+        |--------------------------------------------------------------------------
+        | End of block.
+        |--------------------------------------------------------------------------
+        */
+        
         // Parse any custom routing that may exist
         $this->_parse_routes();
 

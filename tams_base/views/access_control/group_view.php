@@ -3,7 +3,7 @@
         <div class="box-title">
             <h3>
                 <i class="glyphicon-group"></i>
-                 User Groups                                       
+                 User Groups                                   
             </h3>
             <a class="btn pull-right" data-toggle="modal" href="#create_group_modal">New User Group</a>
         </div>
@@ -13,7 +13,6 @@
                     <tr>
                         <th>Group Name</th>
                         <th>Owner</th>
-                        <th>Roles</th>
                         <th>Actions</th>
                     </tr>                                        
                 </thead>
@@ -29,15 +28,9 @@
                             </a>
                         </td>  
                         <td>
-                            <a href="<?php echo site_url("{$group->usertype}/profile/{$group->userid}")?>">
-                                <?php echo "{$group->lname} {$group->fname}"?>
+                            <a href="<?php echo site_url("{$group->usertype}/profile?id={$group->userid}")?>">
+                                <?php echo "{$group->ownername}"?>
                             </a>, 
-                        </td> 
-                        <td>
-                            <a href="/access/role?id=1">Upload result</a>, 
-                            <a>Edit Profile</a>, 
-                            <a>Messaging</a><br/>
-                            <a>View all roles</a>
                         </td> 
                         <td>
                             <div class="btn-group">

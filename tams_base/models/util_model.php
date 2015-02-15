@@ -37,7 +37,7 @@ class Util_model extends CI_Model {
      */
     public function create_request_entry($query_fields) {
         
-        // Check if user has a pending reset request
+        // Check if the user has an unused reset request
         $query = $this->db->get_where('reset_request', array('userid' => $query_fields['userid']));
         
         if($query->num_rows() > 0) {
@@ -303,9 +303,15 @@ class Util_model extends CI_Model {
         }
         
         // Prepare select fields 
+        $quote = true;
+        if(($pos = count($fields) - 1) > 0 && $fields[$pos] === false) {
+            unset($fields[$pos]);
+            $quote = false;
+        }
+        
         $select = implode(',', $fields);        
         
-        $this->db->select($select);
+        $this->db->select($select, $quote);
         $this->db->from($table);
         
         // Prepare join clause

@@ -217,6 +217,28 @@ class Group extends CI_Controller {
         $data = array();
         $page_name = 'group_details';
         
+        $group_id = $this->input->get('id'); // @todo show 404 if null or non-int value.
+        
+        $ret = $this->mdl->get_group_info($group_id);
+        switch($ret['status']) {
+            
+            case DEFAULT_SUCCESS:
+                $data['info'] = $ret['rs'];
+                break;
+
+            case DEFAULT_EMPTY:
+                // show 404 message.
+                break;
+
+            case DEFAULT_ERROR:
+                $msg = $this->lang->line('operation_error');
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $msg, true);
+                break;
+        }
+        
+        
+        $data['assoc'] = [];
+        
         $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
         
         $this->page->build($page_content, $this->folder_name, $page_name, 'User Groups');    
