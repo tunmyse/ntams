@@ -16,6 +16,14 @@
 class Role extends CI_Controller {
 
     /**
+     * School id
+     * 
+     * @access private
+     * @var int
+     */
+    private $school_id;
+    
+    /**
      * Folder Name
      * 
      * @access private
@@ -65,6 +73,7 @@ class Role extends CI_Controller {
         // Initialize class variables
         $this->user_id = $this->main->get('user_id');
         $this->user_type = $this->main->get('user_type');
+        $this->school_id = $this->main->item('school_id');
         
     }// End func __construct
     
@@ -74,6 +83,26 @@ class Role extends CI_Controller {
     public function index() {
         $data = array();
         $page_name = 'role_view';
+        
+        // Retrieve all roles.        
+        $result = $this->mdl->get_roles();
+        
+        switch($result['status']) {
+
+            case DEFAULT_SUCCESS:
+                $data['roles'] = $result['rs'];
+                break;
+
+            case DEFAULT_EMPTY:
+                $data['roles'] = [];
+                break;
+
+            case DEFAULT_ERROR:
+                $data['roles'] = [];
+                $msg = $this->lang->line('operation_error');
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $msg, true);
+                break;
+        }
         
         $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);        
         $this->page->build($page_content, $this->folder_name, $page_name, 'User Roles', false);       

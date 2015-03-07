@@ -133,7 +133,7 @@ class Page {
             'topmenu_content' => $menu_content['top'],
             'dashboard_url' => site_url('/'.$this->user_type.'/dashboard'),
             'logout_url' => site_url('/logout'),
-            'message_count' => 2,
+            'message_count' => 2,//TODO get actually message count
             'display_name' => $this->user_name,
             'display_img' => base_url('img/demo/user-avatar.jpg')
         );
@@ -170,8 +170,8 @@ class Page {
             'body_content' => $body_buffer
         );
 
-        $page_content = $this->CI->load->view(TMPLPATH.'page', $page_parts, true);
-        echo $page_content;
+        $this->CI->load->view(TMPLPATH.'page', $page_parts);
+        
     } // End func build
     
     /*

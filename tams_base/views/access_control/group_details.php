@@ -1,7 +1,14 @@
 <div>
     <h2><?php echo $info->name?></h2>
     <p><?php echo $info->description?></p>
-    <p><?php echo $info->ownername?></p>
+    <p>
+        <?php echo $info->ownername?> &nbsp;&nbsp; 
+        <a  data-toggle="modal" href="#change_owner_modal"><i class="icon-pencil"></i></a>
+        <span class="pull-right">
+            <a class="btn btn-green" href="<?php echo site_url("access/group/edit?id={$info->groupid}")?>">Edit Group</a>
+        </span>
+    </p>
+    
     <div class="box box-color box-bordered">
         <div class="box-title">
             <h3>
@@ -28,12 +35,18 @@
                             <tr>
                                 <th>Role</th>
                                 <th>Actions</th>
-                            </tr>                                        
+                            </tr>      
+                            <tr class="thefilter">
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody>
                             <?php 
-                                if(!empty($assoc['roles'])) {
-                                    foreach($roles as $role) {
+                                foreach($assoc as $key => $role) : 
+                                    if($role->type !== 'role') :
+                                        break;
+                                    endif;
                             ?>
                             <tr>                                                 
                                 <td>
@@ -59,11 +72,10 @@
                                     </div>
                                 </td>                         
                             </tr>
-                            <?php }}else {?>
-                            <tr>                                                 
-                                <td colspan="2"><?php echo sprintf($this->lang->line('no_entries'), 'roles')?></td>                         
-                            </tr>
-                            <?php }?>
+                            <?php 
+                                unset($assoc[$key]); 
+                                endforeach;
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -71,6 +83,11 @@
                 <div id="perms" class="tab-pane">
                     <table class="table table-striped table-hover dataTable dataTable-columnfilter">
                         <thead>
+                            <tr class="thefilter">
+                                <th>Permission</th>
+                                <th>Module</th>
+                                <th>Actions</th>
+                            </tr> 
                             <tr>
                                 <th>Permission</th>
                                 <th>Module</th>
@@ -79,8 +96,10 @@
                         </thead>
                         <tbody>
                             <?php 
-                                if(!empty($assoc['perms'])) {
-                                    foreach($perms as $perm) {
+                                foreach($assoc as $key => $perm) : 
+                                    if($perm->type !== 'perm') :
+                                        break;
+                                    endif;
                             ?>
                             <tr>                                                 
                                 <td>
@@ -88,7 +107,11 @@
                                         <h4><?php echo $perm->name?></h4>
                                     </a>
                                 </td>
-                                <th><?php echo $perm->module?></th>
+                                <td>
+                                    <a href='<?php echo site_url("module-manager/module?id={$perm->exid}")?>'>
+                                        <?php echo $perm->exname?>
+                                    </a>
+                                </td>
                                 <td>
                                     <div class="btn-group">
                                         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -106,11 +129,10 @@
                                     </div>
                                 </td>                         
                             </tr>
-                            <?php }}else {?>
-                            <tr>                                                 
-                                <td colspan="3"><?php echo sprintf($this->lang->line('no_entries'), 'permissions')?></td>                         
-                            </tr>
-                            <?php }?>
+                            <?php 
+                                unset($assoc[$key]); 
+                                endforeach;
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -122,20 +144,22 @@
                                 <th>Users</th>
                                 <th>Type</th>
                                 <th>Actions</th>
-                            </tr>                                        
+                            </tr> 
+                            <tr class="thefilter">
+                                <th>Users</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                            </tr> 
                         </thead>
                         <tbody>
-                            <?php 
-                                if(!empty($assoc['users'])) {
-                                    foreach($users as $user) {
-                            ?>
+                            <?php foreach($assoc as $key => $user) : ?>
                             <tr>                                                 
                                 <td>
-                                    <a href='<?php echo site_url("{$user->usertype}/profile?id={$user->id}")?>'>
+                                    <a href='<?php echo site_url("{$user->type}/profile?id={$user->id}")?>'>
                                         <h4><?php echo $user->name?></h4>
                                     </a>
                                 </td>
-                                <td><?php echo ucfirst($user->usertype)?></td>
+                                <td><?php echo ucfirst($user->type)?></td>
                                 <td>
                                     <div class="btn-group">
                                         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -144,7 +168,7 @@
                                         </a>
                                         <ul class="dropdown-menu">
                                             <li>
-                                                <a href='<?php echo site_url("{$user->usertype}/profile?id={$user->id}")?>'>
+                                                <a href='<?php echo site_url("{$user->type}/profile?id={$user->id}")?>'>
                                                     View Profile
                                                 </a>
                                             </li>
@@ -155,11 +179,7 @@
                                     </div>
                                 </td>                         
                             </tr>
-                            <?php }}else {?>
-                            <tr>                                                 
-                                <td colspan="3"><?php echo sprintf($this->lang->line('no_entries'), 'users')?></td>                         
-                            </tr>
-                            <?php }?>
+                            <?php endforeach; ?>
                             
                         </tbody>
                     </table>
@@ -168,3 +188,21 @@
         </div>
     </div>                                
 </div>           
+<script type="text/javascript">
+    //Customise 'no data' message.
+   $(function() {
+       
+        var table = $('#DataTables_Table_0').dataTable();
+        table.fnSettings().oLanguage.sEmptyTable = "<?php echo sprintf($this->lang->line('no_entries'), 'roles')?>";
+        table.fnDraw();
+        
+        var table = $('#DataTables_Table_1').dataTable();
+        table.fnSettings().oLanguage.sEmptyTable = "<?php echo sprintf($this->lang->line('no_entries'), 'permissions')?>";
+        table.fnDraw();
+        
+        var table = $('#DataTables_Table_2').dataTable();
+        table.fnSettings().oLanguage.sEmptyTable = "<?php echo sprintf($this->lang->line('no_entries'), 'users')?>";
+        table.fnDraw();
+   });
+   
+</script>

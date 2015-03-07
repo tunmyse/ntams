@@ -50,7 +50,7 @@ $route['default_controller'] = "application";
 $route['tams_installation'] = "installation";
 $route['tams_installation/complete'] = "application/complete_installation";
 $route['tams_installation/(:any)'] = "installation/$1";
-
+$route['tams_installation_require'] = false;
 
 /*
  *---------------------------------------------------------------

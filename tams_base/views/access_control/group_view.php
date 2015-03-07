@@ -3,7 +3,7 @@
         <div class="box-title">
             <h3>
                 <i class="glyphicon-group"></i>
-                 User Groups                                   
+                 User Groups   <?php echo $this->benchmark->elapsed_time();?>                                    
             </h3>
             <a class="btn pull-right" data-toggle="modal" href="#create_group_modal">New User Group</a>
         </div>
@@ -17,10 +17,7 @@
                     </tr>                                        
                 </thead>
                 <tbody>
-                    <?php 
-                        if(!empty($groups)) {
-                            foreach($groups as $group) {
-                    ?>
+                    <?php foreach($groups as $group) : ?>
                     <tr>                                                 
                         <td>
                             <a href="<?php echo site_url("access/group?id={$group->groupid}")?>">
@@ -30,7 +27,7 @@
                         <td>
                             <a href="<?php echo site_url("{$group->usertype}/profile?id={$group->userid}")?>">
                                 <?php echo "{$group->ownername}"?>
-                            </a>, 
+                            </a>
                         </td> 
                         <td>
                             <div class="btn-group">
@@ -58,13 +55,18 @@
                             </div>
                         </td>                         
                     </tr>
-                    <?php }}else {?>
-                    <tr>                                                 
-                        <td colspan="3"><?php echo sprintf($this->lang->line('no_entries'), 'user groups')?></td>                         
-                    </tr>
-                    <?php }?>
+                    <?php endforeach;?>
                 </tbody>
             </table>
         </div>
     </div>                                
 </div>           
+<script type="text/javascript">
+    //Customise 'no data' message.
+    $(function() {       
+        var table = $('#DataTables_Table_0').dataTable();
+        table.fnSettings().oLanguage.sEmptyTable = "<?php echo sprintf($this->lang->line('no_entries'), 'groups')?>";
+        table.fnDraw();
+    });
+   
+</script>

@@ -103,7 +103,7 @@ class Group extends CI_Controller {
     }// End func __construct
     
     /**
-     * Index page for the college module.	 
+     * Index page for the group view.	 
      */
     public function index() {
         $data = array();
@@ -236,8 +236,23 @@ class Group extends CI_Controller {
                 break;
         }
         
-        
-        $data['assoc'] = [];
+        $ret = $this->mdl->get_group_assoc($group_id);
+        switch($ret['status']) {
+            
+            case DEFAULT_SUCCESS:
+                $data['assoc'] = $ret['rs'];
+                break;
+
+            case DEFAULT_EMPTY:
+                $data['assoc'] = [];
+                break;
+
+            case DEFAULT_ERROR:
+                $data['assoc'] = [];
+                $msg = $this->lang->line('operation_error');
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $msg, true);
+                break;
+        }
         
         $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
         

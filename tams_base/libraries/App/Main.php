@@ -335,18 +335,19 @@ class Main {
                 $this->school_name = $rs_obj->schoolname;
                 $this->school_shortname = $rs_obj->shortname;
                 $this->unit_name = $rs_obj->unitname;
-                return DEFAULT_VALID;
+                $resp = DEFAULT_VALID;
                 break;
 
             case DEFAULT_EMPTY:
-                return DEFAULT_NOT_EXIST;
+                $resp = DEFAULT_NOT_EXIST;
                 break;
 
             case DEFAULT_NOT_VALID:
-                return DEFAULT_NOT_VALID;
+                $resp = DEFAULT_NOT_VALID;
                 break;
         }         
         
+        return $resp;
     }// End func check_domain
     
     /**
