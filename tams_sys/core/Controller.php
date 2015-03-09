@@ -30,7 +30,62 @@
 class CI_Controller {
 
 	private static $instance;
-
+        
+        /**
+         *  @var Main TAMS library class 
+         */ 
+        public $main;
+        
+        /**
+         *  @var CI_Input CI Input class
+         */ 
+        public $input;
+        
+        /**
+         *  @var CI_Loader CI Loader class
+         */ 
+        public $load;
+        
+        /**
+         *  @var CI_URI CI URI class
+         */ 
+        public $uri;
+        
+        /**
+         *  @var CI_Benchmark CI Benchmark class
+         */ 
+        public $benchmark;
+        
+        /**
+         *  @var TAMS_Config TAMS Config override class
+         */ 
+        public $config;        
+        
+        /**
+         *  @var TAMS_Form_validation TAMS Form Validation override class
+         */ 
+        public $form_validation;
+        
+        /**
+         *  @var TAMS_Session TAMS Session override class
+         */ 
+        public $session;
+        
+        /**
+         *  @var Util_model TAMS Utility Model class
+         */ 
+        public $util_model;
+        
+        /**
+         *  @var CI_Lang CI Language class
+         */ 
+        public $lang;
+        
+        /**
+         *  @var TAMS_Hooks TAMS Hook override class 
+         */ 
+        public $hooks;
+        
 	/**
 	 * Constructor
 	 */

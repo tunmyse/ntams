@@ -30,7 +30,7 @@ $route['admission/(:any)'] = "admission/$1";
 $route['admission/(:any)/(:any)'] = "admission/$1/$2";
 
 // Exam routes
-$route['exam/(:any)/create'] = "admission/exam/create_$1";
-$route['exam/(:any)/update'] = "admission/exam/update_$1";
-$route['exam/(:any)/delete'] = "admission/exam/delete_$1";
+$route['admission/exam/(:any)/create'] = "admission/exam/create_$1";
+$route['admission/exam/(:any)/update'] = "admission/exam/update_$1";
+$route['admission/exam/(:any)/delete'] = "admission/exam/delete_$1";
 

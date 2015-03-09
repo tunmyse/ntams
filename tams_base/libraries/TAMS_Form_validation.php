@@ -33,6 +33,14 @@ class TAMS_Form_validation extends CI_Form_validation {
         // If not, we look to see if they were assigned via a config file
         if (count($this->_field_data) == 0) {
             
+            /**
+            |-------------------------------------------------------------------------------------
+            | Custom tams modularized implementation of form validation rules. 
+            | Form validation rules for each module is placed in the custom config directory.
+            | START OF IMPLEMENTATION
+            |-------------------------------------------------------------------------------------
+            */
+            
             // Get url prefix for current executing module.
             $prefix = $this->CI->main->item('segment');
             
@@ -49,6 +57,14 @@ class TAMS_Form_validation extends CI_Form_validation {
                 // This is NOT advisable, but expedient!
                 unset($this->CI->config->config[$config_path]);
             }
+            
+            /**
+            |-------------------------------------------------------------------------------------
+            | Custom tams modularized implementation of form validation rules. 
+            | Form validation rules for each module is placed in the custom config directory.
+            | END OF IMPLEMENTATION
+            |-------------------------------------------------------------------------------------
+            */
             
             // No validation rules?  We're done...
             if (count($this->_config_rules) == 0) {

@@ -57,6 +57,15 @@ class Group extends CI_Controller {
     private $folder_name = 'access_control';
     
     /**
+     * Model Name
+     * 
+     * @access private
+     * @var Access_Control_model
+     */
+    
+    public $mdl;
+    
+    /**
      * Module Name
      * 
      * @access private
@@ -99,7 +108,7 @@ class Group extends CI_Controller {
         $this->user_type = $this->main->item('user_type');
         $this->super_admin = $this->main->item('super_admin');
         $this->school_id = $this->main->item('school_id');
-        
+
     }// End func __construct
     
     /**
@@ -210,10 +219,12 @@ class Group extends CI_Controller {
         redirect($dest);
     }// End of func create
     
+    
     /**
      * User group information.	 
      */
     public function details() {
+
         $data = array();
         $page_name = 'group_details';
         

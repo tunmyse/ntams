@@ -183,7 +183,7 @@ class Main {
      * Codeigniter instance
      * 
      * @access private
-     * @var object
+     * @var CI_Controller
      */
     
     private $CI;
@@ -724,7 +724,9 @@ class Main {
      * Set notification messages
      *
      * @access public
-     * @param string $msg_type, (string | array) $msg 
+     * @param string $msg_type
+     * @param mixed $msg 
+     * @param bool $current Makes a notification available in the present notification build and not in the next request.
      * @return void
      **/
     public function set_notification_message($msg_type, $msg, $current = FALSE) {  

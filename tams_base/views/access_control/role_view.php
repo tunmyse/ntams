@@ -22,7 +22,7 @@
                     <?php foreach($roles as $role) : ?>
                     <tr>                                                 
                         <td>
-                            <a href="<?php echo site_url("access/role?id{$role->id}")?>">
+                            <a href="<?php echo site_url("access/role?id={$role->roleid}")?>">
                                 <h4><?php echo $role->name?></h4>
                             </a>
                         </td> 
@@ -34,7 +34,7 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="<?php echo site_url("access/role?id={$role->id}")?>">View Details</a>
+                                        <a href="<?php echo site_url("access/role?id={$role->roleid}")?>">View Details</a>
                                     </li>
                                     <li>
                                         <a href="#">Edit Role</a>

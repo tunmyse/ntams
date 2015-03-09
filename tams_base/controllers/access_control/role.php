@@ -202,52 +202,7 @@ class Role extends CI_Controller {
         $page_content .= $this->load->view($this->folder_name.'/partials/create_role', $data, true);
         
         $this->page->build($page_content, $this->folder_name, $page_name, 'User Roles');    
-    }// End of func create
-    
-    /**
-     * College information.	 
-     */
-    public function info($college_name) {
-        $data = array();
-        $page_name = 'college_info';
-        
-        // Format college name from url
-        // Format department name from url
-        $link_paths = explode('-', $college_name);
-        $colid = (int)$link_paths[count($link_paths)-1];
-        
-        $params = array(
-            'colid' => $colid
-        );
-        // Retrieve all department students 
-        $data['info'] = $this->mdl->get_college($params);
-        
-        if($data['info'] == DEFAULT_NOT_EXIST) {
-            redirect('error/errorNum');
-        }
-        
-        $data['college_name'] = $this->main->get_college_name();
-        
-        // Retrieve all colleges 
-        $data['colleges'] = $this->mdl->get_college();
-        
-        // Retrieve all colleges 
-        $data['students'] = $this->mdl->get_college_students($params);
-        
-        // Retrieve all colleges 
-        $data['staffs'] = $this->mdl->get_college_staffs($params);
-        
-        // Retrieve all colleges 
-        $data['depts'] = $this->mdl->get_college_depts($params);
-        
-        
-        $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
-        $page_content .= $this->load->view($this->folder_name.'/partials/edit_college', $data['college_name'], true);
-        $page_content .= $this->load->view('department/partials/create_dept', $data['college_name'], true);
-        
-        $this->page->build($page_content, $this->folder_name, $page_name, ucfirst($data['college_name']));    
-    }// End of func info
-    
+    }// End of func create 
 }
 
 /* End of file role.php */

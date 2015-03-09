@@ -189,7 +189,11 @@ class Util_model extends CI_Model {
      * Retrieve all user's permission.
      *
      * @access public
+<<<<<<< HEAD
      * @param int $user_id The user to retrieve permission for.
+=======
+     * @param int $user_id The user to retrieve permissions for.
+>>>>>>> master
      * @return array
      **/
     public function get_user_perms($user_id) {
@@ -302,11 +306,19 @@ class Util_model extends CI_Model {
      * @param array $fields Fields to include in the result set
      * @param array $where Where clause to include in the query
      * @param array $order Order by clause to in the query
+<<<<<<< HEAD
      * @param array $join Join clause to include in the in query
      * @param array group Group by clause to include in the query
      * @param int $r_set The type of the result returned
      * @param array $limit The number of rows to include in the result set (Two values indicate offset and amount)
      * @return array
+=======
+     * @param array $join Join clause to include in the query
+     * @param array $group Group by clause to include in the query
+     * @param int $r_set The type of the result returned
+     * @param array $limit The number of rows to include in the result set (Two values indicate offset and amount)
+     * @return array Status of the query, and the resultset, only if query was successful
+>>>>>>> master
      */
     public function get_data(
             $table, 
@@ -428,7 +440,11 @@ class Util_model extends CI_Model {
      * @param string $query Query to be executed
      * @param array $data Data to be bound with the query
      * @param int $r_set The type of the result returned
+<<<<<<< HEAD
      * @return array
+=======
+     * @return array Status of the query, and the resultset, only if query was successful
+>>>>>>> master
      */
     public function get_query_data($query, $data = array(), $r_set = QUERY_OBJECT_RESULT) {
         

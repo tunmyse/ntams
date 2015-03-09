@@ -175,7 +175,6 @@ class Access_Control_model extends CI_Model {
         return $resp;
     } //End of func create_group
     
-    
     /*
     |--------------------------------------------------------------------------
     | Role related functions
@@ -197,6 +196,64 @@ class Access_Control_model extends CI_Model {
         
         return $this->util_model->get_data($table_name, $select, $where, [], []);
     }// end func get_groups
+    
+    /**
+     *  Get role's information
+     * 
+     * @access public
+     * @param int $role_id
+     * @return array
+     */
+    public function get_role_info($role_id) {
+        $table_name = 'roles r';
+        
+        $select = [
+                    'r.roleid',
+                    'r.name',
+                    'r.description'
+                ];
+        
+        $where = [
+                    ['field' => "r.roleid", 'value' => $role_id]
+                ];
+        
+        return $this->util_model->get_data($table_name, $select, $where, [], [], [], QUERY_OBJECT_ROW);
+    }// end func get_role_info
+    
+    /**
+     *  Get associations for a certain role
+     * 
+     * @access public
+     * @param int $role_id The role to retrieve associations about
+     * @return array
+     */
+    public function get_role_assoc($role_id) {
+        
+        $query_data = [$role_id, $role_id, $role_id];
+        // TODO check if result is unique without using DISTINCT
+        $query = "SELECT `g`.`groupid` as `id`, `g`.`name`, 'group' as `type`, `g`.`description`, 0 as `exid`, 'NULL' as `exname` "
+                . "FROM ".$this->db->protect_identifiers('groups', TRUE)." g "
+                . "JOIN ".$this->db->protect_identifiers('access_assigns', TRUE)." a ON `a`.`parentid` = `g`.`groupid` "
+                . "AND `a`.`parenttype` = 'group' "
+                . "WHERE `a`.`childtype` = 'role' AND `a`.`childid` = ? "
+                . "LIMIT 50 "
+                . "UNION "
+                . "SELECT DISTINCT(`p`.`permid`), `p`.`name`, 'perm' as `type`, `p`.`description`, `m`.`moduleid`, `m`.`dispname` "
+                . "FROM ".$this->db->protect_identifiers('permissions', TRUE)." p "
+                . "JOIN ".$this->db->protect_identifiers('modules', TRUE)." m ON `m`.`moduleid` = `p`.`moduleid` "
+                . "JOIN ".$this->db->protect_identifiers('access_assigns', TRUE)." a ON `a`.`childid` = `p`.`permid` "
+                . "AND `a`.`childtype` = 'perm' "
+                . "WHERE `a`.`parenttype` = 'role' AND `a`.`parentid` = ? "
+                . "LIMIT 50 "
+                . "UNION "
+                . "SELECT `u`.`userid`, CONCAT(u.lname,' ', u.fname), `u`.`usertype`, 'NULL', 0, 'NULL' "
+                . "FROM ".$this->db->protect_identifiers('users', TRUE)." u "
+                . "JOIN ".$this->db->protect_identifiers('role_users', TRUE)." r ON `r`.`userid` = `u`.`userid` "
+                . "WHERE `r`.`roleid` = ? "
+                . "LIMIT 50";
+             
+        return $this->util_model->get_query_data($query, $query_data);
+    }// end func get_role_assoc
     
     /**
      * Create a new user role
