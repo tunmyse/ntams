@@ -68,6 +68,14 @@ class Main {
      */
     
     private $user_type_id;
+        
+    /**
+     * Is user super admin.
+     * 
+     * @access private
+     * @var bool
+     */
+    private $super_admin = false;
     
     /**
      * School Id
@@ -175,7 +183,7 @@ class Main {
      * Codeigniter instance
      * 
      * @access private
-     * @var object
+     * @var CI_Controller
      */
     
     private $CI;
@@ -280,8 +288,7 @@ class Main {
 
                     case DEFAULT_NOT_VALID:
                         break;
-                }                 
-                
+                }               
             }
         
         }
@@ -328,18 +335,19 @@ class Main {
                 $this->school_name = $rs_obj->schoolname;
                 $this->school_shortname = $rs_obj->shortname;
                 $this->unit_name = $rs_obj->unitname;
-                return DEFAULT_VALID;
+                $resp = DEFAULT_VALID;
                 break;
 
             case DEFAULT_EMPTY:
-                return DEFAULT_NOT_EXIST;
+                $resp = DEFAULT_NOT_EXIST;
                 break;
 
             case DEFAULT_NOT_VALID:
-                return DEFAULT_NOT_VALID;
+                $resp = DEFAULT_NOT_VALID;
                 break;
         }         
         
+        return $resp;
     }// End func check_domain
     
     /**
@@ -420,7 +428,7 @@ class Main {
     } // End func get_school_name
     
     /**
-     * Get current session information
+     * Get current session information for a school 
      *
      * @access public
      * @return void
@@ -437,12 +445,13 @@ class Main {
     |--------------------------------------------------------------------------
     */
     
-    /*
+    /**
      * Authenticate a user using a specified authentication protocol
      * 
      * @access public 
-     * @param $method (string), $credentials (array)
-     * @return mixed (bool | array)
+     * @param string $method The authentication provider
+     * @param array $credentials The authentication credentials
+     * @return mixed 
      */
     public function authenticate($method, $credentials) {
         
@@ -543,20 +552,21 @@ class Main {
             return false;
         }
         
-        $user_data = array(
-            'user_id' => $params['userid'],
-            'user_type_id' => $params['usertypeid'],
-            'email' => $params['email'],
-            'first_name' => $params['fname'],
-            'last_name' => $params['lname'],
-            'user_type' => $params['usertype'],
-            'cs' => sha1($params['email'] . '_' . $params['usertypeid'] . '_' . $params['usertype']),
-            'school_id' => $this->school_id,
-            'school_name' => $this->school_name,    
-            'school_shortname' => $this->school_shortname,
-            'unit_name' => $this->unit_name,
-            'domain_string' => $this->domain_string
-        );
+        $user_data = [
+                        'user_id' => $params['userid'],
+                        'user_type_id' => $params['usertypeid'],
+                        'email' => $params['email'],
+                        'first_name' => $params['fname'],
+                        'last_name' => $params['lname'],
+                        'user_type' => $params['usertype'],            
+                        'super_admin' => true, //TODO Get this from login authentication.
+                        'cs' => sha1($params['email'] . '_' . $params['usertypeid'] . '_' . $params['usertype']),
+                        'school_id' => $this->school_id,
+                        'school_name' => $this->school_name,    
+                        'school_shortname' => $this->school_shortname,
+                        'unit_name' => $this->unit_name,
+                        'domain_string' => $this->domain_string
+                    ];
         
         // Add user information to session
         $this->CI->session->set_userdata($user_data);
@@ -714,20 +724,31 @@ class Main {
      * Set notification messages
      *
      * @access public
-     * @param string $msg_type, (string | array) $msg 
+     * @param string $msg_type
+     * @param mixed $msg 
+     * @param bool $current Makes a notification available in the present notification build and not in the next request.
      * @return void
      **/
-    public function set_notification_message($msg_type, $msg) {  
-        $msg_bank = $this->notification[$msg_type];
+    public function set_notification_message($msg_type, $msg, $current = FALSE) {  
+        
+        // If notification is for current request
+        if(!$current) {
+            $msg_bank = $this->notification[$msg_type];
 
-        if(is_array($msg)) {
-            $this->notification[$msg_type] = $msg_bank = array_merge($msg_bank, $msg);            
+            if(is_array($msg)) {
+                $this->notification[$msg_type] = $msg_bank = array_merge($msg_bank, $msg);            
+            }else {
+                array_push($msg_bank, $msg);
+                $this->notification[$msg_type] = $msg_bank;
+            }
+
         }else {
-            array_push($msg_bank, $msg);
-            $this->notification[$msg_type] = $msg_bank;
+            if(!is_array($msg)) {
+                $msg_bank = [$msg];
+            }
         }
         
-        $this->CI->session->set_flashdata($msg_type, $msg_bank);
+        $this->CI->session->set->set_flashdata($msg_type, $msg_bank, $current);
     } // End func set_notification_message
 	
     /**
@@ -737,7 +758,7 @@ class Main {
      * @param $msg_type (string), $limit (int)
      * @return mixed (string | array)
      **/
-    public function get_notification_messages($msg_type, $limit=0) {  
+    public function get_notification_messages($msg_type, $limit = 0) {  
         $msg_bank = $this->CI->session->flashdata($msg_type);
         
         // Ensure $limit is a non-negative number.
@@ -826,13 +847,14 @@ class Main {
      * User must have at least one permission specified by the controller for this resource.
      *
      * @access public
+     * @param array $mod_perms
      * @return array
      **/
     public function check_auth(Array $mod_perms) {
         // User is unauthorized by default
         $authd = false;
         
-        //TODO: Include extra compulsory parameter to check if a permission is compulsory for a resource.
+        //TODO Include extra compulsory parameter to check if a permission is compulsory for a resource.
         
 
         // Iterate through modules in parameter array.
@@ -884,7 +906,7 @@ class Main {
      * @return bool
      */
     public function has_perm($module, $perm) {
-        return isset($this->user_perms[$module]['perms'][$perm]);
+        return $this->super_admin || isset($this->user_perms[$module]['perms'][$perm]);
     }// End func has_perm
      
 } // End class Main

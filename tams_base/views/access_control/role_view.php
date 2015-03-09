@@ -9,20 +9,22 @@
         <div class="box-content nopadding"> 
             <table class="table table-striped table-hover dataTable dataTable-columnfilter">
                 <thead>
+                    <tr class="thefilter">
+                        <th>Role Name</th>
+                        <th>Actions</th>
+                    </tr>   
                     <tr>
                         <th>Role Name</th>
-                        <th>Permissions</th>
                         <th>Actions</th>
                     </tr>                                        
                 </thead>
                 <tbody>
+                    <?php foreach($roles as $role) : ?>
                     <tr>                                                 
-                        <td><a><h4>Lecturer</h4></a></td>    
                         <td>
-                            <a href="/access/permission?id=1">Upload result</a>, 
-                            <a>Edit Profile</a>, 
-                            <a>Messaging</a><br/>
-                            <a>View all roles</a>
+                            <a href="<?php echo site_url("access/role?id={$role->roleid}")?>">
+                                <h4><?php echo $role->name?></h4>
+                            </a>
                         </td> 
                         <td>
                             <div class="btn-group">
@@ -32,7 +34,7 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="#">View Details</a>
+                                        <a href="<?php echo site_url("access/role?id={$role->roleid}")?>">View Details</a>
                                     </li>
                                     <li>
                                         <a href="#">Edit Role</a>
@@ -41,58 +43,17 @@
                             </div>
                         </td>                         
                     </tr>
-                    <tr>                                                 
-                        <td><a><h4>Lecturer</h4></a></td>    
-                        <td>
-                            <a href="/access/role?id=1">Upload result</a>, 
-                            <a>Edit Profile</a>, 
-                            <a>Messaging</a><br/>
-                            <a>View all roles</a>
-                        </td> 
-                        <td>
-                            <div class="btn-group">
-                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <i class="icon-cog"></i> 
-                                    <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a href="#">View Details</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Edit Role</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>                         
-                    </tr>
-                    <tr>                                                 
-                        <td><a><h4>Leturer</h4></a></td>    
-                        <td>
-                            <a href="/access/role?id=1">result</a>, 
-                            <a>Edit Profile</a>, 
-                            <a>Messaging</a><br/>
-                            <a>View all roles</a>
-                        </td> 
-                        <td>
-                            <div class="btn-group">
-                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <i class="icon-cog"></i> 
-                                    <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a href="#">View Details</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">Edit Role</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>                         
-                    </tr>
+                    <?php endforeach;?>
                 </tbody>
             </table>
         </div>
     </div>                                
 </div>           
+<script type="text/javascript">
+    //Customise 'no data' message.
+   $(function() {var table = $('#DataTables_Table_0').dataTable();
+        table.fnSettings().oLanguage.sEmptyTable = "<?php echo sprintf($this->lang->line('no_entries'), 'roles')?>";
+        table.fnDraw();
+   });
+   
+</script>

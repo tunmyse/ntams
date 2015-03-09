@@ -68,7 +68,7 @@ class Application extends CI_Controller {
         
         // Logged in, NO neeed to log in anymore, redirect.
         if($this->main->logged_in()) {
-            redirect("$this->user_type/dashboard");
+            //redirect("$this->user_type/dashboard?".urlencode(implode(',', $this->input->get)));
         }
         // Set school name
         $school_names = $this->main->get_school_name();

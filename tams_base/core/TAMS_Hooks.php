@@ -17,13 +17,14 @@
 class TAMS_Hooks extends CI_Hooks {
 
     /**
-     * Raise a custom hook
+     * Mark a point as a hook
      *
      * @access	private
-     * @param	$string $module, array	the hook details
+     * @param	string $hook_name The name of the hook
+     * @param   array $data Data to be passed to the hook actions
      * @return	array
      */
-    private function raise_hook($module, $data) {
+    public function mark_hook($hook_name, $data) {
         
         return ['status' => true];
     }
@@ -32,7 +33,7 @@ class TAMS_Hooks extends CI_Hooks {
      * Run actions associated with a custom hook
      *
      * @access	private
-     * @param	array	the hook details
+     * @param	array $data Data to be passed to the hook actions
      * @return	bool
      */
     private function hook_action($data) {
