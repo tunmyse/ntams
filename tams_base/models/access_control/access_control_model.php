@@ -7,8 +7,7 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  * 
  * @category   Model
  * @package    Access Control
- * @subpackage Admission
- * @author     Akinsola Tunmise <akinsolatunmise@gmail.com>, Suleodu Adedayo <suleodu.adedayo@gmail.com>
+ * @author     Akinsola Tunmise <akinsolatunmise@gmail.com>
  * @copyright  Copyright © 2014 TAMS.
  * @version    1.0.0
  * @since      File available since Release 1.0.0
