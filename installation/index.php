@@ -56,7 +56,7 @@ if (defined('ENVIRONMENT'))
  * as this file.
  *
  */
-	$system_path = 'tams_sys';
+	$system_path = 'system';
 
 /*
  *---------------------------------------------------------------
@@ -72,9 +72,19 @@ if (defined('ENVIRONMENT'))
  * NO TRAILING SLASH!
  *
  */
-	$application_folder = 'tams_base';
+	$application_folder = 'application';
 
-        /*
+/*
+ *---------------------------------------------------------------
+ * INSTALLATION FOLDER NAME
+ *---------------------------------------------------------------
+ *
+ * Folder name of the main directory to install into
+ *
+ */
+	$inst_folder = '../';
+
+/*
  *---------------------------------------------------------------
  * APPLICATION FOLDER NAME
  *---------------------------------------------------------------
@@ -88,8 +98,8 @@ if (defined('ENVIRONMENT'))
  * NO TRAILING SLASH!
  *
  */
-	$template_folder = 'template';
-
+	$inst_app_folder = '../tams_base';
+        
 /*
  * --------------------------------------------------------------------
  * DEFAULT CONTROLLER
@@ -144,50 +154,31 @@ if (defined('ENVIRONMENT'))
 // END OF USER CONFIGURABLE SETTINGS.  DO NOT EDIT BELOW THIS LINE
 // --------------------------------------------------------------------
 
-        
-/*
- * ------------------------------------------------------------------------
- *  Run installation
- * ------------------------------------------------------------------------
- * 
- * Check if installation file exists and redirect to installation page.
- * Do this check here to prevent framework from loading,and make application run faster.
- */
-        
-    // Redirect to installation folder if it still exists.
-    $path_exists = realpath("installation");
-    $request = explode('/', filter_input(INPUT_SERVER, 'REQUEST_URI'));
-    
-    if($path_exists && !(in_array('install', $request) && in_array('complete', $request))) {
-        header("Location: installation");
-        exit;
-    }
-
 /*
  * ---------------------------------------------------------------
  *  Resolve the system path for increased reliability
  * ---------------------------------------------------------------
  */
 
-    // Set the current directory correctly for CLI requests
-    if (defined('STDIN'))
-    {
-            chdir(dirname(__FILE__));
-    }
+	// Set the current directory correctly for CLI requests
+	if (defined('STDIN'))
+	{
+		chdir(dirname(__FILE__));
+	}
 
-    if (realpath($system_path) !== FALSE)
-    {
-            $system_path = realpath($system_path).'/';
-    }
+	if (realpath($system_path) !== FALSE)
+	{
+		$system_path = realpath($system_path).'/';
+	}
 
-    // ensure there's a trailing slash
-    $system_path = rtrim($system_path, '/').'/';
+	// ensure there's a trailing slash
+	$system_path = rtrim($system_path, '/').'/';
 
-    // Is the system path correct?
-    if ( ! is_dir($system_path))
-    {
-            exit("Your system folder path does not appear to be set correctly. Please open the following file and correct this: ".pathinfo(__FILE__, PATHINFO_BASENAME));
-    }
+	// Is the system path correct?
+	if ( ! is_dir($system_path))
+	{
+		exit("Your system folder path does not appear to be set correctly. Please open the following file and correct this: ".pathinfo(__FILE__, PATHINFO_BASENAME));
+	}
 
 /*
  * -------------------------------------------------------------------
@@ -211,11 +202,10 @@ if (defined('ENVIRONMENT'))
 	define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
 
 
-	// The path to the "base" folder and "template" folder
+	// The path to the "application" folder
 	if (is_dir($application_folder))
 	{
 		define('APPPATH', $application_folder.'/');
-                define('TMPLPATH', $template_folder.'/');
 	}
 	else
 	{
@@ -225,9 +215,16 @@ if (defined('ENVIRONMENT'))
 		}
 
 		define('APPPATH', BASEPATH.$application_folder.'/');
-                define('TMPLPATH', $template_folder.'/');
 	}
 
+        // The path to the "installation application" folder	
+        if ( ! is_dir(realpath($inst_app_folder).'/'))
+        {
+                exit("Your destination application folder path does not appear to be set correctly. Please open the following file and correct this: ".SELF);
+        }else {
+            define('INSTAPPPATH', str_replace("\\", "/", realpath($inst_app_folder).'/'));
+            
+	}
 /*
  * --------------------------------------------------------------------
  * LOAD THE BOOTSTRAP FILE
