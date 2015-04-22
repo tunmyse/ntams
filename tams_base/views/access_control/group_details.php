@@ -1,11 +1,21 @@
 <div>
-    <h2><?php echo $info->name?></h2>
-    <p><?php echo $info->description?></p>
+    <h2>
+        <?php echo $info->name?>
+        <a ng-show="data.edit" data-toggle="modal" href="#edit_group_modal" style="font-size: 13px; font-weight: normal">edit name</a>
+    </h2>
+    <p>
+        <?php echo $info->description?>
+        <a ng-show="data.edit" data-toggle="modal" href="#edit_group_modal">
+            <?php echo $info->description != NULL? 'edit':'add'?> description
+        </a> 
+    </p>
     <p>
         <?php echo $info->ownername?> &nbsp;&nbsp; 
-        <a  data-toggle="modal" href="#change_owner_modal"><i class="icon-pencil"></i></a>
+        <a ng-show="data.edit" data-toggle="modal" href="#change_owner_modal">change owner</a>
         <span class="pull-right">
-            <a class="btn btn-green" href="<?php echo site_url("access/group/edit?id={$info->groupid}")?>">Edit Group</a>
+            <a ng-click="enableEdit()" class="btn btn-green" href="#">
+                Edit Group
+            </a>
         </span>
     </p>
     
@@ -30,6 +40,12 @@
         <div class="box-content nopadding"> 
             <div class="tab-content">
                 <div id="roles" class="tab-pane active">
+                    <p class="clearfix pad-1">
+                        <a class="btn btn-green pull-right" data-toggle="modal" href="#add_role_modal">
+                            Add Role(s)
+                        </a>
+                    </p>
+                    
                     <table class="table table-striped table-hover dataTable dataTable-columnfilter">
                         <thead>
                             <tr>
@@ -81,6 +97,11 @@
                 </div>
                 
                 <div id="perms" class="tab-pane">
+                    <p class="clearfix pad-1">
+                        <a class="btn btn-green pull-right" data-toggle="modal" href="#add_perm_modal">
+                            Add Permission(s)
+                        </a>
+                    </p>
                     <table class="table table-striped table-hover dataTable dataTable-columnfilter">
                         <thead>
                             <tr class="thefilter">
@@ -138,6 +159,11 @@
                 </div>
                 
                 <div id="users" class="tab-pane">
+                    <p class="clearfix pad-1">
+                        <a class="btn btn-green pull-right" data-toggle="modal" href="#add_user_modal">
+                            Add User(s)
+                        </a>
+                    </p>
                     <table class="table table-striped table-hover dataTable dataTable-columnfilter">
                         <thead>
                             <tr>

@@ -50,7 +50,7 @@ $active_record = TRUE;
 
 $db['default']['hostname'] = 'sql112.byethost18.com';
 $db['default']['username'] = 'b18_15808213';
-$db['default']['password'] = 'bytedgreat9';
+$db['default']['password'] = 'tamsonline';
 $db['default']['database'] = 'b18_15808213_tams_mvc';
 $db['default']['dbdriver'] = 'mysqli';
 $db['default']['dbprefix'] = 'tams_';

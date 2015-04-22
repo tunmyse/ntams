@@ -226,10 +226,10 @@ class Main {
         // Get the first segment of this uri
         $this->segment = $this->CI->uri->segment(1, '');
         
-        $this->uri = filter_input(INPUT_SERVER, 'REQUEST_URI');//$this->CI->uri->uri_string();
+        $this->uri = $this->CI->uri->uri_string();
         
         // Flag to determine whether this request requires authentication.
-        $req = isset($this->CI->router->routes["{$this->segment}_require"])? false: true;
+        $req = isset($this->CI->router->routes["{$this->uri}_require"])? false: true;
         
         // Check if the user is logged in.
         $this->check_login($req);
@@ -242,6 +242,7 @@ class Main {
         
         // Initialize class properties.
         $this->_init();
+        
     } // End func __construct
 
     
@@ -262,12 +263,9 @@ class Main {
             $this->user_id = $this->get('user_id');
             $this->user_type = $this->get('user_type');
             $this->user_type_id = $this->get('user_type_id');
-            $this->unit_name = $this->get('unit_name');
-            $this->school_id = $this->get('school_id');
-            $this->school_name = $this->get('school_name');        
-            $this->school_shortname = $this->get('school_shortname');
             $this->cur_session = $this->get('cur_session');
             $this->cur_sesname = $this->get('cur_sesname');
+            $this->super_admin = $this->get('super_admin');
             
             if(!isset($this->cur_session) || $this->cur_session == '') {
 
@@ -309,7 +307,7 @@ class Main {
         
         // return false if there is no subdomain string
         if($count < 3) {
-            return DEFAULT_NOT_VALID ;
+            //return DEFAULT_NOT_VALID ;
         }
         
         // Retrieve the first section of the domain.
@@ -318,13 +316,15 @@ class Main {
         
         // If user is logged in, subdomain details should exists in the session,
         // check that it does and ensure it is the same as the one in the url.
-        if($this->logged_in() && $this->domain_string == $this->get('domain_string')) {
-            return DEFAULT_VALID;
-        }elseif($this->logged_in() && $this->domain_string != $this->get('domain_string')) {
-            return DEFAULT_MISMATCH;
-        }
+//        if($this->logged_in() && $this->domain_string == $this->get('domain_string')) {
+//            return DEFAULT_VALID;
+//        }elseif($this->logged_in() && $this->domain_string != $this->get('domain_string')) {
+//            return DEFAULT_MISMATCH;
+//        }
         
         // Get the information for the valid domain_string.
+        // Modified to work for a single environment, 
+        // retrieves only one school from the database regardless of the domain string passed
         $result = $this->CI->util_model->get_school_details($this->domain_string);
 
         switch($result['status']) {
@@ -335,6 +335,8 @@ class Main {
                 $this->school_name = $rs_obj->schoolname;
                 $this->school_shortname = $rs_obj->shortname;
                 $this->unit_name = $rs_obj->unitname;
+                $this->domain_string = $rs_obj->domainstring;
+                $this->super_admin = $rs_obj->admin;
                 $resp = DEFAULT_VALID;
                 break;
 
@@ -483,8 +485,8 @@ class Main {
     /**
      * Redirect to login page if user is not logged in.
      * 
-     * @access public
-     * @param bool $require_login
+     * @access private
+     * @param bool $require_login Parameter to specify whether a resource requires login
      * @return void
      */
     public function check_login($require_login) {
@@ -499,7 +501,7 @@ class Main {
     } // End of func check_login
 
     /**
-     * Check if user is logged in
+     * Check if user has an active login session.
      *
      * @access public
      * @return bool
@@ -552,6 +554,9 @@ class Main {
             return false;
         }
         
+        // Check if user is the super admin.
+        $admin = ($params['userid'] == $this->super_admin)? true: false;  
+        
         $user_data = [
                         'user_id' => $params['userid'],
                         'user_type_id' => $params['usertypeid'],
@@ -559,7 +564,7 @@ class Main {
                         'first_name' => $params['fname'],
                         'last_name' => $params['lname'],
                         'user_type' => $params['usertype'],            
-                        'super_admin' => true, //TODO Get this from login authentication.
+                        'super_admin' => $admin,
                         'cs' => sha1($params['email'] . '_' . $params['usertypeid'] . '_' . $params['usertype']),
                         'school_id' => $this->school_id,
                         'school_name' => $this->school_name,    
@@ -586,7 +591,7 @@ class Main {
      * @param string $password
      * @return mixed (bool | array)
      */
-    public function encrpyt($password) {
+    public function encrypt($password) {
         
         $this->CI->load->driver("Auth/Auth", array(), 'auth_prov');      
         $crypt_password = $this->CI->auth_prov->site->encrypt($password);
@@ -724,8 +729,8 @@ class Main {
      * Set notification messages
      *
      * @access public
-     * @param string $msg_type
-     * @param mixed $msg 
+     * @param string $msg_type The message type of the message being set.
+     * @param mixed $msg The message to set.
      * @param bool $current Makes a notification available in the present notification build and not in the next request.
      * @return void
      **/
@@ -755,8 +760,9 @@ class Main {
      * Get notification messages
      *
      * @access public
-     * @param $msg_type (string), $limit (int)
-     * @return mixed (string | array)
+     * @param string $msg_type The message type of the message to retrieve.
+     * @param int $limit The number of messages to retrieve.
+     * @return mixed Returns a string only if the limit is one, array otherwise.
      **/
     public function get_notification_messages($msg_type, $limit = 0) {  
         $msg_bank = $this->CI->session->flashdata($msg_type);
@@ -791,18 +797,20 @@ class Main {
      * Get session variable value assigned to user. 
      * 
      * @access public
-     * @param string $item
-     * @return mixed (bool | string)
+     * @param string $key The key of the value to retrieve from the session.
+     * @return mixed The value of the key specified, NULL if no such key exists.
      */
-    public function get($item) {
-        return $this->CI->session->userdata($item);
+    public function get($key) {
+        return $this->CI->session->userdata($key);
     } // End func get
 
     /**
      * Set a session variable. 
      * 
      * @access public
-     * @param string $item
+     * @param string $key The key to identify the value.
+     * @param string $value The value to be stored in the session
+     * @param bool $clear Whether to set or unset the item.
      * @return mixed (bool | string)
      */
     public function set($key, $value = '', $clear = FALSE) {
@@ -826,13 +834,11 @@ class Main {
      * Get a property in this class. 
      * 
      * @access public
-     * @param string $item
-     * @return string
+     * @param string $prop The property to retrieve it's value.
+     * @return string The value of the property specified, NULL if no such property exists.
      */
-    public function item($item) {
-
-        return $this->$item;
-
+    public function item($prop) {
+        return isset($this->$prop)? $this->$prop: NULL;
     } // End func item
 
     
@@ -848,7 +854,7 @@ class Main {
      *
      * @access public
      * @param array $mod_perms
-     * @return array
+     * @return void 
      **/
     public function check_auth(Array $mod_perms) {
         // User is unauthorized by default
@@ -856,7 +862,7 @@ class Main {
         
         //TODO Include extra compulsory parameter to check if a permission is compulsory for a resource.
         
-
+        
         // Iterate through modules in parameter array.
         foreach($mod_perms as $mod => $perms) {
             
@@ -864,9 +870,9 @@ class Main {
             foreach($perms as $perm) {
                 
                 // Once one permission is found, user is authorized, stop checking for any more permissions.
-                if(isset($this->user_perms[$mod]['perms'][$perm])) {
+                if(in_array($perm, $this->user_perms[$mod]['perms'])) {
                     $authd = true;
-                    break;
+                    break ;
                 }
             }            
         }
@@ -888,25 +894,25 @@ class Main {
         
         $this->user_perms['ids'] = array();
                 
-        if($result['status'] != DEFAULT_EMPTY) {
+        if($result['status'] == DEFAULT_SUCCESS) {
             // Format the permissions.
             foreach($result['rs'] as $perm) {
                 $this->user_perms[$perm->mname]['perms'][] = $perm->pname;
                 $this->user_perms['ids'][] = $perm->permid;
             }
         }
-        
     } // End func get_user_perms
     
     /**
      * Check if a user has a certain permission 
      * 
      * @access public
-     * @param string $module, string $perm
+     * @param string $module The module that defines the permission.
+     * @param string $perm The permission to check for.
      * @return bool
      */
     public function has_perm($module, $perm) {
-        return $this->super_admin || isset($this->user_perms[$module]['perms'][$perm]);
+        return $this->super_admin || in_array($perm, $this->user_perms[$module]['perms']);
     }// End func has_perm
      
 } // End class Main

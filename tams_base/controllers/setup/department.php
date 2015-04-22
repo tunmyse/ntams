@@ -22,7 +22,7 @@ class Department extends CI_Controller {
      * @var string
      */
     
-    private $folder_name = 'department';
+    private $folder_name = 'setup';
     
     /**
      * Module Name
@@ -31,7 +31,7 @@ class Department extends CI_Controller {
      * @var string
      */
     
-    private $module_name = 'department';
+    private $module_name = 'setup';
     
     /*
      * Class constructor
@@ -51,7 +51,7 @@ class Department extends CI_Controller {
          * Load models
          */
         $this->load->model("$this->folder_name/department_model", 'mdl');
-        $this->load->model('college/college_model', 'col_mdl');
+        $this->load->model("$this->folder_name/college_model", 'col_mdl');
         
         /*
          * Load language
@@ -76,7 +76,7 @@ class Department extends CI_Controller {
         $data = array();
         $page_name = 'view_dept';
         
-        $data['college_name'] = $this->main->get_college_name();
+        $data['college_name'] = $this->main->get_unit_name();
         
         // Retrieve all departments 
         $data['depts']      = $this->mdl->get_department();

@@ -166,7 +166,7 @@ class Group extends CI_Controller {
                 
                 // Prepare parameter
                 $params = array(
-                            'name' => strtolower(ucwords($fields['group_name'])),
+                            'name' => ucwords(strtolower($fields['group_name'])),
                             'owner' => $this->user_id,
                             'description' => $fields['group_desc'],
                             'schoolid' => $this->school_id
@@ -219,16 +219,16 @@ class Group extends CI_Controller {
         redirect($dest);
     }// End of func create
     
-    
     /**
      * User group information.	 
      */
-    public function details() {
+    public function edit() {
 
         $data = array();
-        $page_name = 'group_details';
+        $page_name = 'group_edit';
         
-        $group_id = $this->input->get('id'); // @todo show 404 if null or non-int value.
+        $data['type'] = 'group';
+        $data['id'] = $group_id = $this->input->get('id'); // @todo show 404 if null or non-int value.
         
         $ret = $this->mdl->get_group_info($group_id);
         switch($ret['status']) {
@@ -266,7 +266,158 @@ class Group extends CI_Controller {
         }
         
         $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/add_roles', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/add_perms', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/add_users', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/edit_group', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/change_group_owner', $data, true);
+        $this->page->build($page_content, $this->folder_name, $page_name, 'User Groups'); 
+    }// End of func details
+    
+    /**
+     * Assign an object to a group.	 
+     */
+    public function assign($type) {
         
+        $dest = $this->input->server('HTTP_REFERER') == NULL? 'access/groups': $this->input->server('HTTP_REFERER');
+        
+        // Check for valid request method
+        if($this->input->server('REQUEST_METHOD') == 'POST') {
+            
+            // Load the validation library
+            $this->load->library('form_validation');
+            
+            // Run validation and process request if fields are valid.
+            if($this->form_validation->run('access_assign') != FALSE) {
+               
+                // Get all input values
+                $fields = $this->input->post(NULL);
+                
+                $group_id = $fields['obj_id'];                
+                $params = [];
+                               
+                $meta = [
+                    'parentid' => $group_id,
+                    'parenttype' => 'group',
+                    'childtype' => $type
+                ];
+                
+                // TODO check posted items against appropriate table to make sure they are valid
+                // Prepare parameter
+                foreach($fields['items'] as $item) {
+                    if($meta['childtype'] == 'user') {
+                        $params[] = [
+                                        'groupid' => $group_id,
+                                        'userid' => $item
+                                    ];
+                    }else {
+                        $params[] = [
+                                        'parentid' => $group_id,
+                                        'parenttype' => 'group',
+                                        'childid' => $item,
+                                        'childtype' => $type // TODO check that type is either perm, role, or user
+                                    ];
+                    }
+                }
+                
+                // Call model method to perform insertion
+                $result = $this->mdl->assign_to_group($meta, $params);
+                
+                // Process model response
+                switch($result['status']) {
+                    
+                    // Unique constraint violated.
+                    case DEFAULT_EXIST:
+                        // Set error message for unique constraint violation.
+                        $msg = sprintf($this->lang->line('duplicate_value'), 'group name');  
+                        $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+                        break;
+                    
+                    // There was a problem creating the entry.
+                    case DEFAULT_ERROR:
+                        // Set error message for problem creating entry.
+                        $msg = $this->lang->line('create_error');  
+                        $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+                        break;
+                    
+                    // Entry created successfully.
+                    case DEFAULT_SUCCESS:
+                        // Set success message for unique constraint violation.
+                        $msg = sprintf($this->lang->line('create_success'), 'User Group', '');  
+                        $this->main->set_notification_message(MSG_TYPE_SUCCESS, $msg);
+                        break;
+                    
+                    default:
+                        break;
+                }
+            }else {              
+                // Set error message for invalid/incomplete fields
+                $msg = $this->lang->line('validation_error');  
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+            }
+            
+        }else{
+            // Set error message for any request other than POST
+            $msg = $this->lang->line('invalid_req_method');  
+            $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+        }
+        
+        // Redirect to appropriate page, showing notifiction messages if there are.
+        redirect($dest);
+    }// End of func create
+    
+    /**
+     * User group information.	 
+     */
+    public function details() {
+
+        $data = array();
+        $page_name = 'group_details';
+        
+        $data['type'] = 'group';
+        $data['id'] = $group_id = $this->input->get('id'); // @todo show 404 if null or non-int value.
+        
+        $ret = $this->mdl->get_group_info($group_id);
+        switch($ret['status']) {
+            
+            case DEFAULT_SUCCESS:
+                $data['info'] = $ret['rs'];
+                break;
+
+            case DEFAULT_EMPTY:
+                // show 404 message.
+                break;
+
+            case DEFAULT_ERROR:
+                $msg = $this->lang->line('operation_error');
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $msg, true);
+                break;
+        }
+        
+        $ret = $this->mdl->get_group_assoc($group_id);
+        switch($ret['status']) {
+            
+            case DEFAULT_SUCCESS:
+                $data['assoc'] = $ret['rs'];
+                break;
+
+            case DEFAULT_EMPTY:
+                $data['assoc'] = [];
+                break;
+
+            case DEFAULT_ERROR:
+                $data['assoc'] = [];
+                $msg = $this->lang->line('operation_error');
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $msg, true);
+                break;
+        }
+        
+        $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/add_roles', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/add_perms', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/add_users', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/edit_group', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/change_group_owner', $data, true);
         $this->page->build($page_content, $this->folder_name, $page_name, 'User Groups');    
     }// End of func details
     

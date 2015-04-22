@@ -28,7 +28,8 @@
             
             <div class="page-header">
                 <div class="pull-left">
-                    <img id="logo" type="image" src="<?php echo base_url("img/logo.jpg")?>" name="logo"/>
+                    <img id="logo" type="image"class='retina-ready' width="50" height="55"
+                         src="<?php echo base_url("img/logo/{$short_name}-logo.png")?>" name="logo"/>
                     <h2 class="pull-right" style="margin-left: 10px"><?php echo $school_name?></h2>
                 </div>
 

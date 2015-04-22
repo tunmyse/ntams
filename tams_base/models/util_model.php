@@ -160,9 +160,10 @@ class Util_model extends CI_Model {
     public function get_school_details($domain) {
         return $this->get_data(
                             'schools', 
-                            array('schoolid', 'shortname', 'schoolname', 'unitname'), 
+                            array('schoolid', 'shortname', 'schoolname', 'unitname', 'domainstring', 'admin'), 
                             array(
-                                array('field' => "domainstring", 'value' => strtolower($domain))
+                               // Uncomment to use in multi environment.
+                               // array('field' => "domainstring", 'value' => strtolower($domain))
                             ),
                             array(),
                             array(),
@@ -189,18 +190,14 @@ class Util_model extends CI_Model {
      * Retrieve all user's permission.
      *
      * @access public
-<<<<<<< HEAD
-     * @param int $user_id The user to retrieve permission for.
-=======
      * @param int $user_id The user to retrieve permissions for.
->>>>>>> master
      * @return array
      **/
     public function get_user_perms($user_id) {
         
         $query_data = [$user_id, $user_id, $user_id, $user_id];
         
-        $query = "SELECT `p`.`permid`, `p`.`name`, `m`.`name`, `a`.`parenttype`, `a`.`extradata` "
+        $query = "SELECT `p`.`permid`, `p`.`name` as `pname`, `m`.`name` as `mname`, `a`.`parenttype`, `a`.`extradata` "
                 . "FROM ".$this->db->protect_identifiers('permissions', TRUE)." p "
                 . "JOIN ".$this->db->protect_identifiers('modules', TRUE)." m ON `m`.`moduleid` = `p`.`moduleid` "
                 . "JOIN ".$this->db->protect_identifiers('access_assigns', TRUE)." a ON `a`.`childid` = `p`.`permid` "
@@ -306,19 +303,11 @@ class Util_model extends CI_Model {
      * @param array $fields Fields to include in the result set
      * @param array $where Where clause to include in the query
      * @param array $order Order by clause to in the query
-<<<<<<< HEAD
-     * @param array $join Join clause to include in the in query
-     * @param array group Group by clause to include in the query
-     * @param int $r_set The type of the result returned
-     * @param array $limit The number of rows to include in the result set (Two values indicate offset and amount)
-     * @return array
-=======
      * @param array $join Join clause to include in the query
      * @param array $group Group by clause to include in the query
-     * @param int $r_set The type of the result returned
+     * @param int $r_set The type of the resultset returned
      * @param array $limit The number of rows to include in the result set (Two values indicate offset and amount)
      * @return array Status of the query, and the resultset, only if query was successful
->>>>>>> master
      */
     public function get_data(
             $table, 
@@ -356,17 +345,32 @@ class Util_model extends CI_Model {
         
         // Prepare where clause
         foreach($where as $w) {
-            
+            // TODO add not clauses
             $quote = isset($w['quote'])? false: true;
             $logic = isset($w['logic']);
             $mod = isset($w['mod'])? $w['mod']: '';
+            $negate = isset($w['negate']);
+            
             switch($mod) {
                 case 'in':
-                    $logic? $this->db->or_where_in($w['field'], $w['value']): $this->db->where_in($w['field'], $w['value']);
+                    if($negate) {
+                        $logic? $this->db->or_where_not_in($w['field'], $w['value']): 
+                            $this->db->where_not_in($w['field'], $w['value']);
+                    }else {
+                        $logic? $this->db->or_where_in($w['field'], $w['value']): 
+                            $this->db->where_in($w['field'], $w['value']);
+                    }                    
                     break;
                       
                 case 'like':
-                    $logic? $this->db->or_like($w['field'], $w['value']): $this->db->like($w['field'], $w['value']);
+                    if($negate) {
+                        $logic? $this->db->or_not_like($w['field'], $w['value']): 
+                            $this->db->not_like($w['field'], $w['value']);
+                    }else {
+                        $logic? $this->db->or_like($w['field'], $w['value']): 
+                            $this->db->like($w['field'], $w['value']);
+                    } 
+                    
                     break;
                 
                 default:
@@ -392,7 +396,7 @@ class Util_model extends CI_Model {
             $offset = ($size > 1)? $limit[0]: 0;
             $count = ($size == 1)? $limit[0]: $limit[1];
             
-            $this->db->limit($offset, $count);
+            $this->db->limit($count, $offset);
         }        
         
         // Run query
@@ -403,7 +407,7 @@ class Util_model extends CI_Model {
             // Set default return value 
             $ret = array('status' => DEFAULT_EMPTY);
             
-            // Check if query is empty
+            // Check if query is not empty
             if($r_count = $result->num_rows() > 0) {
                 switch($r_set) {
                     case QUERY_ARRAY_ROW:
@@ -422,7 +426,7 @@ class Util_model extends CI_Model {
                         $result_set = $result->result();
                 }
 
-                $ret = array('status' => DEFAULT_SUCCESS, 'rs' => $result_set, 'cursor' => $result, 'count' => $r_count);
+                $ret = array('status' => DEFAULT_SUCCESS, 'rs' => $result_set, 'cursor' => &$result, 'count' => $r_count);
             }
             
         }else {
@@ -440,11 +444,7 @@ class Util_model extends CI_Model {
      * @param string $query Query to be executed
      * @param array $data Data to be bound with the query
      * @param int $r_set The type of the result returned
-<<<<<<< HEAD
-     * @return array
-=======
      * @return array Status of the query, and the resultset, only if query was successful
->>>>>>> master
      */
     public function get_query_data($query, $data = array(), $r_set = QUERY_OBJECT_RESULT) {
         

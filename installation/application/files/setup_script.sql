@@ -13,8 +13,10 @@ CREATE TABLE IF NOT EXISTS `tams_schools` (
   `shortname` varchar(15) NOT NULL,
   `created` datetime NOT NULL,
   `unitname` varchar(20) NOT NULL DEFAULT 'College',
+  `admin` int(255) unsigned,
   PRIMARY KEY (`schoolid`),
-  UNIQUE KEY `domainstring` (`domainstring`)
+  UNIQUE KEY `domainstring` (`domainstring`),
+  KEY `admin` (`admin`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -34,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `tams_users` (
   `phone` varchar(11) DEFAULT NULL,
   `sex` enum('Male','Female') DEFAULT NULL,
   `dob` datetime DEFAULT NULL,
-  `usertype` enum('student','staff','admin','management') NOT NULL,
+  `usertype` enum('student','applicant','staff','admin','management') NOT NULL,
   `schoolid` int(255) unsigned NOT NULL,
   `address` text,
   `password` varchar(80) NOT NULL,
@@ -43,4 +45,10 @@ CREATE TABLE IF NOT EXISTS `tams_users` (
   UNIQUE KEY `email` (`email`,`schoolid`),
   UNIQUE KEY `phone` (`phone`,`schoolid`),
   KEY `schoolid` (`schoolid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+
+--
+-- Constraints for table `tams_schools`
+--
+ ALTER TABLE `tams_schools`
+   ADD CONSTRAINT `tams_schools_ibfk_1` FOREIGN KEY (`admin`) REFERENCES `tams_users` (`userid`) ON UPDATE CASCADE

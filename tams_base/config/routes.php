@@ -40,23 +40,14 @@
 
 $route['default_controller'] = "application";
 
-
-/*
- *---------------------------------------------------------------
- * Installation routes
- *---------------------------------------------------------------
- */
-
-$route['tams_installation'] = "installation";
-$route['tams_installation/complete'] = "application/complete_installation";
-$route['tams_installation/(:any)'] = "installation/$1";
-$route['tams_installation_require'] = false;
-
 /*
  *---------------------------------------------------------------
  * General application routing rules.
  *---------------------------------------------------------------
  */
+
+$route['install/complete'] = "application/complete_installation";
+$route['install/complete_require'] = false;
 
 // Login rules
 $route['login'] = "application/login";
@@ -91,19 +82,19 @@ $route['(:any)/dashboard'] = "users/$1";
  */
 
 // College route
-$route['college'] = "setup/college";
-$route['college/(:any)'] = "setup/college/$1";
-$route['college/info/(:any)'] = "setup/college/details/$1";
+$route['setup'] = $route['setup/college'] = "setup/college";
+$route['setup/college/(:any)'] = "setup/college/$1";
+$route['setup/college/info/(:any)'] = "setup/college/details/$1";
 
 // Department route
-$route['department'] = "setup/department";
-$route['department/(:any)'] = "setup/department/$1";
-$route['department/info/(:any)'] = "setup/department/details/$1";
+$route['setup/department'] = "setup/department";
+$route['setup/department/(:any)'] = "setup/department/$1";
+$route['setup/department/info/(:any)'] = "setup/department/details/$1";
 
 // Programme route
-$route['programme'] = "setup/programme";
-$route['programme/(:any)'] = "setup/programme/$1";
-$route['programme/info/(:any)'] = "setup/programme/details/$1";
+$route['setup/programme'] = "setup/programme";
+$route['setup/programme/(:any)'] = "setup/programme/$1";
+$route['setup/programme/info/(:any)'] = "setup/programme/details/$1";
 
 
 /*
@@ -114,17 +105,22 @@ $route['programme/info/(:any)'] = "setup/programme/details/$1";
 
 $route['(:any)/access_denied'] = "accesscontrol/access_denied/$1";
 $route['access'] = "access_control/group";
+$route['access/suggestions'] = "access_control/accesscontrol/suggestions";
+
 $route['access/groups'] = "access_control/group";
 $route['access/group'] = "access_control/group/details";
 $route['access/group/(:any)'] = "access_control/group/$1";
+$route['access/group/assign/([role]|[perm]|[user])'] = "access_control/group/assign/$1";
 
 $route['access/roles'] = "access_control/role";
 $route['access/role'] = "access_control/role/details";
 $route['access/role/(:any)'] = "access_control/role/$1";
+$route['access/role/assign/([group]|[perm]|[user])'] = "access_control/role/assign/$1";
 
 $route['access/permissions'] = "access_control/permission";
 $route['access/permission'] = "access_control/permission/details";
 $route['access/permission/(:any)'] = "access_control/permission/details/$1";
+$route['access/permission/assign/([group]|[role]|[user])'] = "access_control/permission/assign/$1";
 
 $route['404_override'] = '';
 

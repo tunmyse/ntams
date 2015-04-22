@@ -1,9 +1,12 @@
 {
     "all": {
-        "js": [
+        "js": [            
             "plugins/datatable/jquery.dataTables.min.js",
             "plugins/chosen/chosen.jquery.min.js",
-            "plugins/datatable/jquery.dataTables.columnFilter.min.js"
+            "plugins/datatable/jquery.dataTables.columnFilter.min.js",
+            "angular/angular.min.js",
+            "angular/angular-access-control.js",
+            "lodash/lodash.min.js"
         ],
         
         "css": [
@@ -12,14 +15,5 @@
         ],
         
         "feedbar": false
-    },
-    "create_account": {
-        "js": [
-            
-        ],
-        
-        "css": [
-            
-        ]
-    }
+    }    
 }

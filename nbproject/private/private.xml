@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <coverage xmlns="http://www.netbeans.org/ns/code-coverage/1" enabled="false"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
+        <file>
+            <url>tams_sys/database/DB_driver.php</url>
+            <bookmark id="1">
+                <name/>
+                <line>1161</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/Users/Tunmyse/Documents/tams-mvc/index.php</file>
+            <file>file:/C:/Users/Tunmyse/Documents/tams-mvc/tams_base/libraries/App/Main.php</file>
+            <file>file:/C:/Users/Tunmyse/Documents/tams-mvc/installation/application/controllers/installation.php</file>
+            <file>file:/C:/Users/Tunmyse/Documents/tams-mvc/tams_base/controllers/setup/programme.php</file>
+            <file>file:/C:/Users/Tunmyse/Documents/tams-mvc/tams_base/views/setup/view_prog.php</file>
+        </group>
+    </open-files>
+</project-private>

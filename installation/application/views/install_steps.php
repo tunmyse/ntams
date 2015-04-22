@@ -41,7 +41,7 @@
             <script src="<?php echo base_url('../js/bootstrap.min.js')?>"></script>
  
             <script src="<?php echo base_url('../js/plugins/imagesLoaded/jquery.imagesloaded.min.js')?>"></script>
-       
+            <script src="<?php echo base_url('../js/plugins/fileupload/bootstrap-fileupload.min.js')?>"></script>
             <!-- Validation -->
             <script src="<?php echo base_url('../js/plugins/validation/jquery.validate.min.js')?>"></script>
             <script src="<?php echo base_url('../js/plugins/validation/additional-methods.min.js')?>"></script>
@@ -65,9 +65,9 @@
             <![endif]-->
 
             <!-- Favicon -->
-            <link rel="shortcut icon" href="<?php echo base_url('img/icon.ico')?>" />
+            <link rel="shortcut icon" href="<?php echo base_url('../img/icon.ico')?>" />
             <!-- Apple devices Homescreen icon -->
-            <link rel="apple-touch-icon-precomposed" href="<?php echo base_url('img/apple-touch-icon-precomposed.png')?>" />
+            <link rel="apple-touch-icon-precomposed" href="<?php echo base_url('../img/apple-touch-icon-precomposed.png')?>" />
 
     </head>
     <body>
@@ -106,12 +106,16 @@
                 <div class="box">
                      <div class="box-title">
                         <h3>
-                            <a><img src="<?php echo base_url('img/logo@2x.png')?>" alt="" class='retina-ready' width="29" height="19"></a>
+                            <a><img src="<?php echo base_url('../img/logo@2x.png')?>" alt="" class='retina-ready' width="29" height="19"></a>
                             Installation wizard
                         </h3>
                     </div>
                     <div class="box-content">       
-                        <form action="<?php echo site_url('verify_steps')?>" method="POST" class='form-horizontal form-wizard' id="setup_form">
+                        <form action="<?php echo site_url('verify_steps')?>" 
+                              enctype="multipart/form-data" 
+                              method="POST" 
+                              class='form-horizontal form-wizard' 
+                              id="setup_form">
                             <div class="step" id="firstStep">
                                  <ul class="wizard-steps steps-4">
                                     <li class='active'>
@@ -174,6 +178,12 @@
                                         </div>
                                     </div>
                                     <div class="control-group">
+                                        <label for="acct[phone]" class="control-label">Phone</label>
+                                        <div class="controls">
+                                            <input type="text" name="acct[phone]" id="phone" class="input-xlarge" data-rule-required="true">
+                                        </div>
+                                    </div>
+                                        <div class="control-group">
                                         <label for="acct[email]" class="control-label">Email </label>
                                         <div class="controls">
                                               <input type="email" name="acct[email]" id="email" class="input-xlarge" data-rule-required="true">
@@ -270,6 +280,21 @@
                                     <label for="sch[shortname]" class="control-label">Short Name</label>
                                     <div class="controls">
                                         <input type="text" name="sch[shortname]" id="schname" class="input-xlarge" data-rule-required="true">
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label for="textfield" class="control-label"></label>
+                                    <div class="controls">
+                                        <div class="fileupload fileupload-new" data-provides="fileupload">
+                                            <div class="fileupload-new thumbnail" style="width: 200px; height: 150px;"><img src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&text=no+image" /></div>
+                                            <div class="fileupload-preview fileupload-exists thumbnail" style="max-width: 200px; max-height: 150px; line-height: 20px;"></div>
+                                            <div>
+                                                <span class="btn btn-file"><span class="fileupload-new">Select image</span>
+                                                <span class="fileupload-exists">Change</span>
+                                                <input type="file" name='logo' /></span>
+                                                <a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

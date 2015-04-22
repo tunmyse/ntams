@@ -22,7 +22,7 @@ class College extends CI_Controller {
      * @var string
      */
     
-    private $folder_name = 'college';
+    private $folder_name = 'setup';
     
     /**
      * Module Name
@@ -31,7 +31,7 @@ class College extends CI_Controller {
      * @var string
      */
     
-    private $module_name = 'college';
+    private $module_name = 'setup';
     
     /*
      * Class constructor
@@ -75,7 +75,7 @@ class College extends CI_Controller {
         $data = array();
         $page_name = 'view_college';
         
-        $data['college_name'] = $this->main->get_college_name();
+        $data['college_name'] = $this->main->get_unit_name();
         
         $data['dept_count'] = $this->mdl->get_department_count();
         

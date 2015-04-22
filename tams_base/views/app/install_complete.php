@@ -11,28 +11,28 @@
             <title>TAMS - Installation</title>
 
             <!-- Bootstrap -->
-            <link rel="stylesheet" href="<?php echo base_url('../css/bootstrap.min.css')?>">
+            <link rel="stylesheet" href="<?php echo base_url('css/bootstrap.min.css')?>">
             <!-- Bootstrap responsive -->
-            <link href="<?php echo base_url('../css/docs.css')?>" rel="stylesheet">
-            <link rel="stylesheet" href="<?php echo base_url('../css/bootstrap-responsive.min.css')?>">
+            <link href="<?php echo base_url('css/docs.css')?>" rel="stylesheet">
+            <link rel="stylesheet" href="<?php echo base_url('css/bootstrap-responsive.min.css')?>">
             
             <!-- Theme CSS -->
-            <link rel="stylesheet" href="<?php echo base_url('../css/style.css')?>">
+            <link rel="stylesheet" href="<?php echo base_url('css/style.css')?>">
 
 
             <!-- jQuery -->
-            <script src="<?php echo base_url('../js/jquery.min.js')?>"></script>
+            <script src="<?php echo base_url('js/jquery.min.js')?>"></script>
 
             <!-- Bootstrap -->
-            <script src="<?php echo base_url('../js/bootstrap.min.js')?>"></script>
+            <script src="<?php echo base_url('js/bootstrap.min.js')?>"></script>
             
             <!-- Theme framework -->
-            <script src="<?php echo base_url('../js/eakroko.min.js')?>"></script>
+            <script src="<?php echo base_url('js/eakroko.min.js')?>"></script>
             <!-- Theme scripts -->
-            <script src="<?php echo base_url('../js/application.min.js')?>"></script>
+            <script src="<?php echo base_url('js/application.min.js')?>"></script>
 
             <!--[if lte IE 9]>
-                    <script src="<?php echo base_url('../js/plugins/placeholder/jquery.placeholder.min.js')?>"></script>
+                    <script src="<?php echo base_url('js/plugins/placeholder/jquery.placeholder.min.js')?>"></script>
                     <script>
                             $(document).ready(function() {
                                     $('input, textarea').placeholder();
@@ -41,9 +41,9 @@
             <![endif]-->
 
             <!-- Favicon -->
-            <link rel="shortcut icon" href="<?php echo base_url('../img/icon.ico')?>" />
+            <link rel="shortcut icon" href="<?php echo base_url('img/icon.ico')?>" />
             <!-- Apple devices Homescreen icon -->
-            <link rel="apple-touch-icon-precomposed" href="<?php echo base_url('../img/apple-touch-icon-precomposed.png')?>" />
+            <link rel="apple-touch-icon-precomposed" href="<?php echo base_url('img/apple-touch-icon-precomposed.png')?>" />
 
     </head>
     <body>
@@ -75,13 +75,19 @@
         <div class="jumbotron masthead">
             <div class="container">
                 <h1>TAMS</h1>
-                <p>University administration brought down to the simplest form, with sleek and powerful interface .</p>
+                <p>University administration brought down to its simplest form, 
+                    <em>garnished</em> with a sleek and powerful interface .</p>
                 <p>
-                    <a href="<?php echo site_url('tams_installation/steps')?>" class="btn btn-primary btn-large"> Install Tams </a>
+                    Thank you for choosing TAMS!
+                </p>
+                <p>
+                    <a href="<?php echo site_url('login')?>" class="btn btn-primary btn-large"> 
+                        Login 
+                    </a>
                 </p>
                 <ul class="masthead-links">
                     <li>
-                      <a><img src="<?php echo base_url('../img/logo@2x.png')?>" alt="" class='retina-ready' width="39" height="29"></a>
+                      <a><img src="<?php echo base_url('img/logo@2x.png')?>" alt="" class='retina-ready' width="39" height="29"></a>
                     </li><br/><br/><br/><br/><br/><br/>
                     <li>
                     <a>Tertiary academic management system</a>

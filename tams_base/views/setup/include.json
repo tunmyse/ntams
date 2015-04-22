@@ -1,0 +1,19 @@
+{
+    "all": {
+        "js": [
+            "plugins/chosen/chosen.jquery.min.js"
+        ],
+        
+        "css": [
+            "plugins/chosen/chosen.css"            
+        ]
+    },
+    
+    "login": {
+        
+    },
+    
+    "reset_password": {
+        
+    }
+}

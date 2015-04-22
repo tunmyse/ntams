@@ -32,6 +32,7 @@ $lang['delete_error'] = 'There was an error deleting the entry you specified. Pl
 $lang['create_success'] = '%s created successfully! %s';
 $lang['update_success'] = '%s updated successfully! %s';
 $lang['delete_success'] = '%s deleted successfully! %s';
+$lang['image_error'] = 'The image specified could not be uploaded! Make sure it is a valid PNG file and is not greater than 512KB.';
 
 /* End of file installer_lang.php */
 /* Location: ./base/language/english/installer_lang.php */

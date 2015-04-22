@@ -18,7 +18,7 @@ $lang['reset_link_expired'] = 'The reset link you specified has expired! <a href
 $lang['password_change_error'] = 'Oops! There was a problem %s your password. %s or contact your system administrator!';
 $lang['password_change_success'] = 'Your password has been successfully changed! <a href=\'%s\'>Click here</a> to go to the login screen.';
 $lang['password_mismatch'] = 'The passwords you specified do not match!';
-$lang['validation_error'] = 'One or more values you entered are not valid or are missing. Enter the correct data and try again!';
+$lang['validation_error'] = 'One or more values are not valid or are missing. Enter the correct data and try again!';
 $lang['no_entries'] = 'There are no %s to display!';
 $lang['create_dependency'] = 'You need to create at least one %s before you can create this entry! Create the dependency then refresh this page to proceed.';
 $lang['file_read_error'] = 'Error reading %s file!';

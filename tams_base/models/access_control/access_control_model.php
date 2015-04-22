@@ -36,6 +36,62 @@ class Access_Control_model extends CI_Model {
         $this->school_id = $this->main->item('school_id');
     } // End func __construct
  
+    /**
+     *  Get suggestions for a access assignments
+     * 
+     * @access public
+     * @param int $owner
+     * @return array
+     */
+    public function get_suggestions($params) {        
+        
+        $id_field = '';
+        $table = 'user';
+        $fields = ['*'];
+        $where = [];
+        
+        switch($params['type']) {
+
+            case 'Permission':
+                $id_field = 'permid';
+                $table = 'permissions';
+                $fields = ['permid AS id', 'name'];
+                array_push($where, ['field' => "name", 'value' => $params['query'], 'mod' => "like"]);
+//                                    ['field' => "moduleid", 'value' => $params['module_id']]);
+                break;
+            
+            case 'Role':
+                $id_field = 'roleid';
+                $table = 'roles';
+                $fields = ['roleid AS id', 'name'];
+                array_push($where, ['field' => "schoolid", 'value' => $params['school_id']],
+                                    ['field' => "name", 'value' => $params['query'], 'mod' => "like"]);
+                break;
+
+            case 'Group':
+                $id_field = 'groupid';
+                $table = 'groups';
+                $fields = ['groupid AS id', 'name'];
+                array_push($where, ['field' => "schoolid", 'value' => $params['school_id']],
+                                    ['field' => "name", 'value' => $params['query'], 'mod' => "like"]);
+                break;
+                
+            case 'User':
+                $id_field = 'userid';
+                $table = 'users';
+                $fields = ['userid AS id', 'CONCAT(lname, " ", fname) AS name', FALSE];
+                array_push($where, ['field' => "schoolid", 'value' => $params['school_id']],
+                            ['field' => "fname", 'value' => $params['query'], 'mod' => "like"],
+                            ['field' => "lname", 'value' => $params['query'], 'mod' => "like", 'logic' => true],
+                            ['field' => "mname", 'value' => $params['query'], 'mod' => "like", 'logic' => true]
+                        );
+
+        }
+        
+        array_push($where, ['field' => $id_field, 'value' => $params['exclude'], 'mod' => "in", 'negate' => true]);
+        
+        return $this->util_model->get_data($table, $fields, $where, [], [], [], QUERY_OBJECT_RESULT, [10]);
+    }
     
     /*
     |--------------------------------------------------------------------------
@@ -175,6 +231,37 @@ class Access_Control_model extends CI_Model {
         return $resp;
     } //End of func create_group
     
+    /**
+     * Assign access object to group
+     * 
+     * @access public
+     * @param array $meta
+     * @param array $params
+     * @return array
+     */
+    public function assign_to_group($meta, $params) {
+        // Set response message.
+        $resp = array('status' => DEFAULT_ERROR);  
+        $table_name = $meta['childtype'] == 'user'? 'group_users': 'access_assigns';        
+        
+        $ret = $this->db->insert_batch($table_name, $params);
+        
+        // Set success response message
+        if($ret) {
+            $resp['status'] = DEFAULT_SUCCESS;
+            $resp['rs'] = $this->db->insert_id();
+        }else {
+            if($this->db->_error_number() == 1062) {
+                $resp['status'] = DEFAULT_EXIST;
+            }else {
+                $resp['status'] = DEFAULT_ERROR;
+            }
+        }
+
+        return $resp;
+    }// end func assign_to_group
+    
+    
     /*
     |--------------------------------------------------------------------------
     | Role related functions
@@ -283,6 +370,74 @@ class Access_Control_model extends CI_Model {
 
         return $resp;
     } //End of func create_role
+    
+    /**
+     * Assign access object to role
+     * 
+     * @access public
+     * @param array $meta
+     * @param array $params
+     * @return array
+     */
+    public function assign_to_role($meta, $params) {
+        // Set response message.
+        $resp = array('status' => DEFAULT_ERROR);         
+        $table_name = $meta['childtype'] == 'user'? 'role_users': 'access_assigns'; 
+                
+        $ret = $this->db->insert_batch($table_name, $params);
+
+        // Set success response message
+        if($ret) {
+            $resp['status'] = DEFAULT_SUCCESS;
+            $resp['rs'] = $this->db->insert_id();
+        }else {
+            if($this->db->_error_number() == 1062) {
+                $resp['status'] = DEFAULT_EXIST;
+            }else {
+                $resp['status'] = DEFAULT_ERROR;
+            }
+        }
+
+        return $resp;
+    }// end func assign_to_role
+    
+    
+    /*
+    |--------------------------------------------------------------------------
+    | User related functions
+    |--------------------------------------------------------------------------
+    */
+    
+    /**
+     * Assign access object to user
+     * 
+     * @access public
+     * @param array $meta
+     * @param array $params
+     * @return array
+     */
+    public function assign_to_user($meta, $params) {
+        // Set response message.
+        $resp = array('status' => DEFAULT_ERROR);        
+        $type_map = ['group' => 'group_users', 'role' => 'role_users', 'perm' => 'access_assigns'];
+        $table_name = $type_map[$meta['childtype']]; 
+        
+        $ret = $this->db->insert_batch($table_name, $params); 
+        
+        // Set success response message
+        if($ret) {
+            $resp['status'] = DEFAULT_SUCCESS;
+            $resp['rs'] = $this->db->insert_id();
+        }else {
+            if($this->db->_error_number() == 1062) {
+                $resp['status'] = DEFAULT_EXIST;
+            }else {
+                $resp['status'] = DEFAULT_ERROR;
+            }
+        }
+
+        return $resp;
+    }// end func assign_to_user
     
 } // End class Access_Control_model
 

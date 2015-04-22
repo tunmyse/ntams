@@ -135,7 +135,7 @@ class Page {
             'logout_url' => site_url('/logout'),
             'message_count' => 2,//TODO get actually message count
             'display_name' => $this->user_name,
-            'display_img' => base_url('img/demo/user-avatar.jpg')
+            'display_img' => base_url('img/user/user-avatar.jpg')
         );
         $top_menu_buffer = $this->CI->load->view(TMPLPATH.'top_menu', $top_menu, true);        
 
@@ -155,6 +155,7 @@ class Page {
         
         $body_parts = array(
             'school_name' => $this->school_name,
+            'short_name' => $this->school_shortname,
             'page_content' => $page_content_buffer,
             'top_nav' => $top_menu_buffer,
             'left_sidebar' => $left_sidebar_buffer,

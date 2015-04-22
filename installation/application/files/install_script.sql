@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `tams_access_assigns` (
   PRIMARY KEY (`assignid`),
   KEY `parentid` (`parentid`),
   KEY `childid` (`childid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 
 -- --------------------------------------------------------
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `tams_colleges` (
   UNIQUE KEY `colcode` (`colcode`),
   UNIQUE KEY `colname` (`colname`),
   UNIQUE KEY `coltitle` (`coltitle`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 -- --------------------------------------------------------
 
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `tams_departments` (
   UNIQUE KEY `deptname` (`deptname`),
   UNIQUE KEY `deptcode` (`deptcode`),
   KEY `colid_idx` (`colid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 -- --------------------------------------------------------
 
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `tams_exams` (
   UNIQUE KEY `examname` (`examname`),
   UNIQUE KEY `shortname` (`shortname`),
   KEY `groupid` (`groupid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 -- --------------------------------------------------------
 
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `tams_exam_grades` (
   PRIMARY KEY (`examgradeid`),
   KEY `examid` (`examid`),
   KEY `gradeid` (`gradeid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ;
 
 -- --------------------------------------------------------
 
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `tams_exam_groups` (
   `status` enum('Active','Inactive') NOT NULL,
   PRIMARY KEY (`groupid`),
   UNIQUE KEY `groupname` (`groupname`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 -- --------------------------------------------------------
 
@@ -119,7 +119,7 @@ CREATE TABLE IF NOT EXISTS `tams_exam_periods` (
   `periodname` varchar(50) NOT NULL,
   PRIMARY KEY (`periodid`),
   UNIQUE KEY `periodname` (`periodname`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1  ;
 
 -- --------------------------------------------------------
 
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS `tams_exam_subjects` (
   PRIMARY KEY (`examsubjectid`),
   KEY `examid` (`examid`),
   KEY `subjectid` (`subjectid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ;
 
 -- --------------------------------------------------------
 
@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS `tams_grades` (
   `gradedesc` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`gradeid`),
   UNIQUE KEY `gradename` (`gradename`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 -- --------------------------------------------------------
 
@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS `tams_groups` (
   UNIQUE KEY `name` (`name`,`owner`,`schoolid`),
   KEY `owner` (`owner`),
   KEY `schoolid` (`schoolid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
 
 --
 -- Dumping data for table `tams_groups`
@@ -179,7 +179,9 @@ CREATE TABLE IF NOT EXISTS `tams_groups` (
 INSERT INTO `tams_groups` (`groupid`, `name`, `owner`, `schoolid`, `description`) VALUES
 (1, 'Student', 1, 1, ''),
 (2, 'Staff', 1, 1, 'Used to manage tams users\r\n'),
-(3, 'Management', 1, 1, 'Used to manage management users\r\n');
+(3, 'Management', 1, 1, 'Used to manage management users\r\n'),
+(4, 'Admin', 1, 1, 'Used to manage admin users\r\n'),
+(5, 'Applicant', 1, 1, 'Used to manage applicants\r\n');
 
 -- --------------------------------------------------------
 
@@ -196,7 +198,7 @@ CREATE TABLE IF NOT EXISTS `tams_group_users` (
   PRIMARY KEY (`groupuserid`),
   KEY `userid` (`userid`),
   KEY `groupid` (`groupid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 -- --------------------------------------------------------
 
@@ -212,7 +214,7 @@ CREATE TABLE IF NOT EXISTS `tams_link_perms` (
   PRIMARY KEY (`linkpermid`),
   KEY `permid` (`permid`),
   KEY `linkid` (`linkid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
 -- Dumping data for table `tams_link_perms`
@@ -283,10 +285,9 @@ INSERT INTO `tams_module_links` (`linkid`, `moduleid`, `name`, `url`, `status`, 
 (4, 3, 'Admission', 'admission/exam', 'active', NULL),
 (5, 2, 'Manage Roles', 'roles', 'active', NULL),
 (6, 2, 'Manage Permissions', 'permissions', 'active', NULL),
-(7, 2, 'Manage Users', 'users', 'active', NULL),
-(8, 1, 'Setup College', 'college', 'active', NULL),
-(9, 1, 'Setup Department', 'department', 'active', NULL),
-(10, 1, 'Setup Programme', 'programme', 'active', NULL);
+(7, 1, 'Setup College', 'college', 'active', NULL),
+(8, 1, 'Setup Department', 'department', 'active', NULL),
+(9, 1, 'Setup Programme', 'programme', 'active', NULL);
 
 -- --------------------------------------------------------
 
@@ -332,10 +333,6 @@ CREATE TABLE IF NOT EXISTS `tams_programmes` (
   UNIQUE KEY `progcode` (`progcode`),
   KEY `deptid` (`deptid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
---
--- Dumping data for table `tams_programmes`
---
 
 -- --------------------------------------------------------
 
@@ -405,7 +402,7 @@ CREATE TABLE IF NOT EXISTS `tams_roles` (
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`roleid`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 -- --------------------------------------------------------
 
@@ -422,7 +419,7 @@ CREATE TABLE IF NOT EXISTS `tams_role_users` (
   PRIMARY KEY (`roleuserid`),
   KEY `userid` (`userid`),
   KEY `roleid` (`roleid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 -- --------------------------------------------------------
 
@@ -439,7 +436,7 @@ CREATE TABLE IF NOT EXISTS `tams_session` (
   `status` enum('active','closed') NOT NULL DEFAULT 'active',
   `registration` enum('open','closed','reopened') NOT NULL DEFAULT 'open',
   PRIMARY KEY (`sesid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ;
 
 -- --------------------------------------------------------
 
@@ -509,7 +506,7 @@ CREATE TABLE IF NOT EXISTS `tams_subjects` (
   `subname` varchar(255) NOT NULL,
   PRIMARY KEY (`subid`),
   UNIQUE KEY `subname` (`subname`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 -- --------------------------------------------------------
 

@@ -72,7 +72,7 @@ class Application extends CI_Controller {
         }
         // Set school name
         $school_names = $this->main->get_school_name();
-        $data['school_name'] = $school_names['short'];
+        $data['short_name'] = $school_names['short'];
         
         // Set redirection url if any.
         $redirect_uri = $this->input->get('rdr');
@@ -344,25 +344,8 @@ class Application extends CI_Controller {
         $this->load->helper('file');
         
         // Delete files in installation folder
-        delete_files(APPPATH.'installation', TRUE, 1);
-        
-        // Build array of all installation related files
-        $files = array(
-            APPPATH.'controllers/installation.php',
-            APPPATH.'models/installer_model.php',
-            APPPATH.'views/app/installation.php',
-            APPPATH.'views/app/install_steps.php',
-            APPPATH.'language/installer_lang.php'
-        );
-        
-        // Delete other installation related files
-        foreach($files as $f) {
-            if(realpath($f))
-                @unlink($f);
-        }
-        
-        $data['domain_string'] = $domain_string;
-        $this->load->view('app/newhtml', $data);       
+        delete_files(realpath(APPPATH.'../installation'), TRUE, 1);
+        $this->load->view('app/install_complete');       
     }
 }
 

@@ -73,8 +73,9 @@
     <body class='login'>
 	<div class="wrapper">
             <h1>
-                <a href="#"><img src="<?php echo site_url(); ?>img/logo2.png" alt="" class='retina-ready' width="59" height="49">
-                    <?php echo $school_name?>
+                <a href="#"><img src="<?php echo site_url()."img/logo/{$short_name}-logo.png"?>" 
+                                 alt="" class='retina-ready' width="59" height="49">
+                    <?php echo $short_name?>
                 </a>
             </h1>
             <div class="login-body" style="padding-top: 20px">

@@ -50,16 +50,24 @@ class Installer_model extends CI_Model {
                             'domainstring' => $sch_params['domainstring']
                         );      
             $this->db->insert('schools', $sch_data);
+            $school_id = $this->db->insert_id();
             
             $adm_data = array(
                             'fname' => $adm_params['fname'],
                             'lname' => $adm_params['lname'],
                             'email' => $adm_params['email'],
+                            'usertypeid' => $adm_params['usertypeid'],
+                            'phone' => $adm_params['phone'],
                             'usertype' => 'admin',
-                            'schoolid' => $this->db->insert_id(),
+                            'schoolid' => $school_id,
                             'password' => $adm_params['password']
                         );     
             $this->db->insert('users', $adm_data);
+            
+            $sch_update_data = array(
+                            'admin' => $this->db->insert_id()
+                        );     
+            $this->db->update('schools', $sch_update_data, array('schoolid' => $school_id));
             
             $this->db->trans_complete();
 

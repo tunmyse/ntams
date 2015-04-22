@@ -15,21 +15,11 @@
 class TAMS_Session extends CI_Session {
 
     /**
-<<<<<<< HEAD
-     * Add or change flashdata, only available until the next request
-     * Overriden to allow adding notification to the ccess
-=======
      * Add or change flashdata, only available until the next request.
      * Overriden to allow adding notifications to the current request.
->>>>>>> master
      * 
      * @access	public
-     * @param	mixed
-     * @param	string
-<<<<<<< HEAD
-=======
      * @param bool $current Mark the flashdata as old
->>>>>>> master
      * @return	void
      */
     function set_flashdata($newdata = array(), $newval = '', $current = FALSE) {

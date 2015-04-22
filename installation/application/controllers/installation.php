@@ -19,7 +19,7 @@ class Installation extends CI_Controller {
         /*
          * Load language file
          */ 
-        $this->lang->load('installer');
+        $this->lang->load('installer');        
     }
     
     /**
@@ -68,7 +68,9 @@ class Installation extends CI_Controller {
                     $error = $this->lang->line('empty_form_field');  
                     break;
                 
-            
+                case 10:
+                    $error = $this->lang->line('image_error');  
+                    break;      
             }
         }
         
@@ -84,17 +86,35 @@ class Installation extends CI_Controller {
     public function verify_steps() {    
 
         if($this->input->server('REQUEST_METHOD') == 'POST'){
-//            var_dump($this->input->post());
-//            exit;
-            // Set up application file
+            
             $db_config = $this->input->post('db');
             $acct_params = $this->input->post('acct');
             $sch_params = $this->input->post('sch');
             $sch_params['domainstring'] = strtolower(url_title($sch_params['shortname'])); 
-            $this->setup($db_config, $sch_params, $acct_params);
+            
+            $config['upload_path'] = '../img/logo/';
+            $config['allowed_types'] = 'png';
+            $config['max_size']	= '512';
+            $config['max_width']  = '1024';
+            $config['max_height']  = '768';
+            $config['overwrite']  = '768';
+            $config['file_name'] = $sch_params['domainstring'].'-logo';
+            $this->load->library('upload', $config);
+                                   
+            if($this->upload->do_upload('logo')) {
                 
-            $host = $this->input->server('HTTP_HOST');
-            redirect("http://{$host}/install/complete/");
+                $acct_params['usertypeid'] = 'adm001';
+                $sch_params['domainstring'] = strtolower(url_title($sch_params['shortname'])); 
+                $this->setup($db_config, $sch_params, $acct_params);
+
+                $host = $this->input->server('HTTP_HOST');
+                $r_uri = $this->input->server('REQUEST_URI');
+                $host .= substr($r_uri, 0, stripos($r_uri, '/installation'));
+                redirect("http://{$host}/install/complete/");
+            }else {
+                redirect(site_url('steps?status=10'));
+            }                       
+            
         }else {
             redirect(site_url('steps?status=1'));
         }

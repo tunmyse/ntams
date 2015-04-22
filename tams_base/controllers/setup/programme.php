@@ -22,7 +22,7 @@ class Programme extends CI_Controller {
      * @var string
      */
     
-    private $folder_name = 'programme';
+    private $folder_name = 'setup';
     
     /**
      * Module Name
@@ -31,7 +31,7 @@ class Programme extends CI_Controller {
      * @var string
      */
     
-    private $module_name = 'programme';
+    private $module_name = 'setup';
     
     /*
      * Class constructor
@@ -51,7 +51,7 @@ class Programme extends CI_Controller {
          * Load models
          */
         $this->load->model("$this->folder_name/programme_model", 'mdl');
-        $this->load->model('department/department_model', 'dpt_mdl');
+        $this->load->model("$this->folder_name/department_model", 'dpt_mdl');
         
         /*
          * Load language
@@ -77,7 +77,7 @@ class Programme extends CI_Controller {
         $page_name = 'view_prog';
         
         // Retrieve departments
-        $data['college_name'] = $this->main->get_college_name();
+        $data['college_name'] = $this->main->get_unit_name();
         
         // Retrieve all colleges 
         $data['progs'] = $this->mdl->get_programme();

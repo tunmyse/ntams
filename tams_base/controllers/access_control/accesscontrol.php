@@ -33,6 +33,15 @@ class AccessControl extends CI_Controller {
     
     private $module_name = 'access_control';
     
+    /**
+     * Model Name
+     * 
+     * @access private
+     * @var Access_Control_model
+     */
+    
+    public $mdl;
+    
     /*
      * Class constructor
      * 
@@ -94,79 +103,6 @@ class AccessControl extends CI_Controller {
      */
     public function create() {
         
-        // Check for valid request method
-        if($this->input->server('REQUEST_METHOD') == 'POST') {
-            
-            // Set error to true. 
-            // This should be changed only if there are no validation errors.
-            $error = false;
-            
-            // Set expected form field names
-            $fields = array(
-                'college_name'      => array(
-                    'required' => true
-                ),
-                'college_title'     => array(
-                    'required' => true
-                ),
-                'college_code'      => array(
-                    'required' => true
-                ),
-                'college_remark'    => array(
-                    'required' => true
-                ),
-                'special'          => array(
-                    'required' => true
-                )
-            );
-            
-            // Get all field values.
-            $form_fields = $this->input->post(NULL);
-            
-            // Validate form fields.
-            //$error = $this->validate_fields($form_fields, $fields);
-            
-            // Send fields to model if there are no errors
-            if(!$error) {
-                $params = array(
-                    'colname'   => $form_fields['college_name'],
-                    'coltitle'  => $form_fields['college_title'],
-                    'colcode'   => $form_fields['college_code'],
-                    'remark'    => $form_fields['college_remark'],
-                    'special'   => $form_fields['special']
-                );
-                
-                // Call model method to perform insertion
-                $status = $this->mdl->create($params);
-                
-                // Process model response
-                switch($status) {
-                    
-                    // Unique constraint violated.
-                    case DEFAULT_EXIST:
-                        break;
-                    
-                    // There was a problem creating the entry.
-                    case DEFAULT_ERROR:
-                        break;
-                    
-                    // Entry created successfully.
-                    case DEFAULT_SUCCESS:
-                        break;
-                    
-                    default:
-                        break;
-                }
-            }
-            
-        }else{
-            // Set error message for any request other than POST
-            $error_msg = $this->lang->line('invalid_req_method');  
-            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-        }
-        
-        // Redirect to college page, showing notifiction messages if there are.
-        redirect('college');
     }// End of func create
     
     /**
@@ -202,48 +138,39 @@ class AccessControl extends CI_Controller {
     }// End of func validate_fields
     
     /**
-     * College information.	 
+     * Get suggestions for a certain certain access object.	 
      */
-    public function info($college_name) {
-        $data = array();
-        $page_name = 'college_info';
+    public function suggestions() {
         
-        // Format college name from url
-        // Format department name from url
-        $link_paths = explode('-', $college_name);
-        $colid = (int)$link_paths[count($link_paths)-1];
+        $params = [
+            "query" => $this->input->get('query'),
+            "type" => $this->input->get('type'),
+            "exclude" => explode('_', $this->input->get('exclude')),
+            "module_id" => $this->input->get('module'), // To further filter permissions
+            "school_id" => $this->main->item('school_id')
+        ];
+
+        $result = $this->mdl->get_suggestions($params);
         
-        $params = array(
-            'colid' => $colid
-        );
-        // Retrieve all department students 
-        $data['info'] = $this->mdl->get_college($params);
-        
-        if($data['info'] == DEFAULT_NOT_EXIST) {
-            redirect('error/errorNum');
+        switch($result['status']) {
+
+            case DEFAULT_ERROR:
+                set_status_header(500, $this->lang->line('operation_error'));
+                break;
+
+            case DEFAULT_EMPTY:
+                $result['rs'] = [];
+            case DEFAULT_SUCCESS:
+                set_status_header(200);
+                $this->output->set_content_type('application/json')->set_output(json_encode($result['rs']));
+
         }
         
-        $data['college_name'] = $this->main->get_college_name();
+//        set_status_header(200);
+//        $this->output->set_content_type('application/json')->set_output(json_encode($result['rs']));
+//        set_status_header(403);//, $this->lang->line('invalid_req_method'));
         
-        // Retrieve all colleges 
-        $data['colleges'] = $this->mdl->get_college();
-        
-        // Retrieve all colleges 
-        $data['students'] = $this->mdl->get_college_students($params);
-        
-        // Retrieve all colleges 
-        $data['staffs'] = $this->mdl->get_college_staffs($params);
-        
-        // Retrieve all colleges 
-        $data['depts'] = $this->mdl->get_college_depts($params);
-        
-        
-        $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
-        $page_content .= $this->load->view($this->folder_name.'/partials/edit_college', $data['college_name'], true);
-        $page_content .= $this->load->view('department/partials/create_dept', $data['college_name'], true);
-        
-        $this->page->build($page_content, $this->folder_name, $page_name, ucfirst($data['college_name']));    
-    }// End of func info
+    }// End of func suggestions
     
 }
 

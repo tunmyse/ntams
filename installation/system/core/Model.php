@@ -31,6 +31,17 @@ class CI_Model {
 	 *
 	 * @access public
 	 */
+    
+        /**
+         *  @var Main TAMS library class 
+         */ 
+        public $main;
+                 
+        /**
+         *  @var Util_model TAMS Utility Model class
+         */ 
+        public $util_model;
+        
 	function __construct()
 	{
 		log_message('debug', "Model Class Initialized");
