@@ -14,14 +14,10 @@ examModule.controller('PageController', function($scope) {
     grades = null;
     subjects = null;    
 
-    $scope.current = null;
+    $scope.current = {};
     
-    angular.element('.modal').on('show', function() {
-        angular.element(this).find('.chosen-select').each(function() {
-            return function(that) {
-                setTimeout(function(){angular.element(that).trigger('liszt:updated');},100);   
-            }(this);
-        });
+    angular.element('.modal').on('shown', function() {
+        angular.element(this).find('.chosen-select').trigger('liszt:updated');
     });
     
     $scope.openEditDialog = function(name, idx, e) {         
@@ -31,19 +27,16 @@ examModule.controller('PageController', function($scope) {
 
     $scope.openDeleteDialog = function(name, idx, e) {         
         var href = '#delete_modal'; 
-        $scope.current = null;
         $scope.openDialog(href, name, idx, e);
     }; 
     
     $scope.openDialog = function(href, name, idx, e) {
-        $scope.current = null;
-        $scope.current = angular.copy($scope.data[name+'s'][idx]);
+        angular.copy($scope.data[name+'s'][idx], $scope.current);
         
         if($scope.current === null)
             return;
                
-        angular.element(href).modal('show'); 
-        
+        angular.element(href).modal('show');         
         e.preventDefault();
     };
     

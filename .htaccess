@@ -1,7 +1,7 @@
 RewriteEngine On
 
 # Redirect all non-https links to https
-#RewriteCond %{REQUEST_SCHEME} HTTP$ [NC]
+# RewriteCond %{REQUEST_SCHEME} HTTP$ [NC]
 RewriteCond %{HTTPS} !on [NC]
 RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L]
 

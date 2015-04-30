@@ -68,6 +68,7 @@
             </div>
         </div>
         
+        <input type="hidden" name="edit_prog_id" value="{{current.progid}}"/>
         <div class="modal-footer">
             <button data-dismiss="modal" class="btn" aria-hidden="true">Cancel</button>
             <button class="btn btn-primary" type="submit" id="update_prog_button">Create</button>

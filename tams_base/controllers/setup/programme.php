@@ -263,6 +263,67 @@ class Programme extends CI_Controller {
         redirect('programme');
     }// End of func update
     
+    /**
+     * Delete a programme.	 
+     */
+    public function delete() {
+        
+        // Check for valid request method
+        if($this->input->server('REQUEST_METHOD') == 'POST') {
+            
+        
+            // Load the validation library
+            $this->load->library('form_validation');
+            
+            // Run validation and process request if fields are valid.
+            if($this->form_validation->run('delete_section') != FALSE) {
+               
+                // Get id for entry to be deleted.
+                $id = $this->input->post('delete_id');
+                
+                // Call model method to perform deletion
+                $ret = $this->mdl->delete([['field' => 'progid', 'value' => $id]]);
+                
+                // Process model response
+                switch($ret['status']) {
+                    
+                    // Invalid arguments supplied.
+                    case DEFAULT_NOT_VALID:
+                        break;
+                    
+                    // Foreign key constraint violated.
+                    case DEFAULT_EXIST:
+                        $msg = $this->lang->line('validation_error');  
+                        $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+                        break;
+                    
+                    // There was a problem deleting the entry.
+                    case DEFAULT_ERROR:
+                        break;
+                    
+                    // Entry deleted successfully.
+                    case DEFAULT_SUCCESS:
+                        break;
+                    
+                    default:
+                        break;
+                }
+                
+            }else {
+                // Set error message for invalid/incomplete fields
+                $msg = $this->lang->line('validation_error');  
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+            }  
+            
+        }else{
+            // Set error message for any request other than POST
+            $error_msg = $this->lang->line('invalid_req_method');  
+            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+        }
+        
+        // Redirect to college page, showing notifiction messages if there are.
+        redirect('setup/college');
+    }// End of func delete
     
     /**
      * Validate form fields.	 

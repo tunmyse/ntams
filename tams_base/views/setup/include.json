@@ -1,19 +1,14 @@
 {
     "all": {
         "js": [
-            "plugins/chosen/chosen.jquery.min.js"
+            "plugins/chosen/chosen.jquery.min.js",
+            "angular/angular.min.js",
+            "angular/angular-setup.js",
+            "lodash/lodash.min.js"
         ],
         
         "css": [
             "plugins/chosen/chosen.css"            
         ]
-    },
-    
-    "login": {
-        
-    },
-    
-    "reset_password": {
-        
     }
 }

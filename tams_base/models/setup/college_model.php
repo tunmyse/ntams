@@ -27,18 +27,7 @@ class College_model extends CI_Model {
         $this->load->database();
 
     } // End func __construct
-
-    /**
-     * Create a new college
-     * 
-     * @access public
-     * @param array $params
-     * @return void
-     */
-    public function update($params) {
-        $status = $this->db->insert('colleges', $params); 
-    }// End func create
-	
+    
     /**
      * Create a new college
      * 
@@ -84,12 +73,36 @@ class College_model extends CI_Model {
      * 
      * @access public
      * @param array $params
-     * @return void
+     * @return array
      */
     public function create($params) {
-        $status = $this->db->insert('colleges', $params); 
+        return $status = $this->db->insert('colleges', $params); 
     }// End func create
 	
+    /**
+     * Create a new college
+     * 
+     * @access public
+     * @param int $id
+     * @param array $params
+     * @return array
+     */
+    public function update($id, $params) {
+        return $status = $this->db->insert('colleges', $params); 
+    }// End func create
+	
+    /**
+     * Delete a college
+     * 
+     * @access public
+     * @param array $params
+     * @return array
+     */
+    public function delete($params) {
+        return $this->util_model->delete('colleges', $params); 
+    }// End func delete
+	
+    
     /**
      * Get all student in a college
      * 

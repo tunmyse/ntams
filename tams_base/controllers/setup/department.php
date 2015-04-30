@@ -77,6 +77,7 @@ class Department extends CI_Controller {
         $page_name = 'view_dept';
         
         $data['college_name'] = $this->main->get_unit_name();
+        $data['type'] = 'Department';
         
         // Retrieve all departments 
         $data['depts']      = $this->mdl->get_department();
@@ -86,14 +87,15 @@ class Department extends CI_Controller {
         
         $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
         $page_content .= $this->load->view($this->folder_name.'/partials/create_dept', $data, true);        
-        $page_content .= $this->load->view($this->folder_name.'/partials/edit_dept', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/edit_dept', $data, true);        
+        $page_content .= $this->load->view($this->folder_name.'/partials/delete_modal', $data, true);
         
         $this->page->build($page_content, $this->folder_name, $page_name, 'Department');       
     }// End of func index
     
     
     /**
-     * Create a new department.	 
+     * Update a new department.	 
      */
     public function update() {
         
@@ -165,7 +167,7 @@ class Department extends CI_Controller {
         
         // Redirect to deprtment page, showing notifiction messages if there are.
         redirect('department');
-    }// End of func create
+    }// End of func update
     
     /**
      * Create a new department.	 
@@ -247,6 +249,68 @@ class Department extends CI_Controller {
     }// End of func create
     
     /**
+     * Delete a department.	 
+     */
+    public function delete() {
+        
+        // Check for valid request method
+        if($this->input->server('REQUEST_METHOD') == 'POST') {
+            
+        
+            // Load the validation library
+            $this->load->library('form_validation');
+            
+            // Run validation and process request if fields are valid.
+            if($this->form_validation->run('delete_section') != FALSE) {
+               
+                // Get id for entry to be deleted.
+                $id = $this->input->post('delete_id');
+                
+                // Call model method to perform deletion
+                $ret = $this->mdl->delete([['field' => 'deptid', 'value' => $id]]);
+                
+                // Process model response
+                switch($ret['status']) {
+                    
+                    // Invalid arguments supplied.
+                    case DEFAULT_NOT_VALID:
+                        break;
+                    
+                    // Foreign key constraint violated.
+                    case DEFAULT_EXIST:
+                        $msg = $this->lang->line('validation_error');  
+                        $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+                        break;
+                    
+                    // There was a problem deleting the entry.
+                    case DEFAULT_ERROR:
+                        break;
+                    
+                    // Entry deleted successfully.
+                    case DEFAULT_SUCCESS:
+                        break;
+                    
+                    default:
+                        break;
+                }
+                
+            }else {
+                // Set error message for invalid/incomplete fields
+                $msg = $this->lang->line('validation_error');  
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+            }  
+            
+        }else{
+            // Set error message for any request other than POST
+            $error_msg = $this->lang->line('invalid_req_method');  
+            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+        }
+        
+        // Redirect to college page, showing notifiction messages if there are.
+        redirect('setup/college');
+    }// End of func delete
+    
+    /**
      * Validate form fields.	 
      */
     public function validate_fields($received, $expected) {
@@ -299,7 +363,7 @@ class Department extends CI_Controller {
             redirect('error/errorNum');
         }
         
-        $data['college_name'] = $this->main->get_college_name();
+        $data['college_name'] = $this->main->get_unit_name();
         
         // Retrieve all department students 
         $data['students'] = $this->mdl->get_dept_students($params);

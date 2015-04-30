@@ -76,14 +76,16 @@ class College extends CI_Controller {
         $page_name = 'view_college';
         
         $data['college_name'] = $this->main->get_unit_name();
-        
+        $data['type'] = $data['college_name'];
         $data['dept_count'] = $this->mdl->get_department_count();
         
         // Retrieve all colleges 
         $data['colleges'] = $this->mdl->get_college();
         
         $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/create_college', $data['college_name'], true);
         $page_content .= $this->load->view($this->folder_name.'/partials/edit_college', $data['college_name'], true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/delete_modal', $data['college_name'], true);
         
         $this->page->build($page_content, $this->folder_name, $page_name, ucfirst($data['college_name']));       
     }// End of func index
@@ -166,8 +168,150 @@ class College extends CI_Controller {
         }
         
         // Redirect to college page, showing notifiction messages if there are.
-        redirect('college');
+        redirect('setup/college');
     }// End of func create
+    
+    /**
+     * Update a college.	 
+     */
+    public function update() {
+        
+        // Check for valid request method
+        if($this->input->server('REQUEST_METHOD') == 'POST') {
+            
+            // Set error to true. 
+            // This should be changed only if there are no validation errors.
+            $error = false;
+            
+            // Set expected form field names
+            $fields = array(
+                'college_name'      => array(
+                    'required' => true
+                ),
+                'college_title'     => array(
+                    'required' => true
+                ),
+                'college_code'      => array(
+                    'required' => true
+                ),
+                'college_remark'    => array(
+                    'required' => true
+                ),
+                'special'          => array(
+                    'required' => true
+                )
+            );
+            
+            // Get all field values.
+            $form_fields = $this->input->post(NULL);
+            
+            // Validate form fields.
+            //$error = $this->validate_fields($form_fields, $fields);
+            
+            // Send fields to model if there are no errors
+            if(!$error) {
+                $params = array(
+                    'colname'   => $form_fields['college_name'],
+                    'coltitle'  => $form_fields['college_title'],
+                    'colcode'   => $form_fields['college_code'],
+                    'remark'    => $form_fields['college_remark'],
+                    'special'   => $form_fields['special']
+                );
+                
+                // Call model method to perform insertion
+                $status = $this->mdl->update($params);
+                
+                // Process model response
+                switch($status) {
+                    
+                    // Unique constraint violated.
+                    case DEFAULT_EXIST:
+                        break;
+                    
+                    // There was a problem creating the entry.
+                    case DEFAULT_ERROR:
+                        break;
+                    
+                    // Entry created successfully.
+                    case DEFAULT_SUCCESS:
+                        break;
+                    
+                    default:
+                        break;
+                }
+            }
+            
+        }else{
+            // Set error message for any request other than POST
+            $error_msg = $this->lang->line('invalid_req_method');  
+            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+        }
+        
+        // Redirect to college page, showing notifiction messages if there are.
+        redirect('setup/college');
+    }// End of func update
+    
+    /**
+     * Delete a college.	 
+     */
+    public function delete() {
+        
+        // Check for valid request method
+        if($this->input->server('REQUEST_METHOD') == 'POST') {
+            
+        
+            // Load the validation library
+            $this->load->library('form_validation');
+            
+            // Run validation and process request if fields are valid.
+            if($this->form_validation->run('delete_section') != FALSE) {
+               
+                // Get id for entry to be deleted.
+                $id = $this->input->post('delete_id');
+                
+                // Call model method to perform deletion
+                $ret = $this->mdl->delete([['field' => 'colid', 'value' => $id]]);
+                
+                // Process model response
+                switch($ret['status']) {
+                    
+                    // Invalid arguments supplied.
+                    case DEFAULT_NOT_VALID:
+                        break;
+                    
+                    // Foreign key constraint violated.
+                    case DEFAULT_EXIST:
+                        $msg = $this->lang->line('validation_error');  
+                        $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+                        break;
+                    
+                    // There was a problem deleting the entry.
+                    case DEFAULT_ERROR:
+                        break;
+                    
+                    // Entry deleted successfully.
+                    case DEFAULT_SUCCESS:
+                        break;
+                    
+                    default:
+                        break;
+                }
+                
+            }else {
+                // Set error message for invalid/incomplete fields
+                $msg = $this->lang->line('validation_error');  
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+            }  
+            
+        }else{
+            // Set error message for any request other than POST
+            $error_msg = $this->lang->line('invalid_req_method');  
+            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+        }
+        
+        // Redirect to college page, showing notifiction messages if there are.
+        redirect('setup/college');
+    }// End of func delete
     
     /**
      * Validate form fields.	 
@@ -223,7 +367,7 @@ class College extends CI_Controller {
             redirect('error/errorNum');
         }
         
-        $data['college_name'] = $this->main->get_college_name();
+        $data['college_name'] = $this->main->get_unit_name();
         
         // Retrieve all colleges 
         $data['colleges'] = $this->mdl->get_college();
@@ -240,7 +384,7 @@ class College extends CI_Controller {
         
         $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
         $page_content .= $this->load->view($this->folder_name.'/partials/edit_college', $data['college_name'], true);
-        $page_content .= $this->load->view('department/partials/create_dept', $data['college_name'], true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/create_dept', $data['college_name'], true);
         
         $this->page->build($page_content, $this->folder_name, $page_name, ucfirst($data['college_name']));    
     }// End of func info

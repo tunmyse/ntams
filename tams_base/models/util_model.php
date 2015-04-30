@@ -489,6 +489,55 @@ class Util_model extends CI_Model {
         return $ret;
     }// End func get_query_data
     
+    /**
+     * Delete data from a table
+     * 
+     * @access public
+     * @param string $table Table to delete from
+     * @param array $fields Fields used to build where clause for the delete
+     * @return array Status of the query
+     */
+    public function delete($table, array $fields) {
+                
+        // Check if proper arguments are supplied
+        if(!isset($table) || $table == '' || !is_array($fields) || empty($fields)) {            
+            return array('status' => DEFAULT_NOT_VALID);
+        }
+        
+        foreach ($fields as $field) {
+            $this->db->where($field['field'], $field['value']);
+        }
+        
+        // Run query
+        $result = $this->db->delete($table);
+        
+        if($result) {
+            
+            // Set default return value 
+            $ret = array('status' => DEFAULT_EMPTY);
+            
+            // Check if affected_rows is not empty
+            if($r_count = $this->db->affected_rows() > 0) {                
+                $ret = array('status' => DEFAULT_SUCCESS, 'count' => $r_count);
+            }
+            
+        }else {
+            $ret = array('status' => DEFAULT_ERROR);
+            
+            switch($this->db->_error_number()) {
+                case 1451:
+                    $ret['status'] = \DEFAULT_EXIST;
+                    break;
+                
+                case 1054:
+                    $ret['status'] = \DEFAULT_NOT_VALID;
+                    break;
+            }
+        }
+        
+        return $ret;
+    } // End func delete
+    
 } // End class Util_model
 
 // End file util_model.php
