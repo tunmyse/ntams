@@ -76,6 +76,8 @@ class Programme extends CI_Controller {
         $data = array();
         $page_name = 'view_prog';
         
+        $data['type'] = 'Programme';
+        
         // Retrieve departments
         $data['college_name'] = $this->main->get_unit_name();
         
@@ -83,11 +85,13 @@ class Programme extends CI_Controller {
         $data['progs'] = $this->mdl->get_programme();
         
         // Retrieve departments
-        $data['depts'] = $this->dpt_mdl->get_department();
+        $depts = $this->dpt_mdl->get_department();
+        $data['depts'] = $depts['status'] == \DEFAULT_SUCCESS? $depts['rs']: [];
         
         $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
         $page_content .= $this->load->view($this->folder_name.'/partials/create_prog', $data['depts'], true);
         $page_content .= $this->load->view($this->folder_name.'/partials/edit_prog', $data['depts'], true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/delete_modal', $data['depts'], true);
         
         $this->page->build($page_content, $this->folder_name, $page_name, 'Programme');       
     }// End of func index
@@ -107,32 +111,9 @@ class Programme extends CI_Controller {
             // Set error to true. 
             // This should be changed only if there are no validation errors.
             $error = false;
-            
-            // Set expected form field names
-            // Do form validation here
-//            $fields = array(
-//                'college_name'      => array(
-//                    'required' => true
-//                ),
-//                'college_title'     => array(
-//                    'required' => true
-//                ),
-//                'college_code'      => array(
-//                    'required' => true
-//                ),
-//                'college_remark'    => array(
-//                    'required' => true
-//                ),
-//                'special'          => array(
-//                    'required' => true
-//                )
-//            );
-            
+                        
             // Get all field values.
             $form_fields = $this->input->post(NULL);
-            
-            // Validate form fields.
-            //$error = $this->validate_fields($form_fields, $fields);
             
             // Send fields to model if there are no errors
             if(!$error) {
@@ -175,52 +156,26 @@ class Programme extends CI_Controller {
         }
         
         // Redirect to programme page, showing notifiction messages if there are.
-        redirect('programme');
+        redirect('setup/programme');
     }// End of func create
 
-       /**
-     * Create a new programme.	 
+    /**      
+     * Update a programme.	 
      */
     public function update() {
         
-        // Initialise data array
-        $data = array();
-                
         // Check for valid request method
-        if($this->input->server('REQUEST_METHOD') == 'POST'){
+        if($this->input->server('REQUEST_METHOD') == 'POST') {
             
-            // Set error to true. 
-            // This should be changed only if there are no validation errors.
-            $error = false;
+        
+            // Load the validation library
+            $this->load->library('form_validation');
             
-            // Set expected form field names
-            // Do form validation here
-//            $fields = array(
-//                'college_name'      => array(
-//                    'required' => true
-//                ),
-//                'college_title'     => array(
-//                    'required' => true
-//                ),
-//                'college_code'      => array(
-//                    'required' => true
-//                ),
-//                'college_remark'    => array(
-//                    'required' => true
-//                ),
-//                'special'          => array(
-//                    'required' => true
-//                )
-//            );
-            
-            // Get all field values.
-            $form_fields = $this->input->post(NULL);
-            
-            // Validate form fields.
-            //$error = $this->validate_fields($form_fields, $fields);
-            
-            // Send fields to model if there are no errors
-            if(!$error) {
+            // Run validation and process request if fields are valid.
+            if($this->form_validation->run('setup_update_prog') != FALSE) {
+               
+                // Get parameters for entry to be updated.
+                $form_fields = $this->input->post(NULL);
                 $params = array(
                     'progname'   => $form_fields['prog_name'],
                     'progcode'  => $form_fields['prog_code'],
@@ -230,28 +185,39 @@ class Programme extends CI_Controller {
                     'remark'   => $form_fields['prog_remark']
                 );
                 
-                // Call model method to perform insertion
-                $status = $this->mdl->create($params);
+                $fields = [['field' => 'progid', 'value' => $form_fields['edit_prog_id']]];
+                
+                // Call model method to perform update
+                $ret = $this->mdl->update($params, $fields);
                 
                 // Process model response
-                switch($status) {
+                switch($ret['status']) {
                     
-                    // Unique constraint violated.
+                    // Invalid arguments supplied.
+                    case DEFAULT_NOT_VALID:
+                        break;
+                    
+                    // Foreign key constraint violated.
                     case DEFAULT_EXIST:
                         break;
                     
-                    // There was a problem creating the entry.
+                    // There was a problem updating the entry.
                     case DEFAULT_ERROR:
                         break;
                     
-                    // Entry created successfully.
+                    // Entry updated successfully.
                     case DEFAULT_SUCCESS:
                         break;
                     
                     default:
                         break;
                 }
-            }
+                
+            }else {
+                // Set error message for invalid/incomplete fields
+                $msg = $this->lang->line('validation_error');  
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+            }  
             
         }else{
             // Set error message for any request other than POST
@@ -260,7 +226,7 @@ class Programme extends CI_Controller {
         }
         
         // Redirect to programme page, showing notifiction messages if there are.
-        redirect('programme');
+        redirect('setup/programme');
     }// End of func update
     
     /**
@@ -276,7 +242,7 @@ class Programme extends CI_Controller {
             $this->load->library('form_validation');
             
             // Run validation and process request if fields are valid.
-            if($this->form_validation->run('delete_section') != FALSE) {
+            if($this->form_validation->run('setup_delete_section') != FALSE) {
                
                 // Get id for entry to be deleted.
                 $id = $this->input->post('delete_id');
@@ -321,42 +287,41 @@ class Programme extends CI_Controller {
             $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
         }
         
-        // Redirect to college page, showing notifiction messages if there are.
-        redirect('setup/college');
+        // Redirect to programme page, showing notifiction messages if there are.
+        redirect('setup/programme');
     }// End of func delete
     
     /**
-     * Validate form fields.	 
+     * Programme information.	 
      */
-    public function validate_fields($received, $expected) {
+    public function info($prog_name) {
+        $data = array();
+        $page_name = 'prog_info';
         
-        // Check which of the expected fields are present in the received fields array.
-        $present = array_intersect(array_keys($expected), array_keys($received));
+        // Format department name from url
+        $link_paths = explode('-', $prog_name);
+        $progid = (int)$link_paths[count($link_paths)-1];
         
-        // Compare size of present fields to expected fields.
-        if(count($present) !== count($expected)) {
-            // Set error message for incomplete form fields
-            $error_msg = $this->lang->line('invalid_req_method');  
-            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-            return true;
-        }        
-            
-        foreach($expected as $exp) {
-            if($exp['required']) {
-                
-            }
+        $params = array(
+            'progid' => $progid
+        );
+        // Retrieve all department students 
+        $data['info'] = $this->mdl->get_programme($params);
+        
+        if($data['info']['status'] == DEFAULT_NOT_EXIST) {
+            redirect('error/errorNum');
         }
         
-        if(true) {
-            // Set error message for any request other than POST
-            $error_msg = $this->lang->line('invalid_req_method');  
-            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);            
-            return true;
-        }
+        $data['college_name'] = $this->main->get_unit_name();
         
-        return false;
-    }// End of func index
-    
+        // Retrieve all department students 
+        $data['students'] = $this->mdl->get_prog_students($params);
+                        
+        $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/edit_prog', $data['college_name'], true);
+        
+        $this->page->build($page_content, $this->folder_name, $page_name, 'Programme');    
+    }// End of func info
     
 }
 

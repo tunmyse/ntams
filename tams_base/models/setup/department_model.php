@@ -17,6 +17,15 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Department_model extends CI_Model {
 	
     /**
+     * Table name
+     * 
+     * @access private
+     * @var string
+     */
+    
+    private $table = 'departments';
+    
+    /**
      * Class constructor
      * 
      * @access public
@@ -29,15 +38,38 @@ class Department_model extends CI_Model {
     } // End func __construct
 
     /**
-     * Create a new college
+     * Create a new department
      * 
      * @access public
      * @param array $params
      * @return void
      */
     public function create($params) {
-        $status = $this->db->insert('departments', $params); 
+        $status = $this->db->insert($this->table, $params); 
     }// End func create
+	
+    /**
+     * Update a department
+     * 
+     * @access public
+     * @param array $params
+     * @param array $fields
+     * @return array
+     */
+    public function update($params, $fields) {
+        return $this->util_model->update($this->table, $params, $fields); 
+    }// End func update
+    
+    /**
+     * Delete a department
+     * 
+     * @access public
+     * @param array $fields
+     * @return array
+     */
+    public function delete($fields) {
+        return $this->util_model->delete($this->table, $fields); 
+    }// End func delete
 	
     /**
      * Get departments
@@ -48,8 +80,8 @@ class Department_model extends CI_Model {
      */
     public function get_department($ids = array()) {
         // Build query parameters
-        $table_name = 'departments d';
-        $select = ['*'];
+        $table_name = $this->table.' d';
+        $select = ['*', 'd.remark AS dept_remark'];
         $join = array(
                     array('table' => 'colleges c', 'on' => 'd.colid = c.colid')
                 );
@@ -107,7 +139,7 @@ class Department_model extends CI_Model {
         $joins = array(
                     array('table' => 'students s', 'on' => 'u.userid = s.userid'),
                     array('table' => 'programmes p', 'on' => 's.progid = p.progid'),
-                    array('table' => 'departments d', 'on' => 'p.deptid = d.deptid')                       
+                    array('table' => $this->table.' d', 'on' => 'p.deptid = d.deptid')                       
                 );
         
         foreach($params as $field => $value) {
@@ -146,7 +178,7 @@ class Department_model extends CI_Model {
                 );
         
         $joins = array(
-                    array('table' => 'departments d', 'on' => 'p.deptid = d.deptid')                        
+                    array('table' => $this->table.' d', 'on' => 'p.deptid = d.deptid')                        
                 );
         
         foreach($params as $field => $value) {
@@ -188,7 +220,7 @@ class Department_model extends CI_Model {
         
         $joins = array(
                     array('table' => 'staffs s', 'on' => 'u.userid = s.userid'),
-                    array('table' => 'departments d', 'on' => 's.deptid = d.deptid'),                       
+                    array('table' => $this->table.' d', 'on' => 's.deptid = d.deptid'),                       
                 );
         
         foreach($params as $field => $value) {

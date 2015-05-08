@@ -47,7 +47,8 @@
             <div class="control-group">
                 <label for="dept_remark" class="control-label">Remark:</label>
                 <div class="controls">
-                    <input type="text" name="dept_remark" value="{{current.remark}}" id="edit_dept_remark" class="input-xlarge" >
+                    <input type="text" name="dept_remark" value="{{current.dept_remark}}" 
+                           id="edit_dept_remark" class="input-xlarge" >
                 </div>
             </div>
         </div>
@@ -55,7 +56,7 @@
         <input type="hidden" name="edit_dept_id" value="{{current.deptid}}"/>
         <div class="modal-footer">
             <button data-dismiss="modal" class="btn" aria-hidden="true">Cancel</button>
-            <button class="btn btn-primary" type="submit" id="edit_dept_button">Create</button>
+            <button class="btn btn-primary" type="submit" id="edit_dept_button">Update</button>
         </div>
     </form>
 </div>

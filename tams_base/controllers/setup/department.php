@@ -33,6 +33,15 @@ class Department extends CI_Controller {
     
     private $module_name = 'setup';
     
+    /**
+     * Model name
+     * 
+     * @access public
+     * @var Department_model
+     */
+    
+    public $mdl;
+    
     /*
      * Class constructor
      * 
@@ -92,82 +101,6 @@ class Department extends CI_Controller {
         
         $this->page->build($page_content, $this->folder_name, $page_name, 'Department');       
     }// End of func index
-    
-    
-    /**
-     * Update a new department.	 
-     */
-    public function update() {
-        
-        // Check for valid request method
-        if($this->input->server('REQUEST_METHOD') == 'POST'){
-            
-            // Set error to true. 
-            // This should be changed only if there are no validation errors.
-            $error = false;
-            
-            // Set expected form field names
-//            $fields = array(
-//                'college_name'      => array(
-//                    'required' => true
-//                ),
-//                'college_title'     => array(
-//                    'required' => true
-//                ),
-//                'college_code'      => array(
-//                    'required' => true
-//                ),
-//                'college_remark'    => array(
-//                    'required' => true
-//                ),
-//                'special'          => array(
-//                    'required' => true
-//                )
-//            );
-            
-            // Get all field values.
-            $form_fields = $this->input->post(NULL);
-            
-            // Validate form fields.
-            //$error = $this->validate_fields($form_fields, $fields);
-            
-            // Send fields to model if there are no errors
-            if(!$error) {
-                $params = array(
-                    'deptname'   => $form_fields['edit_dept_name'],
-                    'deptcode'   => $form_fields['edit_dept_code'],
-                    'remark'    => $form_fields['edit_dept_remark'],
-                    'colid'     => $form_fields['edit_dept_col']
-                );
-                
-                // Call model method to perform insertion
-                $status = $this->mdl->update($params);
-                
-                // Process model response
-                switch($status) {
-                    
-                    // There was a problem creating the entry.
-                    case DEFAULT_ERROR:
-                        break;
-                    
-                    // Entry created successfully.
-                    case DEFAULT_SUCCESS:
-                        break;
-                    
-                    default:
-                        break;
-                }
-            }
-            
-        }else{
-            // Set error message for any request other than POST
-            $error_msg = $this->lang->line('invalid_req_method');  
-            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-        }
-        
-        // Redirect to deprtment page, showing notifiction messages if there are.
-        redirect('department');
-    }// End of func update
     
     /**
      * Create a new department.	 
@@ -245,8 +178,78 @@ class Department extends CI_Controller {
         }
         
         // Redirect to college page, showing notifiction messages if there are.
-        redirect('department');
+        redirect('setup/department');
     }// End of func create
+    
+    /**
+     * Update a department.	 
+     */
+    public function update() {
+        
+        // Check for valid request method
+        if($this->input->server('REQUEST_METHOD') == 'POST') {
+            
+        
+            // Load the validation library
+            $this->load->library('form_validation');
+            
+            // Run validation and process request if fields are valid.
+            if($this->form_validation->run('setup_update_dept') != FALSE) {
+               
+                // Get parameters for entry to be updated.
+                $form_fields = $this->input->post(NULL);
+                $params = array(
+                    'deptname'   => $form_fields['dept_name'],
+                    'deptcode'   => $form_fields['dept_code'],
+                    'remark'    => $form_fields['dept_remark'],
+                    'colid'     => $form_fields['dept_col']
+                );
+                
+                $fields = [['field' => 'deptid', 'value' => $form_fields['edit_dept_id']]];
+                
+                // Call model method to perform update
+                $ret = $this->mdl->update($params, $fields);
+                
+                // Process model response
+                switch($ret['status']) {
+                    
+                    // Invalid arguments supplied.
+                    case DEFAULT_NOT_VALID:
+                        break;
+                    
+                    // Foreign key constraint violated.
+                    case DEFAULT_EXIST:
+                        $msg = $this->lang->line('validation_error');  
+                        $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+                        break;
+                    
+                    // There was a problem deleting the entry.
+                    case DEFAULT_ERROR:
+                        break;
+                    
+                    // Entry deleted successfully.
+                    case DEFAULT_SUCCESS:
+                        break;
+                    
+                    default:
+                        break;
+                }
+                
+            }else {
+                // Set error message for invalid/incomplete fields
+                $msg = $this->lang->line('validation_error');  
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+            }  
+            
+        }else{
+            // Set error message for any request other than POST
+            $error_msg = $this->lang->line('invalid_req_method');  
+            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
+        }
+        
+        // Redirect to college page, showing notifiction messages if there are.
+        redirect('setup/department');
+    }// End of func update
     
     /**
      * Delete a department.	 
@@ -261,7 +264,7 @@ class Department extends CI_Controller {
             $this->load->library('form_validation');
             
             // Run validation and process request if fields are valid.
-            if($this->form_validation->run('delete_section') != FALSE) {
+            if($this->form_validation->run('setup_delete_section') != FALSE) {
                
                 // Get id for entry to be deleted.
                 $id = $this->input->post('delete_id');
@@ -311,38 +314,6 @@ class Department extends CI_Controller {
     }// End of func delete
     
     /**
-     * Validate form fields.	 
-     */
-    public function validate_fields($received, $expected) {
-        
-        // Check which of the expected fields are present in the received fields array.
-        $present = array_intersect(array_keys($expected), array_keys($received));
-        
-        // Compare size of present fields to expected fields.
-        if(count($present) !== count($expected)) {
-            // Set error message for incomplete form fields
-            $error_msg = $this->lang->line('invalid_req_method');  
-            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-            return true;
-        }        
-            
-        foreach($expected as $exp) {
-            if($exp['required']) {
-                
-            }
-        }
-        
-        if(true) {
-            // Set error message for any request other than POST
-            $error_msg = $this->lang->line('invalid_req_method');  
-            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);            
-            return true;
-        }
-        
-        return false;
-    }// End of func index
-    
-    /**
      * Department information.	 
      */
     public function info($dept_name) {
@@ -359,7 +330,7 @@ class Department extends CI_Controller {
         // Retrieve all department students 
         $data['info'] = $this->mdl->get_department($params);
         
-        if($data['info'] == DEFAULT_NOT_EXIST) {
+        if($data['info']['status'] == DEFAULT_NOT_EXIST) {
             redirect('error/errorNum');
         }
         
@@ -377,9 +348,9 @@ class Department extends CI_Controller {
         
         $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
         $page_content .= $this->load->view($this->folder_name.'/partials/edit_dept', $data['college_name'], true);
-        $page_content .= $this->load->view('programme/partials/create_prog', $data['college_name'], true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/create_prog', $data['college_name'], true);
         
-        $this->page->build($page_content, $this->folder_name, $page_name, ucfirst($data['college_name']));    
+        $this->page->build($page_content, $this->folder_name, $page_name, 'Department');    
     }// End of func info
 }
 

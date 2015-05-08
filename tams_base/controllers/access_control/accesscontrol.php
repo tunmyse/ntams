@@ -36,7 +36,7 @@ class AccessControl extends CI_Controller {
     /**
      * Model Name
      * 
-     * @access private
+     * @access public
      * @var Access_Control_model
      */
     
@@ -141,6 +141,15 @@ class AccessControl extends CI_Controller {
      * Get suggestions for a certain certain access object.	 
      */
     public function suggestions() {
+        /**
+        * @todo 
+        * 
+        * Modify core DB_active_rec for suggestions, to be able to group where and like clauses.
+        * Create four new methods, one to begin the group and the other to end it, for both where and like.
+        * This methods just adds '(' and ')' to the $this->ar_where and $this->ar_like arrays.
+        * See _compile_select
+        * 
+        */
         
         $params = [
             "query" => $this->input->get('query'),

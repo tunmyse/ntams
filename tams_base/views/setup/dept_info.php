@@ -32,7 +32,7 @@
                 Extended Information
             </h3>
             <ul class="tabs">
-                <li class="active"><a data-toggle="tab" href="#t7">Programess</a></li>
+                <li class="active"><a data-toggle="tab" href="#t7">Programmes</a></li>
                 <li><a data-toggle="tab" href="#t8">Staffs</a></li>
                 <li><a data-toggle="tab" href="#t9">Students</a></li>
             </ul>
@@ -50,15 +50,15 @@
                         </thead>
                         <tbody>
                             <?php 
-                                if($progs != DEFAULT_EMPTY) {
-                                    foreach($progs as $count => $p) {
+                                if($progs['status'] != DEFAULT_EMPTY) {
+                                    foreach($progs['rs'] as $count => $p) {
                             ?>
                             <tr>
                                 <td><?php echo $count+1?></td>
                                 <td><?php echo $p->progname?></td>
                                 <td>
                                     <a 
-                                        href="<?php echo site_url('setup/programmes/info/'.url_title("{$p->progname} {$p->progid}", '-', TRUE))?>" 
+                                        href="<?php echo site_url('setup/programme/info/'.url_title("{$p->progname} {$p->progid}", '-', TRUE))?>" 
                                         class="btn">
                                         View
                                     </a>
@@ -89,8 +89,8 @@
                         </thead>
                         <tbody>
                             <?php 
-                                if($staffs != DEFAULT_EMPTY) {
-                                    foreach($staffs as $count => $s) {
+                                if($staffs['status'] != DEFAULT_EMPTY) {
+                                    foreach($staffs['rs'] as $count => $s) {
                             ?>
                             <tr>
                                 <td><?php echo $count+1?></td>
@@ -133,8 +133,8 @@
                         </thead>
                         <tbody>
                             <?php 
-                                if($students != DEFAULT_EMPTY) {
-                                    foreach($students as $count => $s) {
+                                if($students['status'] != DEFAULT_EMPTY) {
+                                    foreach($students['rs'] as $count => $s) {
                             ?>
                             <tr>
                                 <td><?php echo $count+1?></td>

@@ -33,6 +33,16 @@ class College extends CI_Controller {
     
     private $module_name = 'setup';
     
+    /**
+     * Model name
+     * 
+     * @access public
+     * @var College_model
+     */
+    
+    public $mdl;
+    
+    
     /*
      * Class constructor
      * 
@@ -102,31 +112,9 @@ class College extends CI_Controller {
             // Set error to true. 
             // This should be changed only if there are no validation errors.
             $error = false;
-            
-            // Set expected form field names
-            $fields = array(
-                'college_name'      => array(
-                    'required' => true
-                ),
-                'college_title'     => array(
-                    'required' => true
-                ),
-                'college_code'      => array(
-                    'required' => true
-                ),
-                'college_remark'    => array(
-                    'required' => true
-                ),
-                'special'          => array(
-                    'required' => true
-                )
-            );
-            
+                        
             // Get all field values.
             $form_fields = $this->input->post(NULL);
-            
-            // Validate form fields.
-            //$error = $this->validate_fields($form_fields, $fields);
             
             // Send fields to model if there are no errors
             if(!$error) {
@@ -179,37 +167,15 @@ class College extends CI_Controller {
         // Check for valid request method
         if($this->input->server('REQUEST_METHOD') == 'POST') {
             
-            // Set error to true. 
-            // This should be changed only if there are no validation errors.
-            $error = false;
+        
+            // Load the validation library
+            $this->load->library('form_validation');
             
-            // Set expected form field names
-            $fields = array(
-                'college_name'      => array(
-                    'required' => true
-                ),
-                'college_title'     => array(
-                    'required' => true
-                ),
-                'college_code'      => array(
-                    'required' => true
-                ),
-                'college_remark'    => array(
-                    'required' => true
-                ),
-                'special'          => array(
-                    'required' => true
-                )
-            );
-            
-            // Get all field values.
-            $form_fields = $this->input->post(NULL);
-            
-            // Validate form fields.
-            //$error = $this->validate_fields($form_fields, $fields);
-            
-            // Send fields to model if there are no errors
-            if(!$error) {
+            // Run validation and process request if fields are valid.
+            if($this->form_validation->run('setup_update_college') != FALSE) {
+               
+                // Get parameters for entry to be updated.
+                $form_fields = $this->input->post(NULL);
                 $params = array(
                     'colname'   => $form_fields['college_name'],
                     'coltitle'  => $form_fields['college_title'],
@@ -218,28 +184,41 @@ class College extends CI_Controller {
                     'special'   => $form_fields['special']
                 );
                 
-                // Call model method to perform insertion
-                $status = $this->mdl->update($params);
+                $fields = [['field' => 'colid', 'value' => $form_fields['edit_college_id']]];
+                
+                // Call model method to perform update
+                $ret = $this->mdl->update($params, $fields);
                 
                 // Process model response
-                switch($status) {
+                switch($ret['status']) {
                     
-                    // Unique constraint violated.
-                    case DEFAULT_EXIST:
+                    // Invalid arguments supplied.
+                    case DEFAULT_NOT_VALID:
                         break;
                     
-                    // There was a problem creating the entry.
+                    // Foreign key constraint violated.
+                    case DEFAULT_EXIST:
+                        $msg = $this->lang->line('validation_error');  
+                        $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+                        break;
+                    
+                    // There was a problem deleting the entry.
                     case DEFAULT_ERROR:
                         break;
                     
-                    // Entry created successfully.
+                    // Entry deleted successfully.
                     case DEFAULT_SUCCESS:
                         break;
                     
                     default:
                         break;
                 }
-            }
+                
+            }else {
+                // Set error message for invalid/incomplete fields
+                $msg = $this->lang->line('validation_error');  
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+            }  
             
         }else{
             // Set error message for any request other than POST
@@ -264,7 +243,7 @@ class College extends CI_Controller {
             $this->load->library('form_validation');
             
             // Run validation and process request if fields are valid.
-            if($this->form_validation->run('delete_section') != FALSE) {
+            if($this->form_validation->run('setup_delete_section') != FALSE) {
                
                 // Get id for entry to be deleted.
                 $id = $this->input->post('delete_id');
@@ -314,38 +293,6 @@ class College extends CI_Controller {
     }// End of func delete
     
     /**
-     * Validate form fields.	 
-     */
-    public function validate_fields($received, $expected) {
-        
-        // Check which of the expected fields are present in the received fields array.
-        $present = array_intersect(array_keys($expected), array_keys($received));
-        
-        // Compare size of present fields to expected fields.
-        if(count($present) !== count($expected)) {
-            // Set error message for incomplete form fields
-            $error_msg = $this->lang->line('invalid_req_method');  
-            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);
-            return true;
-        }        
-            
-        foreach($expected as $exp) {
-            if($exp['required']) {
-                
-            }
-        }
-        
-        if(true) {
-            // Set error message for any request other than POST
-            $error_msg = $this->lang->line('invalid_req_method');  
-            $this->main->set_notification_message(MSG_TYPE_ERROR, $error_msg);            
-            return true;
-        }
-        
-        return false;
-    }// End of func validate_fields
-    
-    /**
      * College information.	 
      */
     public function info($college_name) {
@@ -363,7 +310,7 @@ class College extends CI_Controller {
         // Retrieve all department students 
         $data['info'] = $this->mdl->get_college($params);
         
-        if($data['info'] == DEFAULT_NOT_EXIST) {
+        if($data['info']['status'] == DEFAULT_NOT_EXIST) {
             redirect('error/errorNum');
         }
         

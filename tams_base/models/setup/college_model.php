@@ -17,6 +17,15 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class College_model extends CI_Model {
     
     /**
+     * Table name
+     * 
+     * @access private
+     * @var string
+     */
+    
+    private $table = 'colleges';
+    
+    /**
      * Class constructor
      * 
      * @access public
@@ -39,7 +48,7 @@ class College_model extends CI_Model {
         $ret = ['status' => DEFAULT_NOT_VALID];
         
         // Set table name
-        $table_name = 'colleges';
+        $table_name = $this->table;
         $order = array(
                     array('field' => 'colid', 'dir' => 'asc')
                 );
@@ -76,30 +85,30 @@ class College_model extends CI_Model {
      * @return array
      */
     public function create($params) {
-        return $status = $this->db->insert('colleges', $params); 
+        return $status = $this->db->insert($this->table, $params); 
     }// End func create
 	
     /**
-     * Create a new college
+     * Update a college
      * 
      * @access public
-     * @param int $id
      * @param array $params
+     * @param array $fields
      * @return array
      */
-    public function update($id, $params) {
-        return $status = $this->db->insert('colleges', $params); 
-    }// End func create
+    public function update($params, $fields) {
+        return $this->util_model->update($this->table, $params, $fields); 
+    }// End func update
 	
     /**
      * Delete a college
      * 
      * @access public
-     * @param array $params
+     * @param array $fields
      * @return array
      */
-    public function delete($params) {
-        return $this->util_model->delete('colleges', $params); 
+    public function delete($fields) {
+        return $this->util_model->delete($this->table, $fields); 
     }// End func delete
 	
     
@@ -114,11 +123,9 @@ class College_model extends CI_Model {
         
         // Check if param is empty
         if(empty($params)) {
-            return DEFAULT_NOT_VALID;
+            return ['status' => DEFAULT_NOT_VALID];
         }
-        
-        return DEFAULT_EMPTY;
-        
+                
         $table_name = 'users u';
         
         $select = array(
@@ -132,20 +139,20 @@ class College_model extends CI_Model {
                     array('table' => 'students s', 'on' => 'u.userid = s.userid'),
                     array('table' => 'programmes p', 'on' => 's.progid = p.progid'),
                     array('table' => 'departments d', 'on' => 'p.deptid = d.deptid'),
-                    array('table' => 'colleges c', 'on' => 'd.colid = c.colid')                        
+                    array('table' => $this->table.' c', 'on' => 'd.colid = c.colid')                        
                 );
         
-        $where = array(
-                    array('field' => "c.{$field}", 'value' => $value)
-                );
-        
+        $where = [];
+         foreach($params as $field => $value) {
+            $where[] = ['field' => "c.{$field}", 'value' => $value];                
+        }
+    
         $order = array(
                     array('field' => 'u.usertypeid', 'dir' => 'asc')
                 );
         
-        $ret = $this->util_model->get_data($table_name, $select, $where, $order, $joins);
+        return $this->util_model->get_data($table_name, $select, $where, $order, $joins);
         
-        return $ret;
     }// End func get_college_students
     
     /**
@@ -159,7 +166,7 @@ class College_model extends CI_Model {
         
         // Check if param is empty
         if(empty($params)) {
-            return DEFAULT_NOT_VALID;
+            return ['status' => DEFAULT_NOT_VALID];
         }
         
         $table_name = 'departments d';
@@ -170,22 +177,20 @@ class College_model extends CI_Model {
                 );
         
         $joins = array(
-                    array('table' => 'colleges c', 'on' => 'd.colid = c.colid')                        
+                    array('table' => $this->table.' c', 'on' => 'd.colid = c.colid')                        
                 );
         
+        $where = [];
         foreach($params as $field => $value) {
-            $where = array(
-                        array('field' => "c.{$field}", 'value' => $value)
-                    );
+            $where[] = ['field' => "c.{$field}", 'value' => $value];
         }
         
         $order = array(
                     array('field' => 'd.deptid', 'dir' => 'asc')
                 );
         
-        $ret = $this->util_model->get_data($table_name, $select, $where, $order, $joins);
+        return $this->util_model->get_data($table_name, $select, $where, $order, $joins);
         
-        return $ret;
     }// End func get_college_depts
     
     /**
@@ -199,10 +204,8 @@ class College_model extends CI_Model {
         
         // Check if param is empty
         if(empty($params)) {
-            return DEFAULT_NOT_VALID;
+            return ['status' => DEFAULT_NOT_VALID];
         }
-        
-        return DEFAULT_EMPTY;
         
         $table_name = 'users u';
         
@@ -219,18 +222,17 @@ class College_model extends CI_Model {
                     array('table' => 'colleges c', 'on' => 'd.colid = c.colid')                        
                 );
         
+        $where = [];
         foreach($params as $field => $value) {
-            $where = array(
-                        array('field' => "c.{$field}", 'value' => $value)
-                    );
+            $where[] = ['field' => "c.{$field}", 'value' => $value];
         }
+        
         $order = array(
                     array('field' => 'u.usertypeid', 'dir' => 'asc')
                 );
         
-        $ret = $this->util_model->get_data($table_name, $select, $where, $order, $joins);
+        return $this->util_model->get_data($table_name, $select, $where, $order, $joins);
         
-        return $ret;
     }// End func get_college_staffs
     
     /**

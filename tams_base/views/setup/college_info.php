@@ -50,8 +50,8 @@
                         </thead>
                         <tbody>
                             <?php 
-                                if($depts != DEFAULT_EMPTY) {
-                                    foreach($depts as $count => $d) {
+                                if($depts['status'] != DEFAULT_EMPTY) {
+                                    foreach($depts['rs'] as $count => $d) {
                             ?>
                             <tr>
                                 <td><?php echo $count+1?></td>
@@ -89,8 +89,8 @@
                         </thead>
                         <tbody>
                             <?php 
-                                if($staffs != DEFAULT_EMPTY) {
-                                    foreach($staffs as $count => $s) {
+                                if($staffs['status'] != DEFAULT_EMPTY) {
+                                    foreach($staffs['rs'] as $count => $s) {
                             ?>
                             <tr>
                                 <td><?php echo $count+1?></td>
@@ -133,8 +133,8 @@
                         </thead>
                         <tbody>
                             <?php 
-                                if($students != DEFAULT_EMPTY) {
-                                    foreach($students as $count => $s) {
+                                if($students['status'] != DEFAULT_EMPTY) {
+                                    foreach($students['rs'] as $count => $s) {
                             ?>
                             <tr>
                                 <td><?php echo $count+1?></td>

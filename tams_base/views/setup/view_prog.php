@@ -21,8 +21,10 @@
                 </thead>
                 <tbody>
                     <?php 
-                        if($progs['status'] == DEFAULT_SUCCESS) {
-                            foreach($progs['rs'] as $p) {
+                        $json_progs = [];                            
+                        if($progs['status'] == DEFAULT_SUCCESS) {                            
+                            $json_progs = json_encode($progs['rs']);
+                            foreach($progs['rs'] as $key => $p) {
                     ?>
                     <tr>                                                 
                         <td>
@@ -40,13 +42,10 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-success">
                                     <li>
-                                        <a 
-                                            href="#edit_prog_modal" 
-                                            data-toggle="modal" 
-                                            data-id="<?php echo $p->progid?>">Edit</a>
+                                        <a ng-click="openEditDialog('prog', <?php echo $key?>, $event)">Edit</a>
                                     </li>
                                     <li>
-                                        <a href="#">Delete</a>
+                                        <a ng-click="openDeleteDialog('prog', <?php echo $key?>, $event)">Delete</a>
                                     </li>
                                 </ul>
                             </div>
@@ -68,4 +67,11 @@
             </table>
         </div>
     </div>                                
-</div>           
+</div>
+<script type="text/javascript">
+
+    var colleges = {};
+    var depts = {};
+    var progs = <?php echo $json_progs?>;
+
+</script>

@@ -538,6 +538,56 @@ class Util_model extends CI_Model {
         return $ret;
     } // End func delete
     
+    /**
+     * Update data in a table
+     * 
+     * @access public
+     * @param string $table Table to update
+     * @param array $params Data to update
+     * @param array $fields Fields used to build where clause for the update
+     * @return array Status of the query
+     */
+    public function update($table, array $params, array $fields) {
+                
+        // Check if proper arguments are supplied
+        if(!isset($table) || $table == '' || !is_array($params) || empty($params) || !is_array($fields) || empty($fields)) {            
+            return array('status' => DEFAULT_NOT_VALID);
+        }
+        
+        foreach ($fields as $field) {
+            $this->db->where($field['field'], $field['value']);
+        }
+        
+        // Run query
+        $result = $this->db->update($table, $params);
+        
+        if($result) {
+            
+            // Set default return value 
+            $ret = array('status' => DEFAULT_EMPTY);
+            
+            // Check if affected_rows is not empty
+            if($r_count = $this->db->affected_rows() > 0) {                
+                $ret = array('status' => DEFAULT_SUCCESS, 'count' => $r_count);
+            }
+            
+        }else {
+            $ret = array('status' => DEFAULT_ERROR);
+            
+            switch($this->db->_error_number()) {
+                case 1062:
+                    $ret['status'] = \DEFAULT_EXIST;
+                    break;
+                
+                case 1054:
+                    $ret['status'] = \DEFAULT_NOT_VALID;
+                    break;
+            }
+        }
+        
+        return $ret;
+    } // End func update
+    
 } // End class Util_model
 
 // End file util_model.php

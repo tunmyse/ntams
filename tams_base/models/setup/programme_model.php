@@ -17,6 +17,15 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Programme_model extends CI_Model {
 	
     /**
+     * Table name
+     * 
+     * @access private
+     * @var string
+     */
+    
+    private $table = 'programmes';
+    
+    /**
      * Class constructor
      * 
      * @access public
@@ -36,9 +45,32 @@ class Programme_model extends CI_Model {
      * @return void
      */
     public function create($params) {
-        $status = $this->db->insert('programmes', $params); 
+        $status = $this->db->insert($this->table, $params); 
     }// End func create
 	
+    /**
+     * Update a programme
+     * 
+     * @access public
+     * @param array $params
+     * @param array $fields
+     * @return array
+     */
+    public function update($params, $fields) {
+        return $this->util_model->update($this->table, $params, $fields); 
+    }// End func update
+    
+    /**
+     * Delete a department
+     * 
+     * @access public
+     * @param array $fields
+     * @return array
+     */
+    public function delete($fields) {
+        return $this->util_model->delete($this->table, $fields); 
+    }// End func delete
+    
     /**
      * Get programmes
      * 
@@ -48,8 +80,8 @@ class Programme_model extends CI_Model {
      */
     public function get_programme($ids = array()) {
         // Build query parameters
-        $table_name = 'programmes p';
-        $select = ['*'];
+        $table_name = $this->table.' p';
+        $select = ['*', 'p.remark AS prog_remark'];
         $join = [
             ['table' => 'departments d', 'on' => 'p.deptid = d.deptid'],
             ['table' => 'colleges c', 'on' => 'd.colid = c.colid']
@@ -60,7 +92,8 @@ class Programme_model extends CI_Model {
             return $this->util_model->get_data($table_name, $select, [], [], $join);
                        
         } else {
-            
+            $where = [];
+                    
             // Create where condition for progid
             if(isset($ids['prog_id']) && is_numeric($ids['prog_id']) && $ids['prog_id'] > 0) {
                 $where[] = ['field' => 'progid', 'value' => $ids['prog_id']];
@@ -86,6 +119,49 @@ class Programme_model extends CI_Model {
         }
         
     }// End func get_programme
+    
+    /**
+     * Get all student in a programme
+     * 
+     * @access public
+     * @param array $params
+     * @return void
+     */
+    public function get_prog_students(array $params) {
+        
+        // Check if param is empty
+        if(empty($params)) {
+            return ['status' => DEFAULT_NOT_VALID];
+        }
+        
+        $table_name = 'users u';
+        
+        $select = array(
+                    'u.userid',
+                    'u.usertypeid',
+                    'u.fname',
+                    'u.lname'
+                );
+        
+        $joins = array(
+                    array('table' => 'students s', 'on' => 'u.userid = s.userid'),
+                    array('table' => 'programmes p', 'on' => 's.progid = p.progid')                      
+                );
+        
+        foreach($params as $field => $value) {
+            $where = array(
+                        array('field' => "p.{$field}", 'value' => $value)
+                    );
+        }
+        
+        $order = array(
+                    array('field' => 'u.usertypeid', 'dir' => 'asc')
+                );
+        
+        return $this->util_model->get_data($table_name, $select, $where, $order, $joins);
+        
+    }// End func get_prog_students
+    
 } // End class Programme_model
 
 // End file programme_model.php

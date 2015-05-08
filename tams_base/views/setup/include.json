@@ -3,12 +3,17 @@
         "js": [
             "plugins/chosen/chosen.jquery.min.js",
             "angular/angular.min.js",
-            "angular/angular-setup.js",
+            "angular/angular-setup.js?nn",
             "lodash/lodash.min.js"
         ],
         
         "css": [
             "plugins/chosen/chosen.css"            
+        ]
+    },
+    "view_prog": {
+        "js": [
+            "plugins/jquery-ui/jquery.ui.spinner.js"
         ]
     }
 }
