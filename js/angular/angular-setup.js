@@ -16,6 +16,11 @@ setupModule.controller('PageController', function($scope) {
     
     angular.element('.modal').on('shown', function() {
         angular.element(this).find('.chosen-select').trigger('liszt:updated');
+        
+        angular.element(this).find('.spinner').spinner('option', {
+                min: 1,
+                max: 10
+        }).spinner("value", $scope.current['duration']);
     });
     
     $scope.openEditDialog = function(name, idx, e) {         
