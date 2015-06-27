@@ -162,7 +162,7 @@ class Util_model extends CI_Model {
                             'schools', 
                             array('schoolid', 'shortname', 'schoolname', 'unitname', 'domainstring', 'admin'), 
                             array(
-                               // Uncomment to use in multi environment.
+                               // Uncomment to use in multi-tenant environment.
                                // array('field' => "domainstring", 'value' => strtolower($domain))
                             ),
                             array(),
@@ -277,20 +277,24 @@ class Util_model extends CI_Model {
 //        
 //                
 //        return $this->get_data($table_name, $select, [], [], $joins);
-        
+
+        // TODO one query can get all the results required here.
+        // Simply LEFT JOIN link_perms table, the null fields are the links without permissions.
+        // NB: Done, watch for anomalies.
         $query = "SELECT `ml`.`url`, `ml`.`name`, `m`.`name` as `mname`, `m`.`dispname`,"
-                . " `m`.`tilecolor`, `m`.`tileicon`, `m`.`urlprefix` "
-                . "FROM ".$this->db->protect_identifiers('module_links', TRUE)." ml "
-                . "JOIN ".$this->db->protect_identifiers('link_perms', TRUE)." l ON `l`.`linkid` = `ml`.`linkid` "
-                . "JOIN ".$this->db->protect_identifiers('modules', TRUE)." m ON `m`.`moduleid` = `ml`.`moduleid` "
-                . "WHERE `ml`.`status` = 'active' AND `m`.`status` = 'active' AND `l`.`permid` IN (".implode(',', $perms).") "
-                . "UNION "
-                . "SELECT `ml`.`url`, `ml`.`name`, `m`.`name` as `mname`, `m`.`dispname`, "
-                . "`m`.`tilecolor`, `m`.`tileicon`, `m`.`urlprefix` "
+                . " `m`.`tilecolor`, `m`.`tileicon`, `m`.`urlprefix`, `m`.`order` as `mod_order`"
                 . "FROM ".$this->db->protect_identifiers('module_links', TRUE)." ml "
                 . "JOIN ".$this->db->protect_identifiers('modules', TRUE)." m ON `m`.`moduleid` = `ml`.`moduleid` "
-                . "WHERE `ml`.`status` = 'active' AND `m`.`status` = 'active' "
-                . "AND `ml`.linkid NOT IN (SELECT linkid FROM ".$this->db->protect_identifiers('link_perms', TRUE).")";
+                . "LEFT JOIN ".$this->db->protect_identifiers('link_perms', TRUE)." l ON `l`.`linkid` = `ml`.`linkid` AND `l`.`permid` IN (".implode(',', $perms).") "
+                . "WHERE `ml`.`status` = `m`.`status` AND `m`.`status` = 'active' "
+                . "ORDER BY `mod_order` ASC";
+//                . "UNION "
+//                . "SELECT `ml`.`url`, `ml`.`name`, `m`.`name` as `mname`, `m`.`dispname`, "
+//                . "`m`.`tilecolor`, `m`.`tileicon`, `m`.`urlprefix`, `m`.`order` as `mod_order` "
+//                . "FROM ".$this->db->protect_identifiers('module_links', TRUE)." ml "
+//                . "JOIN ".$this->db->protect_identifiers('modules', TRUE)." m ON `m`.`moduleid` = `ml`.`moduleid` "
+//                . "WHERE `ml`.`status` = `m`.`status` AND `m`.`status` = 'active' "
+//                . "AND `ml`.linkid NOT IN (SELECT linkid FROM ".$this->db->protect_identifiers('link_perms', TRUE).")";
              
         return $this->get_query_data($query);
     } // End func get_nav_content

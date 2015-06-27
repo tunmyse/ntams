@@ -308,7 +308,7 @@ class Programme extends CI_Controller {
         // Retrieve all department students 
         $data['info'] = $this->mdl->get_programme($params);
         
-        if($data['info']['status'] == DEFAULT_NOT_EXIST) {
+        if($data['info']['status'] == \DEFAULT_NOT_EXIST) {
             redirect('error/errorNum');
         }
         

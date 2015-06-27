@@ -134,7 +134,7 @@ class Main {
      * @var array
      */
     
-    private $notification = array(MSG_TYPE_ERROR => array(), MSG_TYPE_SUCCESS => array(), MSG_TYPE_WARNING => array());
+    private $notification = [MSG_TYPE_ERROR => [], MSG_TYPE_SUCCESS => [], MSG_TYPE_WARNING => []];
     
     /**
      * User permissions array
@@ -143,7 +143,7 @@ class Main {
      * @var array
      */
     
-    private $user_perms = array();
+    private $user_perms = [];
     
     /**
      * Navigation content array
@@ -152,7 +152,7 @@ class Main {
      * @var array
      */
     
-    private $nav_content = array();
+    private $nav_content = [];
     
     /**
      * Current request uri.
@@ -299,7 +299,7 @@ class Main {
     private function check_domain() {
         
         // Build list of subdomain exceptions.
-        $exceptions = array('www');
+        $exceptions = ['www'];
         
         // Get full domain, and split into parts. 
         $host_part = explode('.', filter_input(INPUT_SERVER, 'HTTP_HOST')); 
@@ -381,13 +381,13 @@ class Main {
                 // If the module name doesn't already exist as a key in the array, initialize it.
                 if(!isset($this->nav_content[$content->mname])) {
                     
-                    $this->nav_content[$content->mname] = array(
+                    $this->nav_content[$content->mname] = [
                                                             'urlprefix' => $content->urlprefix,
                                                             'dispname' => $content->dispname,
                                                             'tilecolor' => $content->tilecolor,
                                                             'tileicon' => $content->tileicon,
-                                                            'links' => array()
-                                                        );
+                                                            'links' => []
+                                                        ];
                     
                     // Check if this module contains the active link.
                     if($this->segment == $content->urlprefix) {
@@ -396,10 +396,10 @@ class Main {
                 }
 
                 // Populate each module with its link. 
-                $this->nav_content[$content->mname]['links'][] = array(
+                $this->nav_content[$content->mname]['links'][] = [
                                                                   'url' => $content->url,
                                                                   'name' => $content->name,
-                                                              );
+                                                              ];
                 // var_dump($this->nav_content[$content->mname]['links']);
             }
             
@@ -425,7 +425,7 @@ class Main {
      * @return void
      **/
     public function get_school_name() {  
-        return array('full' => $this->school_name, 'short' => $this->school_shortname);
+        return ['full' => $this->school_name, 'short' => $this->school_shortname];
 
     } // End func get_school_name
     
@@ -436,7 +436,7 @@ class Main {
      * @return void
      **/
     public function get_session() {  
-        return array('name' => $this->item('cur_sesname'), 'id' => $this->item('cur_session'));
+        return ['name' => $this->item('cur_sesname'), 'id' => $this->item('cur_session')];
 
     } // End func get_school_name
     
@@ -514,11 +514,11 @@ class Main {
         }
         
         // Get the information used to determine logged_in status.
-        $cdata = array(
+        $cdata = [
             'email' => $this->get('email'),
             'type_id' => $this->get('user_type_id'),
             'user_type' => $this->get('user_type')
-        );
+        ];
 
         // Check that no value is empty.
         foreach($cdata as $data) {
@@ -593,7 +593,7 @@ class Main {
      */
     public function encrypt($password) {
         
-        $this->CI->load->driver("Auth/Auth", array(), 'auth_prov');      
+        $this->CI->load->driver("Auth/Auth", [], 'auth_prov');      
         $crypt_password = $this->CI->auth_prov->site->encrypt($password);
         
         return $crypt_password;
@@ -629,7 +629,7 @@ class Main {
     public function send_reset_email($username) {
         $this->CI->load->helper('auth');
         
-        $params = array('school_id' => $this->school_id, 'username' => $username);
+        $params = ['school_id' => $this->school_id, 'username' => $username];
         $user_info = $this->CI->user_model->get_user_info($params);
         
         // Check if user exists.
@@ -649,11 +649,11 @@ class Main {
         // Generate unique id for this particular request.
         $uid = md5(uniqid(rand(),1));          
         
-        $reset_params = array(
+        $reset_params = [
             'userid'    => $user_info->userid,
             'uid'       => $uid,
             'date'      => date('Y-m-d H:i:s')
-        );
+        ];
         
         // Log the entry into the database and return user information for the email template
         $status = $this->CI->user_model->create_request_entry($reset_params);
@@ -675,13 +675,13 @@ class Main {
         $reset_link = site_url("reset_password/{$uid}");
         
         // Build email parameters for template
-        $email_params = array(
+        $email_params = [
             'reset_link'    => $reset_link,
             'title'         => '',
             'display_name'  => '',
             'department'    => '',
             'college'       => ''
-        );
+        ];
         
         // Send email using reset password template
         $email_status = $this->CI->message->send_email_from_template($user_info->email, $email_params, EMAIL_TEMPLATE_RESET);
@@ -774,7 +774,7 @@ class Main {
         if(empty($msg_bank) && $limit == 1) {
             return '';
         }elseif(empty($msg_bank)) {
-            return array();
+            return [];
         }
         
         $excerpt = array_slice($msg_bank, 0, $limit);
@@ -825,7 +825,7 @@ class Main {
             return;
         }
         
-        $sess_data = array($key => $value);
+        $sess_data = [$key => $value];
         $this->CI->session->set_userdata($sess_data);
 
     } // End func set
@@ -892,7 +892,7 @@ class Main {
         // Retrieve all user's permission for all modules in the application.
         $result = $this->CI->util_model->get_user_perms($this->get('user_id'));
         
-        $this->user_perms['ids'] = array();
+        $this->user_perms['ids'] = [];
                 
         if($result['status'] == DEFAULT_SUCCESS) {
             // Format the permissions.
