@@ -9,14 +9,14 @@
     
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h4 class="modal-title" id="myModalLabel">Create User Group</h4>
+        <h4 class="modal-title" id="myModalLabel">Change Group Owner</h4>
     </div>
     
     <form 
         id="create_group_form" 
         class="form-horizontal form-striped" 
         method="post" 
-        action="<?php echo site_url("access/group/create")?>">
+        action="<?php echo site_url("access/group/change_owner")?>">
         
         <div class="modal-body">
                     

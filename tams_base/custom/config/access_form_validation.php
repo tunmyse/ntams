@@ -8,34 +8,34 @@
 |
 */
 
-$config = array(
-    'access_create_group' => array(
-        array(
+$config = [
+    'access_create_group' => [
+        [
             'field' => 'group_name',
             'label' => 'Group Name',
             'rules' => 'required'
-        )
-    ),
-    'access_create_role' => array(
-        array(
+        ]
+    ],
+    'access_create_role' => [
+        [
             'field' => 'role_name',
             'label' => 'Role Name',
             'rules' => 'required'
-        )
-    ),
-    'access_assign' => array(
-        array(
+        ]
+    ],
+    'access_assign' => [
+        [
             'field' => 'obj_id',
             'label' => '',
             'rules' => 'required|is_natural_no_zero'
-        ),
-        array(
+        ],
+        [
             'field' => 'items[]',
             'label' => '',
             'rules' => 'required'
-        )
-    )       
-);
+        ]
+    ]
+];
 
 /* End of file form_validation.php */
 /* Location: ./application/config/form_validaton.php */

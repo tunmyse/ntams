@@ -16,7 +16,7 @@
         id="edit_group_form" 
         class="form-horizontal form-striped" 
         method="post" 
-        action="<?php echo site_url("access/group/edit")?>">
+        action="<?php echo site_url("access/group/update")?>">
         
         <div class="modal-body">
                     
@@ -40,6 +40,7 @@
         </div>
         
         <div class="modal-footer">
+            <input type="hidden" name="group_id" value="<?php echo $id?>">
             <button data-dismiss="modal" class="btn" aria-hidden="true">Cancel</button>
             <button class="btn btn-primary" type="submit" id="edit_group_button">Edit</button>
         </div>

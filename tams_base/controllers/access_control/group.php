@@ -272,7 +272,77 @@ class Group extends CI_Controller {
         $page_content .= $this->load->view($this->folder_name.'/partials/edit_group', $data, true);
         $page_content .= $this->load->view($this->folder_name.'/partials/change_group_owner', $data, true);
         $this->page->build($page_content, $this->folder_name, $page_name, 'User Groups'); 
-    }// End of func details
+    }// End of func edit
+    
+    /**
+     * Update group information.	 
+     */
+    public function update() {
+
+        $dest = $this->input->server('HTTP_REFERER') == NULL? 'access/groups': $this->input->server('HTTP_REFERER');
+        
+        // Check for valid request method
+        if($this->input->server('REQUEST_METHOD') == 'POST') {
+            
+            // Load the validation library
+            $this->load->library('form_validation');
+            
+            // Run validation and process request if fields are valid.
+            if($this->form_validation->run('access_create_group') != FALSE) {
+               
+                // Get all input values
+                $fields = $this->input->post(NULL);
+                
+                $group_id = $fields['group_id'];                
+                $params = [
+                    'name' => $fields['group_name'],
+                    'desc' => $fields['group_desc']
+                ];
+                           
+                // Call model method to perform update
+                $result = $this->mdl->edit_group($group_id, $params);
+                
+                // Process model response
+                switch($result['status']) {
+                    
+                    // Unique constraint violated.
+                    case DEFAULT_EXIST:
+                        // Set error message for unique constraint violation.
+                        $msg = sprintf($this->lang->line('duplicate_value'), 'group name');  
+                        $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+                        break;
+                    
+                    // There was a problem creating the entry.
+                    case DEFAULT_ERROR:
+                        // Set error message for problem creating entry.
+                        $msg = $this->lang->line('create_error');  
+                        $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+                        break;
+                    
+                    // Entry created successfully.
+                    case DEFAULT_SUCCESS:
+                        // Set success message for unique constraint violation.
+                        $msg = sprintf($this->lang->line('create_success'), 'User Group', '');  
+                        $this->main->set_notification_message(MSG_TYPE_SUCCESS, $msg);
+                        break;
+                    
+                    default:
+                        break;
+                }
+            }else {              
+                // Set error message for invalid/incomplete fields
+                $msg = $this->lang->line('validation_error');  
+                $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+            }
+            
+        }else{
+            // Set error message for any request other than POST
+            $msg = $this->lang->line('invalid_req_method');  
+            $this->main->set_notification_message(MSG_TYPE_ERROR, $msg);
+        }
+        
+        redirect($dest);
+    }// End of func update
     
     /**
      * Assign an object to a group.	 
@@ -364,7 +434,7 @@ class Group extends CI_Controller {
         
         // Redirect to appropriate page, showing notifiction messages if there are.
         redirect($dest);
-    }// End of func create
+    }// End of func assign
     
     /**
      * User group information.	 

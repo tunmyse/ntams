@@ -42,13 +42,18 @@
                                     <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-success">
+                                    <?php if($this->main->has_perm('', ['setup.college.edit'])):?>
                                     <li>
                                         <a ng-click="openEditDialog('college', <?php echo $key?>, $event)">Edit</a>
                                     </li>
+                                    <?php endif;?>
+                                    
                                     <?php //if($dept_count[$key]) {?>
+                                    <?php if($this->main->has_perm('', ['setup.college.delete'])):?>
                                     <li>
                                         <a ng-click="openDeleteDialog('college', <?php echo $key?>, $event)">Delete</a>
                                     </li>
+                                    <?php endif;?>
                                     <?php //}?>
                                 </ul>
                             </div>

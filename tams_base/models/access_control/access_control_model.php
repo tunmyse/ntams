@@ -261,6 +261,18 @@ class Access_Control_model extends CI_Model {
         return $resp;
     }// end func assign_to_group
     
+    /**
+     * Edit group information.
+     * 
+     * @access public
+     * @param array $group_id
+     * @param array $params
+     * @return array
+     */
+    public function edit_group($group_id, $params) {
+        $where = ['groupid' => $group_id];
+        return $this->util_model->update('groups', $params, $where);
+    }// end func edit_group    
     
     /*
     |--------------------------------------------------------------------------
@@ -401,6 +413,18 @@ class Access_Control_model extends CI_Model {
         return $resp;
     }// end func assign_to_role
     
+    /**
+     * Edit role information.
+     * 
+     * @access public
+     * @param array $role_id
+     * @param array $params
+     * @return array
+     */
+    public function edit_role($role_id, $params) {
+        $where = ['roleid' => $role_id];
+        return $this->util_model->update('roles', $params, $where);
+    }// end func edit_group    
     
     /*
     |--------------------------------------------------------------------------

@@ -912,6 +912,7 @@ class Main {
         // Redirect to access denied page if user is not authorized. 
         if(!$authd) {
             redirect(site_url("{$this->user_type}/access_denied"), 'refresh');
+            exit;
         }
     } // End func check_auth
     

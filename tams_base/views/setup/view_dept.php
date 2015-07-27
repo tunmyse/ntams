@@ -11,10 +11,12 @@
                 <thead>
                     <tr>
                         <th>
+                            <?php if($this->main->has_perm('', ['setup.department.create'])):?>
                             <button href="#create_dept_modal" data-toggle="modal" class="btn btn-green">
                                 <i class="icon-plus"> </i> 
                                 Add
                             </button>
+                            <?php endif;?>                            
                         </th>
                         <th>Actions</th>
                     </tr>                                        
@@ -41,12 +43,17 @@
                                     <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-success">
+                                    <?php if($this->main->has_perm('', ['setup.department.edit'])):?>
                                     <li>
                                         <a ng-click="openEditDialog('dept', <?php echo $key?>, $event)">Edit</a>
                                     </li>
+                                    <?php endif;?>
+                                    
+                                    <?php if($this->main->has_perm('', ['setup.department.edit'])):?>
                                     <li>
                                         <a ng-click="openDeleteDialog('dept', <?php echo $key?>, $event)">Delete</a>
                                     </li>
+                                    <?php endif;?>
                                 </ul>
                             </div>
                         </td>

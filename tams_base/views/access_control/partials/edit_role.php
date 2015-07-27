@@ -40,6 +40,7 @@
         </div>
         
         <div class="modal-footer">
+            <input type="hidden" name="role_id" value="<?php echo $id?>">
             <button data-dismiss="modal" class="btn" aria-hidden="true">Cancel</button>
             <button class="btn btn-primary" type="submit" id="edit_role_button">Edit</button>
         </div>
