@@ -16,7 +16,7 @@
         id="create_grade_form" 
         class="form-horizontal form-striped" 
         method="post" 
-        action="<?php echo site_url('exam/grade/create')?>">
+        action="<?php echo site_url('admission/create_grade')?>">
         
         <div class="modal-body">                    
             <div class="control-group">
@@ -24,29 +24,6 @@
                 <div class="controls">
                     <input type="text" name="grade_name" id="grade_name" class="input-xlarge" />
                 </div>
-            </div>
-            
-            <div class="control-group">
-                <label for="grade_weight" class="control-label">Grade Weight:</label>
-                <div class="controls">
-                    <input value="1" 
-                           type="text" 
-                           min="1" 
-                           max="9" 
-                           name="grade_weight" 
-                           id="grade_weight" 
-                           class="spinner input-mini uneditable-input"/>
-                </div>
-            </div>
-            
-            <div class="control-group">
-                <label for="grade_desc" class="control-label">Grade Description:</label>
-                <div class="controls">
-                    <input type="text" 
-                           name="grade_desc" 
-                           id="grade_desc" 
-                           class="input-xlarge" >
-                </div>                           
             </div>
         </div>
         <div class="modal-footer">

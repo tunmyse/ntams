@@ -1,0 +1,109 @@
+{
+    "all": {
+        "feedbar": false
+        
+    },
+    
+    "bursary_management": {
+        "js": [
+            "plugins/chosen/chosen.jquery.min.js",
+            "plugins/select2/select2.min.js",
+            "plugins/datatable/jquery.dataTables.min.js",
+            "plugins/datatable/TableTools.min.js",
+            "plugins/datatable/ColReorder.min.js",
+            "plugins/datatable/ColVis.min.js",
+            "plugins/datatable/jquery.dataTables.columnFilter.js",
+            "lodash/lodash.min.js",
+            "angular/angular.min.js",
+            "angular/angular-paysetup.js"
+            ],
+        
+        "css": [
+            "plugins/select2/select2.css",
+            "plugins/chosen/chosen.css",
+            "plugins/datatable/TableTools.css"     
+        ]
+    },
+    
+    
+    
+    "payment": {
+        "js": [
+            "plugins/chosen/chosen.jquery.min.js",
+            "plugins/select2/select2.min.js",
+            "plugins/datatable/jquery.dataTables.min.js",
+            "plugins/datatable/TableTools.min.js",
+            "plugins/datatable/jquery.dataTables.columnFilter.js"
+        ],
+        
+        "css": [
+            "plugins/select2/select2.css",
+            "plugins/chosen/chosen.css",
+            "plugins/datatable/TableTools.css"
+        ],
+        "feedbar": false
+    },
+    
+    "paynow": {
+        
+        "js": [
+            "plugins/chosen/chosen.jquery.min.js",
+            "plugins/select2/select2.min.js" 
+        ],
+        
+        "css": [
+            "plugins/select2/select2.css",
+            "plugins/chosen/chosen.css"
+        ],
+        
+        "feedbar": false
+    },
+    
+    "create_exception": {
+        "js": [
+            "lodash/lodash.js",
+            "angular/angular.min.js",
+            "angular/angular-paysetup.js",
+            "plugins/chosen/chosen.jquery.min.js",
+            "plugins/select2/select2.min.js",
+            "plugins/datatable/jquery.dataTables.min.js",
+            "plugins/datatable/TableTools.min.js",
+            "plugins/datatable/ColReorder.min.js",
+            "plugins/datatable/ColVis.min.js",
+            "plugins/datatable/jquery.dataTables.columnFilter.js"
+            ],
+        
+        "css": [
+            "plugins/select2/select2.css",
+            "plugins/chosen/chosen.css",
+            "plugins/datatable/TableTools.css"     
+        ],
+        
+        "feedbar": false
+    },
+    
+    "assign_schedule": {
+        "js": [
+            "lodash/lodash.min.js",
+            "plugins/chosen/chosen.jquery.min.js",
+            "plugins/select2/select2.min.js",
+            "plugins/datatable/jquery.dataTables.min.js",
+            "plugins/datatable/TableTools.min.js",
+            "plugins/datatable/ColReorder.min.js",
+            "plugins/datatable/ColVis.min.js",
+            "plugins/datatable/FixedColumns.min.js",
+            "plugins/datatable/jquery.dataTables.columnFilter.js",
+            "plugins/datatable/dataTables.scroller.min.js",
+            "angular/angular.min.js",
+            "angular/angular-bursary-controller.js"
+            ],
+        
+        "css": [
+            "plugins/select2/select2.css",
+            "plugins/chosen/chosen.css",
+            "plugins/datatable/TableTools.css"     
+        ],
+        
+        "feedbar": false
+    }
+}

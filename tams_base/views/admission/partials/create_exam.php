@@ -16,7 +16,7 @@
         id="create_exam_form" 
         class="form-horizontal form-striped" 
         method="post" 
-        action="<?php echo site_url('exam/exam/create')?>">
+        action="<?php echo site_url('admission/create_exam')?>">
         
         <div class="modal-body">
                     

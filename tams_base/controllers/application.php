@@ -302,8 +302,9 @@ class Application extends CI_Controller {
         if(in_array(check_field($uname, FIELD_TYPE_USERNAME), $err) 
                 || in_array(check_field($upw, FIELD_TYPE_PASSWORD), $err)) {
             $password_length = $this->config->item('password_min_length');
+            $username_length = $this->config->item('username_min_length');
             $error_msg = $this->lang->line('invalid_credentials');  
-            $this->main->set_notification_message(MSG_TYPE_ERROR, sprintf($error_msg, $password_length));
+            $this->main->set_notification_message(MSG_TYPE_ERROR, sprintf($error_msg, $password_length, $username_length));
             redirect(site_url($dest_uri));
         }
         

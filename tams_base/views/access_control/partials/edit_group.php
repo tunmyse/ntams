@@ -16,7 +16,7 @@
         id="edit_group_form" 
         class="form-horizontal form-striped" 
         method="post" 
-        action="<?php echo site_url("access/group/update")?>">
+        action="<?php echo site_url("access/group/edit")?>">
         
         <div class="modal-body">
                     

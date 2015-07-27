@@ -16,14 +16,14 @@
         id="create_subject_form" 
         class="form-horizontal form-striped" 
         method="post" 
-        action="<?php echo site_url('exam/subject/create')?>">
+        action="<?php echo site_url('admission/create_subject')?>">
         
         <div class="modal-body">
                     
             <div class="control-group">
                 <label for="subject_name" class="control-label">Subject Name:</label>
                 <div class="controls">
-                    <input type="text" name="subject_name" id="subject_name" class="input-xlarge" >
+                    <input type="text" name="subject_name" id="subject_name" class="input-xlarge" required="required" >
                 </div>
             </div>
         </div>

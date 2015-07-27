@@ -56,10 +56,13 @@
             
             <div class="dropdown pull-right">
                 <a href="#" class='dropdown-toggle' data-toggle="dropdown">
-                    <img src="<?php echo $display_img;?>" alt="">
+                    <img src="<?php echo $display_img;?>" style="height:27px; width:27px" alt=" ">
                     <?php echo $display_name;?> 
                 </a>
                 <ul class="dropdown-menu pull-right">
+                    <li>
+                        <a href="<?php echo $profile_url; ?>">My Profile</a>
+                    </li>
                     <li>
                         <a href="#">Account settings</a>
                     </li>

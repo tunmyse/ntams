@@ -1,11 +1,11 @@
 <?php
 
-$lang['invalid_credentials'] = 'Invalid login credentials. Ensure your password is at least %s characters long!';
+$lang['invalid_credentials'] = 'Invalid login credentials. Ensure your username and password are at least %s and %s characters long, respectively!';
 $lang['invalid_username'] = 'Invalid username!';
 $lang['empty_form_field'] = 'One or more required fields are missing!';
 $lang['invalid_password'] = 'Invalid password!';
 $lang['invalid_email'] = 'Your email address is either invalid or hasn\'t been changed from the default!';
-$lang['invalid_auth_method'] = 'Please login using an accepted authentication method!';
+$lang['invalid_auth_method'] = 'Please log in using an accepted authentication method!';
 $lang['invalid_req_method'] = 'Invalid server request method!';
 $lang['user_not_found'] = 'Information for the %s you supplied was not found on this server. Please contact your system administrator!';
 $lang['session_build_error'] = 'Error preparing the application for your use. Please try again or contact the system administrator!';

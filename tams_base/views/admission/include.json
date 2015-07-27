@@ -1,15 +1,42 @@
 {
     "all": {
-        "js": [            
-            "plugins/chosen/chosen.jquery.min.js"
+        "js": [
+            
+            "lodash/lodash.min.js",
+            "angular/angular.min.js",
+            "angular/angular-admission.js",
+            "plugins/datepicker/bootstrap-datepicker.js",
+            "plugins/chosen/chosen.jquery.min.js",
+            "plugins/imagesLoaded/jquery.imagesloaded.min.js",
+            "plugins/fileupload/bootstrap-fileupload.min.js",
+            "plugins/tagsinput/jquery.tagsinput.min.js",
+            "plugins/datatable/jquery.dataTables.min.js",            
+            "plugins/datatable/TableTools.min.js",
+            "plugins/datatable/ColReorder.min.js",
+            "plugins/datatable/ColVis.min.js",
+            "plugins/datatable/jquery.dataTables.columnFilter.js",
+            "plugins/jquery-ui/jquery.ui.spinner.js",
+            "plugins/formwiz/jquery.snippet.min.js",
+            "plugins/formwiz/jquery.easyWizard.js",
+            "admission/scripts.js"
+            
+            
         ],
                 
         "css": [
-            "plugins/chosen/chosen.css"
+            "plugins/formwiz/jquery.snippet.min.css",
+             "plugins/formwiz/styles.css",
+            "plugins/chosen/chosen.css",
+            "plugins/plupload/jquery.plupload.queue.css",
+            "plugins/datepicker/datepicker.css",
+            "plugins/tagsinput/jquery.tagsinput.css",
+            "plugins/datatable/TableTools.css"
+            
         ],
         
         "feedbar": false
     },
+    
     "create_account": {
         "js": [
             
@@ -28,16 +55,69 @@
             
         ]
     },
-    "manage_exam": {
+    "admission_management": {
         "js": [
-            "angular/angular.min.js",
-            "angular/angular-exam.js",
-            "plugins/jquery-ui/jquery.ui.spinner.js"
+            
+            "plugins/datepicker/bootstrap-datepicker.js",
+            "plugins/validation/jquery.validate.min.js",
+            "plugins/validation/additional-methods.min.js",
+            "angular/angular_admission_management.js"
+            
         ],
         
         "css": [
+            "plugins/chosen/chosen.css",
+            "plugins/plupload/jquery.plupload.queue.css",
+            "plugins/datepicker/datepicker.css",
+            "plugins/tagsinput/jquery.tagsinput.css",
+            "plugins/datatable/TableTools.css"
+        ],
+        "feedbar": false
+    },
+    
+    "register": {
+        "js": [ 
+            "plugins/datepicker/bootstrap-datepicker.js",
+            "plugins/validation/jquery.validate.min.js",
+            "plugins/validation/additional-methods.min.js"
+            
+            
+            
             
         ],
-        "feedbar": true
+        
+        "css": [
+             "plugins/chosen/chosen.css",
+             "plugins/plupload/jquery.plupload.queue.css",
+             "plugins/datepicker/datepicker.css",
+             "plugins/tagsinput/jquery.tagsinput.css",
+             "plugins/formwiz/jquery.snippet.min.css",
+             "plugins/formwiz/styles.css"
+             
+        ],
+        
+        "feedbar": false
+    },
+    "reg_form1": {
+        "js": [ 
+            "plugins/datepicker/bootstrap-datepicker.js",
+            "plugins/validation/jquery.validate.min.js",
+            "plugins/validation/additional-methods.min.js"
+            
+            
+            
+        ],
+        
+        "css": [
+             "plugins/chosen/chosen.css",
+             "plugins/plupload/jquery.plupload.queue.css",
+             "plugins/datepicker/datepicker.css",
+             "plugins/tagsinput/jquery.tagsinput.css",
+             "plugins/formwiz/jquery.snippet.min.css",
+             "plugins/formwiz/styles.css"
+             
+        ],
+        
+        "feedbar": false
     }
 }

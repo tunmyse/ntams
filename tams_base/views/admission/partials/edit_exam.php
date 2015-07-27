@@ -16,7 +16,7 @@
         id="edit_exam_form" 
         class="form-horizontal form-striped" 
         method="post" 
-        action="<?php echo site_url('exam/exam/update')?>">
+        action="<?php echo site_url('admission/update_exam')?>">
         
         <div class="modal-body">
                     

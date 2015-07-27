@@ -16,7 +16,7 @@
         id="edit_group_form" 
         class="form-horizontal form-striped" 
         method="post" 
-        action="<?php echo site_url('exam/group/update')?>">
+        action="<?php echo site_url('admission/update_group')?>">
         
         <div class="modal-body">
                     

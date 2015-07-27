@@ -11,10 +11,12 @@
                 <thead>
                     <tr>
                         <th>
-                            <button href="#create_college_modal" data-toggle="modal" class="btn btn-green">
+                            <?php if($this->main->has_perm('', ['setup.college.create'])):?>
+                            <button href="#create_college_modal" data-toggle="modal" class="btn btn-green">                            
                                 <i class="icon-plus"> </i> 
                                 Add
                             </button>
+                            <?php endif;?>
                         </th>
                         <th>Actions</th>
                     </tr>                                        

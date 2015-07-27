@@ -40,6 +40,14 @@ class Page {
     private $user_type;
     
     /**
+     * User image url
+     * 
+     * @access private
+     * @var string
+     */
+    private $image_url;
+    
+    /**
      * School name
      * 
      * @access private
@@ -72,7 +80,7 @@ class Page {
         $this->user_type = $this->CI->main->item('user_type');
         $this->school_shortname = $this->CI->main->item('school_shortname');
         $this->school_name = $this->CI->main->item('school_name');
-        
+        $this->image_url = $this->CI->main->item('image_url');
     }
 
     /**
@@ -133,14 +141,15 @@ class Page {
             'topmenu_content' => $menu_content['top'],
             'dashboard_url' => site_url('/'.$this->user_type.'/dashboard'),
             'logout_url' => site_url('/logout'),
+            'profile_url' => site_url("/{$this->user_type}/profile"),
             'message_count' => 2,//TODO get actually message count
-            'display_name' => $this->user_name,
-            'display_img' => base_url('img/user/user-avatar.jpg')
+            'display_name' => strtoupper($this->user_name),
+            'display_img' => base_url("img/user/{$this->image_url}")
         );
         $top_menu_buffer = $this->CI->load->view(TMPLPATH.'top_menu', $top_menu, true);        
 
         $left_sidebar = array(
-            'school_name' => $this->school_shortname,
+            'school_name' => strtoupper($this->school_shortname),
             'sidemenu_content' => $menu_content['side']
         );        
         $left_sidebar_buffer = $this->CI->load->view(TMPLPATH.'left_sidebar', $left_sidebar, true);

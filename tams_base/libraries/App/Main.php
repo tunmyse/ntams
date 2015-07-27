@@ -43,7 +43,7 @@ class Main {
     private $user_fname;
     
     /**
-     * User type (student | staff | admin)
+     * User type (applicant | student | staff | admin)
      * 
      * @access private
      * @var string
@@ -68,6 +68,15 @@ class Main {
      */
     
     private $user_type_id;
+    
+    /**
+     * Image url of the user
+     * 
+     * @access private
+     * @var string
+     */
+    
+    private $image_url;
         
     /**
      * Is user super admin.
@@ -224,7 +233,12 @@ class Main {
         }
         
         // Get the first segment of this uri
-        $this->segment = $this->CI->uri->segment(1, '');
+        $this->segment = $this->CI->uri->segment(1, '');        
+        
+        // Adjustment for user module.
+        if(in_array($this->segment, ['student', 'staff', 'admin', 'applicant'])) {
+            $this->segment = 'user';
+        }
         
         $this->uri = $this->CI->uri->uri_string();
         
@@ -232,17 +246,21 @@ class Main {
         $req = isset($this->CI->router->routes["{$this->uri}_require"])? false: true;
         
         // Check if the user is logged in.
-        $this->check_login($req);
-         
-        // Retrieve all permissions owned by logged in user.
-        $this->get_user_perms();
-        
-        // Retrieve navigation content.
-        $this->get_nav_content();
+        $this->check_login($req);         
         
         // Initialize class properties.
         $this->_init();
         
+        // Retrieve all permissions owned by logged in user.
+        //$this->get_user_perms();
+        (in_array($this->get('user_perms'), ['', FALSE]))? $this->get_user_perms(): 
+            $this->user_perms = json_decode($this->get('user_perms'), true);
+        
+        //var_dump($this->user_perms);
+        $this->get_nav_content();
+        // Retrieve navigation content.
+//        (in_array($this->get('nav_content'), ['', FALSE]))? $this->get_nav_content(): 
+//            $this->nav_content = json_decode($this->get('nav_content'), true);              
     } // End func __construct
 
     
@@ -260,6 +278,7 @@ class Main {
             $this->user_lname = $this->get('last_name');
             $this->user_fname = $this->get('first_name');
             $this->user_email = $this->get('email');
+            $this->image_url = $this->get('image_url');
             $this->user_id = $this->get('user_id');
             $this->user_type = $this->get('user_type');
             $this->user_type_id = $this->get('user_type_id');
@@ -287,8 +306,7 @@ class Main {
                     case DEFAULT_NOT_VALID:
                         break;
                 }               
-            }
-        
+            }        
         }
     }// End func _init
     
@@ -371,19 +389,19 @@ class Main {
     public function get_nav_content() {
         
         // Retrieve navigation content from model.
-        $result = $this->CI->util_model->get_nav_content($this->user_perms['ids']);
+        $result = $this->CI->util_model->get_nav_content($this->user_perms['ids'], $this->is_admin(true));
         
-        // Check if returned value is not empty.
-        if($result['status'] != DEFAULT_EMPTY) {
+        // Check returned value.
+        if($result['status'] == DEFAULT_SUCCESS) {
             
             // Loop through each content to process it.
             foreach($result['rs'] as $content) {
                 // If the module name doesn't already exist as a key in the array, initialize it.
                 if(!isset($this->nav_content[$content->mname])) {
-                    
+                    $disname = ($this->is_admin() && $content->adminname != NULL)? $content->adminname:$content->dispname;
                     $this->nav_content[$content->mname] = [
                                                             'urlprefix' => $content->urlprefix,
-                                                            'dispname' => $content->dispname,
+                                                            'dispname' => $disname,
                                                             'tilecolor' => $content->tilecolor,
                                                             'tileicon' => $content->tileicon,
                                                             'links' => []
@@ -400,7 +418,9 @@ class Main {
                                                                   'url' => $content->url,
                                                                   'name' => $content->name,
                                                               ];
-                // var_dump($this->nav_content[$content->mname]['links']);
+                
+                // Add to session to reduce database calls.
+                $this->set('nav_content', json_encode($this->nav_content));
             }
             
         }
@@ -564,6 +584,7 @@ class Main {
                         'first_name' => $params['fname'],
                         'last_name' => $params['lname'],
                         'user_type' => $params['usertype'],            
+                        'image_url' => $params['imageurl'],
                         'super_admin' => $admin,
                         'cs' => sha1($params['email'] . '_' . $params['usertypeid'] . '_' . $params['usertype']),
                         'school_id' => $this->school_id,
@@ -576,6 +597,20 @@ class Main {
         // Add user information to session
         $this->CI->session->set_userdata($user_data);
         return true;
+    }
+    
+    /**
+     * Check if the logged in user is an admin user
+     *
+     * @access public
+     * @return bool
+     **/
+    public function is_admin($super = FALSE) {
+        if($super) {
+            return $this->super_admin;
+        }
+        
+        return ($this->user_type == 'admin')? true: false;     
     }
     
     
@@ -633,14 +668,14 @@ class Main {
         $user_info = $this->CI->user_model->get_user_info($params);
         
         // Check if user exists.
-        if(!$user_info) {
+        if($user_info['status'] != DEFAULT_SUCCESS) {
             $error_msg = $this->CI->lang->line('user_not_found');      
             $this->set_notification_message(MSG_TYPE_ERROR, sprintf($error_msg, 'username'));
             return MSG_TYPE_ERROR;
         }
         
         // Check if email exist or is valid.
-        if(!check_field($user_info->email, FIELD_TYPE_EMAIL)) {
+        if(!check_field($user_info['rs']->email, FIELD_TYPE_EMAIL)) {
             $error_msg = $this->CI->lang->line('invalid_email');      
             $this->set_notification_message(MSG_TYPE_ERROR, $error_msg);
             return MSG_TYPE_ERROR;
@@ -650,13 +685,13 @@ class Main {
         $uid = md5(uniqid(rand(),1));          
         
         $reset_params = [
-            'userid'    => $user_info->userid,
+            'userid'    => $user_info['rs']->userid,
             'uid'       => $uid,
             'date'      => date('Y-m-d H:i:s')
         ];
         
         // Log the entry into the database and return user information for the email template
-        $status = $this->CI->user_model->create_request_entry($reset_params);
+        $status = $this->CI->util_model->create_request_entry($reset_params);
         
         // Check if reset request was successfully logged into database.
         switch($status) {            
@@ -684,7 +719,7 @@ class Main {
         ];
         
         // Send email using reset password template
-        $email_status = $this->CI->message->send_email_from_template($user_info->email, $email_params, EMAIL_TEMPLATE_RESET);
+        $email_status = $this->CI->message->send_email_from_template($user_info['rs']->email, $email_params, EMAIL_TEMPLATE_RESET);
         
         // Check if email was sent
         if(!$email_status) {
@@ -693,7 +728,7 @@ class Main {
             return MSG_TYPE_ERROR;
         }
         
-        // Set successs notification message
+        // Set success notification message
         $success_msg = $this->CI->lang->line('reset_email_succeeded');      
         $this->set_notification_message(MSG_TYPE_SUCCESS, $success_msg);
         
@@ -708,7 +743,7 @@ class Main {
      * @return int $status
      **/
     public function check_reset_link($uid) {
-        $status = $this->CI->user_model->check_reset_link($uid);
+        $status = $this->CI->util_model->check_reset_link($uid);
         
         if($status !== DEFAULT_NOT_EXIST && $status !== DEFAULT_EXPIRED) {
             $this->set('userid', $status->userid);
@@ -862,13 +897,10 @@ class Main {
         
         //TODO Include extra compulsory parameter to check if a permission is compulsory for a resource.
         
-        
         // Iterate through modules in parameter array.
-        foreach($mod_perms as $mod => $perms) {
-            
+        foreach($mod_perms as $mod => $perms) {            
             // Iterate through permissions in each module.
-            foreach($perms as $perm) {
-                
+            foreach($perms as $perm) {                
                 // Once one permission is found, user is authorized, stop checking for any more permissions.
                 if(in_array($perm, $this->user_perms[$mod]['perms'])) {
                     $authd = true;
@@ -889,18 +921,49 @@ class Main {
      * @access private
      **/
     private function get_user_perms() {
+        
         // Retrieve all user's permission for all modules in the application.
-        $result = $this->CI->util_model->get_user_perms($this->get('user_id'));
+        $result = $this->CI->util_model->get_user_perms($this->get('user_id'), $this->is_admin(true));
         
         $this->user_perms['ids'] = [];
-                
+        
+        $brac_perms = [];
+        
         if($result['status'] == DEFAULT_SUCCESS) {
+            
+            $der_where = "`p`.`name` RLIKE '^%s[a-z]+$'";
             // Format the permissions.
             foreach($result['rs'] as $perm) {
+                
+                if(strpos($perm->pname, '*') != FALSE) {
+                    $repl_string = substr($perm->pname, 0, strrpos($perm->pname, '.'));
+                    $brac_perms[] = sprintf($der_where, str_replace('.', '[[.period.]]', $repl_string).'[[.period.]]');
+                }
+                
                 $this->user_perms[$perm->mname]['perms'][] = $perm->pname;
                 $this->user_perms['ids'][] = $perm->permid;
+                $this->user_perms['perms'][] = $perm->pname;
             }
-        }
+            
+            if(count($brac_perms) > 0) {
+                // Retrieve extra user's permission
+                $der_perms = $this->CI->util_model->get_user_derived_perms($brac_perms);
+
+                if($der_perms['status'] == DEFAULT_SUCCESS) {
+                    // Format the permissions.
+                    foreach($der_perms['rs'] as $perm) {                    
+                        $this->user_perms[$perm->mname]['perms'][] = $perm->pname;
+                        $this->user_perms['ids'][] = $perm->permid;
+                        $this->user_perms['perms'][] = $perm->pname;
+                    }
+                }
+            }
+            
+            // Add to session to reduce database calls.
+            $this->set('user_perms', json_encode($this->user_perms));
+            
+        }            
+        
     } // End func get_user_perms
     
     /**
@@ -912,7 +975,34 @@ class Main {
      * @return bool
      */
     public function has_perm($module, $perm) {
-        return $this->super_admin || in_array($perm, $this->user_perms[$module]['perms']);
+        // Check if the user is the super user.
+        if ($this->is_admin(true)) {
+            return true;
+        }
+
+        $has_perms = false;
+        // Format $perm into an array to support existing use 
+        $perm = !is_array($perm)? [$perm]: $perm;
+                
+        $missing_perms = array_diff($perm, $this->user_perms['perms']);
+        
+        if(empty($missing_perms)) {
+            $has_perms = true;
+        }else if(count($missing_perms) <= count($perm)) {
+            // Check for encompassing permissions, e.g student.result.*
+//            $enc = [];
+//            foreach($missing_perms as $mperm) {
+//                $enc = substr($mperm, 0, strrpos($mperm, '.')).'.*';                
+//            }
+//            
+//            $enc = array_unique($enc);
+//            $missing_perms = array_diff($enc, $this->user_perms['perms']);
+//            if(empty($missing_perms)) {
+//                $has_perms = true;
+//            }
+        }
+        
+        return $has_perms;
     }// End func has_perm
      
 } // End class Main

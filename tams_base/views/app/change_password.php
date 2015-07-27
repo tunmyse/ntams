@@ -7,7 +7,7 @@
  * @category   Views
  * @package    User
  * @subpackage Reset password
- * @author     Bada Gabriel <gabbibaa@gmail.com>
+ * @author     Bada Gabriel <gabbibada@gmail.com>
  * @copyright  Copyright © 2014 TAMS.
  * @version    1.0.0
  * @since      File available since Release 1.0.0

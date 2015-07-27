@@ -73,7 +73,11 @@ $route['reset_password_require'] = false;
 $route['change_password'] = "application/change_password";
 
 // User route rules
+$route['user'] = 'users/usermanager';
+$route['user/(:any)'] = 'users/usermanager/$1';
 $route['(:any)/dashboard'] = "users/$1";
+$route['(:any)/profile'] = "users/$1/view_profile";
+$route['(:any)/profile/edit/(:any)'] = "users/$1/edit_profile/$2";
 
 /*
  *---------------------------------------------------------------

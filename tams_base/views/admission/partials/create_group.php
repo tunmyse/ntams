@@ -16,7 +16,7 @@
         id="create_group_form" 
         class="form-horizontal form-striped" 
         method="post" 
-        action="<?php echo site_url('exam/group/create')?>">
+        action="<?php echo site_url('admission/create_group')?>">
         
         <div class="modal-body">
                     

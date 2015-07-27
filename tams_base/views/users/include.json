@@ -1,19 +1,22 @@
 {
-    "forgot_password": {
-        "js": {
-            
-        },
-        
-        "css": {
-            
-        }
+    "all": {
+        "js": [
+            "plugins/fileupload/bootstrap-fileupload.min.js",           
+            "plugins/datatable/jquery.dataTables.min.js",
+            "plugins/chosen/chosen.jquery.min.js",
+            "plugins/datatable/jquery.dataTables.columnFilter.min.js",
+            "plugins/validation/jquery.validate.min.js",
+            "angular/angular.min.js",
+            "angular/angular-user.js",
+            "lodash/lodash.min.js"
+        ],        
+        "css": [
+            "plugins/chosen/chosen.css",
+            "plugins/datatable/TableTools.css"
+        ]
     },
-    
-    "login": {
-        
-    },
-    
-    "reset_password": {
-        
+    "student_profile": {
+        "feedbar": true
     }
+    
 }

@@ -6,7 +6,7 @@
  * Access Control controller
  * 
  * @category   Controller
- * @package    Acess Control
+ * @package    Access Control
  * @subpackage 
  * @author     Tunmise Akinsola <akinsolatunmise@gmail.com>
  * @copyright  Copyright © 2014 TAMS.
@@ -141,14 +141,13 @@ class AccessControl extends CI_Controller {
      * Get suggestions for a certain certain access object.	 
      */
     public function suggestions() {
+        
         /**
-        * @todo 
-        * 
+        * @todo         * 
         * Modify core DB_active_rec for suggestions, to be able to group where and like clauses.
         * Create four new methods, one to begin the group and the other to end it, for both where and like.
         * This methods just adds '(' and ')' to the $this->ar_where and $this->ar_like arrays.
-        * See _compile_select
-        * 
+        * See _compile_select        * 
         */
         
         $params = [
@@ -168,6 +167,7 @@ class AccessControl extends CI_Controller {
                 break;
 
             case DEFAULT_EMPTY:
+                // Falls through to get the status header.
                 $result['rs'] = [];
             case DEFAULT_SUCCESS:
                 set_status_header(200);

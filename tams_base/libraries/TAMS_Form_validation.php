@@ -43,7 +43,7 @@ class TAMS_Form_validation extends CI_Form_validation {
             
             // Get url prefix for current executing module.
             $prefix = $this->CI->main->item('segment');
-            
+                        
             $config_path = "{$prefix}_form_validation";
             
             // Load form validation config file for the current module and merge it with the existing config rules.

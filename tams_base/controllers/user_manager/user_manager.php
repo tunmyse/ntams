@@ -3,17 +3,17 @@
 
 /**
  * TAMS
- * Access Control controller
+ * User Manager controller
  * 
  * @category   Controller
- * @package    Acess Control
+ * @package    User Manager
  * @subpackage 
  * @author     Tunmise Akinsola <akinsolatunmise@gmail.com>
  * @copyright  Copyright © 2014 TAMS.
  * @version    1.0.0
  * @since      File available since Release 1.0.0
  */
-class AccessControl extends CI_Controller {
+class UserManager extends CI_Controller {
 
     /**
      * Folder Name
@@ -22,7 +22,7 @@ class AccessControl extends CI_Controller {
      * @var string
      */ 
     
-    private $folder_name = 'access_control';
+    private $folder_name = 'profile_manager';
     
     /**
      * Module Name
@@ -31,7 +31,7 @@ class AccessControl extends CI_Controller {
      * @var string
      */
     
-    private $module_name = 'access_control';
+    private $module_name = 'profile_manager';
     
     /**
      * Model Name

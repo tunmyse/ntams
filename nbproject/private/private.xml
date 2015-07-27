@@ -25,6 +25,17 @@
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/Tunmyse/Documents/tams-mvc/tams_base/libraries/App/Main.php</file>
+            <file>file:/C:/Users/Tunmyse/Documents/tams-mvc/tams_base/controllers/users/usermanager.php</file>
+            <file>file:/C:/Users/Tunmyse/Documents/tams-mvc/tams_base/views/users/student_profile.php</file>
+            <file>file:/C:/Users/Tunmyse/Documents/tams-mvc/tams_base/controllers/users/student.php</file>
+            <file>file:/C:/Users/Tunmyse/Documents/tams-mvc/tams_base/views/setup/view_college.php</file>
+            <file>file:/C:/Users/Tunmyse/Documents/tams-mvc/tams_base/controllers/users/users.php</file>
+            <file>file:/C:/Users/Tunmyse/Documents/tams-mvc/tams_base/views/access_control/group_view.php</file>
+            <file>file:/C:/Users/Tunmyse/Documents/tams-mvc/tams_base/config/routes.php</file>
+            <file>file:/C:/Users/Tunmyse/Documents/tams-mvc/tams_base/models/users/user_model.php</file>
+            <file>file:/C:/Users/Tunmyse/Documents/tams-mvc/tams_base/models/util_model.php</file>
+        </group>
     </open-files>
 </project-private>

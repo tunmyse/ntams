@@ -28,6 +28,32 @@ class Util_model extends CI_Model {
 
     } // End func __construct
    
+    
+    /**
+     * Check the status of a password reset link.
+     * 
+     * @access private
+     * @param string $date
+     * @return boolean
+     */
+    private function reset_link_status(string $date) {
+        
+        // Get reset link expiration time
+        $expiration_time = $this->config->item('password_expiration_time');
+
+        // Construct date objects to compare request time with current time.
+        $cur_date = new DateTime('now');
+        $exp_date = new DateTime(date('Y-m-d H:i:s', strtotime($date)));
+        $exp_date->modify("+{$expiration_time} hour");
+
+        if($cur_date > $exp_date) {
+            $this->invalidate_reset_link($result->userid); 
+            return DEFAULT_EXPIRED;
+        }else {
+            return DEFAULT_EXIST;
+        }
+    }// End func reset_link_status   
+    
     /**
      * Log request for a password reset
      * 
@@ -38,23 +64,14 @@ class Util_model extends CI_Model {
     public function create_request_entry($query_fields) {
         
         // Check if the user has an unused reset request
-        $query = $this->db->get_where('reset_request', array('userid' => $query_fields['userid']));
+        $query = $this->db->get_where('reset_request', ['userid' => $query_fields['userid']]);
         
-        if($query->num_rows() > 0) {
-            
+        if($query->num_rows() > 0) {            
             $result = $query->row();
-            // Get reset link expiration time
-            $expiration_time = $this->config->item('password_expiration_time');
-
-            // Construct date objects to check if link has expired.
-            $cur_date = new DateTime('now');
-            $exp_date = new DateTime(date('Y-m-d H:i:s', strtotime($result->date)));
-            $exp_date->modify("+{$expiration_time} hour");
+            $link_status = $this->reset_link_status($result->date);   
             
-            if($cur_date > $exp_date) {
-                $this->invalidate_reset_link($result->userid); 
-            }else {
-                return DEFAULT_EXIST;
+            if($link_status == DEFAULT_EXIST) {
+                return $link_status;
             }
         }
         
@@ -65,7 +82,7 @@ class Util_model extends CI_Model {
             return DEFAULT_ERROR;
         
         return DEFAULT_SUCCESS;
-    }
+    } // End func create_request_entry
     
     /**
      * Check if a reset link exists, or is valid
@@ -76,26 +93,19 @@ class Util_model extends CI_Model {
      */
     public function check_reset_link($uid) {
         
-        $query = $this->db->get_where('reset_request', array('uid' => $uid));
+        $query = $this->db->get_where('reset_request', ['uid' => $uid]);
         
-        if($query->num_rows() > 0) {
-            
+        if($query->num_rows() > 0) {            
             $result = $query->row();
-            // Get reset link expiration time
-            $expiration_time = $this->config->item('password_expiration_time');
-
-            // Check if link has expired.
-            $cur_date = new DateTime('now');
-            $exp_date = new DateTime(date('Y-m-d H:i:s', strtotime($result->date)));
-            $exp_date->modify("+{$expiration_time} hour");
             
-            if($cur_date > $exp_date) {
-                $this->invalidate_reset_link($result->userid);
-                return DEFAULT_EXPIRED;
+            // Check link status.
+            $link_status = $this->reset_link_status($result->date);   
+            
+            if($link_status == DEFAULT_EXPIRED) {
+                return $link_status;
             }else {
                 return $result;
-            }
-        
+            }        
         }
         
         return DEFAULT_NOT_EXIST;
@@ -110,7 +120,7 @@ class Util_model extends CI_Model {
      * @return void
      */
     public function invalidate_reset_link($userid) {
-        $this->db->delete('reset_request', array('userid' => $userid)); 
+        $this->db->delete('reset_request', ['userid' => $userid]); 
     }// End func invalidate_reset_link
     
     /**
@@ -125,7 +135,7 @@ class Util_model extends CI_Model {
         // Get schoolid
         $schoolid = $this->main->item('school_id');
         
-        $query = $this->db->get_where('users', array('schoolid' => $schoolid, $type => $value));
+        $query = $this->db->get_where('users', ['schoolid' => $schoolid, $type => $value]);
         
         return ($query->num_rows() > 0)? false: true;
         
@@ -140,14 +150,8 @@ class Util_model extends CI_Model {
     public function get_current_session() {
         return $this->get_data(
                             'session', 
-                            array('*'), 
-                            array(
-                                array('field' => 'status', 'value' => 'active')
-                            ),
-                            array(),
-                            array(),
-                            array(),
-                            QUERY_OBJECT_ROW
+                            ['*'], 
+                            [['field' => 'status', 'value' => 'active']], [], [], [], QUERY_OBJECT_ROW
                         );
     }// End func get_current_session
     
@@ -155,20 +159,17 @@ class Util_model extends CI_Model {
      * Retrieve school information
      * 
      * @access public
+     * 
      * @return void
      */
     public function get_school_details($domain) {
         return $this->get_data(
                             'schools', 
-                            array('schoolid', 'shortname', 'schoolname', 'unitname', 'domainstring', 'admin'), 
-                            array(
+                            ['*'], 
+                            [
                                // Uncomment to use in multi-tenant environment.
-                               // array('field' => "domainstring", 'value' => strtolower($domain))
-                            ),
-                            array(),
-                            array(),
-                            array(),
-                            QUERY_OBJECT_ROW
+                               // ['field' => "domainstring", 'value' => strtolower($domain)]
+                            ], [], [], [], QUERY_OBJECT_ROW
                         );
     }// End func get_school_name
     
@@ -180,10 +181,7 @@ class Util_model extends CI_Model {
      * @return void
      */
     public function get_school_college() {
-        return $this->get_data(
-                            'schools', 
-                            array('unitname')                            
-                        );
+        return $this->get_data('schools', ['unitname']);
     }// End func get_school_college    
     
     /**
@@ -191,9 +189,30 @@ class Util_model extends CI_Model {
      *
      * @access public
      * @param int $user_id The user to retrieve permissions for.
+     * @param boolean $super_admin  
      * @return array
      **/
-    public function get_user_perms($user_id) {
+    public function get_user_perms($user_id, $super_admin = FALSE) {
+        // If user is the super admin, return all permissions present in the system.
+//        if($super_admin) {
+//            $table_name = 'permissions p';
+//            
+//            $select = [
+//                    'p.permid',
+//                    'p.name as pname',
+//                    'm.name as mname',
+//                    "'group' as parenttype",
+//                    "'NULL' as extradata",
+//                    FALSE
+//                ];
+//        
+//            $joins = [
+//                        ['table' => 'modules m', 'on' => 'm.moduleid = p.moduleid']   
+//                    ];
+//
+//        
+//            return $this->get_data($table_name, $select, [], [], $joins);
+//        }
         
         $query_data = [$user_id, $user_id, $user_id, $user_id];
         
@@ -232,77 +251,59 @@ class Util_model extends CI_Model {
         return $this->util_model->get_query_data($query, $query_data);
        
     } // End func get_user_perms
+    
+    /**
+     * Retrieve a user's derived permission.
+     *
+     * @access public
+     * @param array $der_perms
+     * @return array
+     **/
+    public function get_user_derived_perms($der_perms) {
+  
+        $query_data = implode(' OR ', $der_perms);
+        $query = "SELECT `p`.`permid`, `p`.`name` as `pname`, `m`.`name` as `mname`, 'group' as `parenttype`, "
+                . "'NULL' as `extradata` "
+                . "FROM ".$this->db->protect_identifiers('permissions', TRUE)." p "
+                . "JOIN ".$this->db->protect_identifiers('modules', TRUE)." m ON `m`.`moduleid` = `p`.`moduleid` "
+                . "WHERE %s ";
+             
+        return $this->util_model->get_query_data(sprintf($query, $query_data));
        
+    } // End func get_user_derived_perms
+           
     /**
      * Retrieve navigation contents to build menu
      *
      * @access public
      * @param array $perms
+     * @param boolean $super_admin 
      * @return array
      **/
-    public function get_nav_content(Array $perms) {
+    public function get_nav_content(Array $perms, $super_admin) {
         
         $perms = empty($perms)? ['0']: $perms;
-        
-   
-//         "SELECT `ml`.`url`, `ml`.`name`, `m`.`dispname`, `m`.`urlprefix` "
-//                . "FROM ".$this->db->protect_identifiers('module_links', TRUE)." ml "
-//                //. "JOIN `tams_link_perms` l ON `l`.`linkid` = `ml`.`linkid` AND l.permid IN ( 1, 2, 3 ) "
-//                . "JOIN ".$this->db->protect_identifiers('modules', TRUE)." m ON `m`.`moduleid` = `ml`.`moduleid` "
-//                . "AND m.status = 'active' "
-//                . "AND ml.status = 'active' "
-//                . "AND ml.linkid IN "
-//                . "()";
-        
-
-//        $table_name = 'module_links ml';
-//        $select = array(
-//                    'ml.url',
-//                    'ml.name',
-//                    'm.dispname',
-//                    'm.urlprefix'
-//                ); 
-//        
-//        $on['l'] = 'l.linkid = ml.linkid ';
-//        $on['l'] .= empty($perms)? 'AND l.permid IS NULL': 'AND l.permid IN ('.implode(',', $perms).') ';
-//        $on['l'] .= "AND ml.status = 'active'";
-//        
-//        $on['m'] = 'm.moduleid = ml.moduleid ';
-//        $on['m'] .= "AND m.status = 'active'";
-//        
-//        $joins = array(
-//                    array('table' => 'link_perms l', 'on' => $on['l'], 'type' => 'left'),
-//                    array('table' => 'modules m', 'on' => $on['m'])                     
-//                );
-//        
-//                
-//        return $this->get_data($table_name, $select, [], [], $joins);
-
-        // TODO one query can get all the results required here.
-        // Simply LEFT JOIN link_perms table, the null fields are the links without permissions.
-        // NB: Done, watch for anomalies.
-        $query = "SELECT `ml`.`url`, `ml`.`name`, `m`.`name` as `mname`, `m`.`dispname`,"
-                . " `m`.`tilecolor`, `m`.`tileicon`, `m`.`urlprefix`, `m`.`order` as `mod_order`"
+       
+        $query = "SELECT `ml`.`url`, `ml`.`name`, `ml`.`linkorder`, `m`.`name` as `mname`, `m`.`dispname`, "
+                . "`m`.`adminname`, `m`.`tilecolor`, `m`.`tileicon`, `m`.`urlprefix`, `m`.`modorder` "
                 . "FROM ".$this->db->protect_identifiers('module_links', TRUE)." ml "
                 . "JOIN ".$this->db->protect_identifiers('modules', TRUE)." m ON `m`.`moduleid` = `ml`.`moduleid` "
-                . "LEFT JOIN ".$this->db->protect_identifiers('link_perms', TRUE)." l ON `l`.`linkid` = `ml`.`linkid` AND `l`.`permid` IN (".implode(',', $perms).") "
+                . "LEFT JOIN ".$this->db->protect_identifiers('link_perms', TRUE)." l ON `l`.`linkid` = `ml`.`linkid` "
                 . "WHERE `ml`.`status` = `m`.`status` AND `m`.`status` = 'active' "
-                . "ORDER BY `mod_order` ASC";
-//                . "UNION "
-//                . "SELECT `ml`.`url`, `ml`.`name`, `m`.`name` as `mname`, `m`.`dispname`, "
-//                . "`m`.`tilecolor`, `m`.`tileicon`, `m`.`urlprefix`, `m`.`order` as `mod_order` "
-//                . "FROM ".$this->db->protect_identifiers('module_links', TRUE)." ml "
-//                . "JOIN ".$this->db->protect_identifiers('modules', TRUE)." m ON `m`.`moduleid` = `ml`.`moduleid` "
-//                . "WHERE `ml`.`status` = `m`.`status` AND `m`.`status` = 'active' "
-//                . "AND `ml`.linkid NOT IN (SELECT linkid FROM ".$this->db->protect_identifiers('link_perms', TRUE).")";
-             
+                . "%s "
+                . "ORDER BY `modorder` ASC, `linkorder` ASC";
+
+        $where = "AND (`l`.`permid` IN (".implode(',', $perms).") OR `l`.`permid` IS NULL)";
+        
+        $query = ($super_admin)? sprintf($query, ''): sprintf($query, $where);
+        
         return $this->get_query_data($query);
     } // End func get_nav_content
     
     /**
      * Get data from a table
      * 
-     * @access public     * 
+     * @access public
      * @param string $table Table to query from
      * @param array $fields Fields to include in the result set
      * @param array $where Where clause to include in the query
@@ -315,17 +316,17 @@ class Util_model extends CI_Model {
      */
     public function get_data(
             $table, 
-            array $fields = array('*'), 
-            array $where = array(), 
-            array $order = array(), 
-            array $join = array(), 
-            array $group = array(), 
+            array $fields = ['*'], 
+            array $where = [], 
+            array $order = [], 
+            array $join = [], 
+            array $group = [], 
             $r_set = QUERY_OBJECT_RESULT, 
             array $limit = array()) {
                 
         // Check if table name is supplied
         if(!isset($table) || $table == '') {            
-            return array('status' => DEFAULT_NOT_VALID);
+            return ['status' => DEFAULT_NOT_VALID];
         }
         
         // Prepare select fields 
@@ -380,8 +381,7 @@ class Util_model extends CI_Model {
                 default:
                     $logic? $this->db->or_where($w['field'], $w['value']): $this->db->where($w['field'], $w['value']);
                     
-            }
-            
+            }            
         }
         
         // Prepare group by clause
@@ -409,10 +409,10 @@ class Util_model extends CI_Model {
         if($result) {
             
             // Set default return value 
-            $ret = array('status' => DEFAULT_EMPTY);
+            $ret = ['status' => DEFAULT_EMPTY];
             
             // Check if query is not empty
-            if($r_count = $result->num_rows() > 0) {
+            if(($r_count = $result->num_rows()) > 0) {
                 switch($r_set) {
                     case QUERY_ARRAY_ROW:
                          $result_set = $result->row_array();
@@ -430,11 +430,11 @@ class Util_model extends CI_Model {
                         $result_set = $result->result();
                 }
 
-                $ret = array('status' => DEFAULT_SUCCESS, 'rs' => $result_set, 'cursor' => &$result, 'count' => $r_count);
+                $ret = ['status' => DEFAULT_SUCCESS, 'rs' => $result_set, 'cursor' => &$result, 'count' => $r_count];
             }
             
         }else {
-            $ret = array('status' => DEFAULT_ERROR);
+            $ret = ['status' => DEFAULT_ERROR];
         }
         
         return $ret;
@@ -450,11 +450,11 @@ class Util_model extends CI_Model {
      * @param int $r_set The type of the result returned
      * @return array Status of the query, and the resultset, only if query was successful
      */
-    public function get_query_data($query, $data = array(), $r_set = QUERY_OBJECT_RESULT) {
+    public function get_query_data($query, $data = [], $r_set = QUERY_OBJECT_RESULT) {
         
         // Check if query is supplied
         if(!isset($query) || $query == '') {            
-            return array('status' => DEFAULT_NOT_VALID);
+            return ['status' => DEFAULT_NOT_VALID];
         }
                
         // Run query
@@ -462,10 +462,10 @@ class Util_model extends CI_Model {
         
         if($result) {
             // Set default return value 
-            $ret = array('status' => DEFAULT_EMPTY);
+            $ret = ['status' => DEFAULT_EMPTY];
             
             // Check if result is empty
-            if($r_count = $result->num_rows() > 0) {
+            if(($r_count = $result->num_rows()) > 0) {
                 switch($r_set) {
                     case QUERY_ARRAY_ROW:
                          $result_set = $result->row_array();
@@ -483,11 +483,11 @@ class Util_model extends CI_Model {
                         $result_set = $result->result();
                 }
 
-                $ret = array('status' => DEFAULT_SUCCESS, 'rs' => $result_set, 'cursor' => $result, 'count' => $r_count);
+                $ret = ['status' => DEFAULT_SUCCESS, 'rs' => $result_set, 'cursor' => $result, 'count' => $r_count];
             }
             
         }else {
-            $ret = array('status' => DEFAULT_ERROR);
+            $ret = ['status' => DEFAULT_ERROR];
         }
         
         return $ret;
@@ -505,7 +505,7 @@ class Util_model extends CI_Model {
                 
         // Check if proper arguments are supplied
         if(!isset($table) || $table == '' || !is_array($fields) || empty($fields)) {            
-            return array('status' => DEFAULT_NOT_VALID);
+            return ['status' => DEFAULT_NOT_VALID];
         }
         
         foreach ($fields as $field) {
@@ -518,15 +518,15 @@ class Util_model extends CI_Model {
         if($result) {
             
             // Set default return value 
-            $ret = array('status' => DEFAULT_EMPTY);
+            $ret = ['status' => DEFAULT_EMPTY];
             
             // Check if affected_rows is not empty
             if($r_count = $this->db->affected_rows() > 0) {                
-                $ret = array('status' => DEFAULT_SUCCESS, 'count' => $r_count);
+                $ret = ['status' => DEFAULT_SUCCESS, 'count' => $r_count];
             }
             
         }else {
-            $ret = array('status' => DEFAULT_ERROR);
+            $ret = ['status' => DEFAULT_ERROR];
             
             switch($this->db->_error_number()) {
                 case 1451:
@@ -555,7 +555,7 @@ class Util_model extends CI_Model {
                 
         // Check if proper arguments are supplied
         if(!isset($table) || $table == '' || !is_array($params) || empty($params) || !is_array($fields) || empty($fields)) {            
-            return array('status' => DEFAULT_NOT_VALID);
+            return ['status' => DEFAULT_NOT_VALID];
         }
         
         foreach ($fields as $field) {
@@ -568,15 +568,15 @@ class Util_model extends CI_Model {
         if($result) {
             
             // Set default return value 
-            $ret = array('status' => DEFAULT_EMPTY);
+            $ret = ['status' => DEFAULT_EMPTY];
             
             // Check if affected_rows is not empty
             if($r_count = $this->db->affected_rows() > 0) {                
-                $ret = array('status' => DEFAULT_SUCCESS, 'count' => $r_count);
+                $ret = ['status' => DEFAULT_SUCCESS, 'count' => $r_count];
             }
             
         }else {
-            $ret = array('status' => DEFAULT_ERROR);
+            $ret = ['status' => DEFAULT_ERROR];
             
             switch($this->db->_error_number()) {
                 case 1062:

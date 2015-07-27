@@ -135,7 +135,7 @@
                 </div>
                 
                 <div id="subject" class="tab-pane">
-                    <table class="table table-hover table-nomargin">
+                    <table id="subjecttable" class="table table-hover table-nomargin">
                         <thead>
                             <tr>
                                 <th>S/N</th>                                

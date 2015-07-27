@@ -3,8 +3,8 @@
         <div class="box-title">
             <h3>
                 <i class="glyphicon-group"></i>
-                 User Groups   <?php echo $this->benchmark->elapsed_time();?>                                    
-            </h3>
+                 User Groups                                    
+            </h3>            
             <a class="btn pull-right" data-toggle="modal" href="#create_group_modal">New User Group</a>
         </div>
         <div class="box-content nopadding"> 

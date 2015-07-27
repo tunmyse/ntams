@@ -16,7 +16,7 @@
         id="edit_subject_form" 
         class="form-horizontal form-striped" 
         method="post" 
-        action="<?php echo site_url('exam/subject/update')?>">
+        action="<?php echo site_url('admission/update_subject')?>">
         
         <div class="modal-body">
                     
@@ -31,7 +31,7 @@
                 </div>
             </div>
         </div>
-        <input type="hidden" name="edit_sub_id" value="{{current.subjectid}}"/>
+        <input type="hidden" name="edit_subject_id" value="{{current.subid}}"/>
         <div class="modal-footer">
             <button data-dismiss="modal" class="btn" aria-hidden="true">Cancel</button>
             <button class="btn btn-primary" type="submit" id="edit_subject_button">Update</button>
