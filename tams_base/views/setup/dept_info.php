@@ -1,5 +1,5 @@
 <div>
-    <div class="box span6"><br/>
+<!--    <div class="box span6"><br/>
         <h4> <i class="icon-magic"></i> Stat Dashboard</h4>
         <div class="box-title">                                                        
             <h3> Lecturers</h3>
@@ -24,7 +24,7 @@
         <div class="box-content">
             <div id="flot-6" class='flot' style="width:270px; height:250px;"></div>
         </div>                                                    
-    </div>
+    </div>-->
     <div class="box"><br/>
         <div class="box-title">
             <h3>

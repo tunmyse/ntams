@@ -37,7 +37,9 @@
                             </a>
                         </td>
                         <td>
-                            <div class="btn-group">
+                            <?php if($this->main->has_perm('', ['setup.department.edit']) || 
+                                    $this->main->has_perm('', ['setup.department.delete'])):?>
+                            <div class="btn-group">                                
                                 <a class="btn dropdown-toggle" href="#" data-toggle="dropdown">
                                     <i class="icon-cog"> </i>
                                     <span class="caret"></span>
@@ -49,13 +51,14 @@
                                     </li>
                                     <?php endif;?>
                                     
-                                    <?php if($this->main->has_perm('', ['setup.department.edit'])):?>
+                                    <?php if($this->main->has_perm('', ['setup.department.delete'])):?>
                                     <li>
                                         <a ng-click="openDeleteDialog('dept', <?php echo $key?>, $event)">Delete</a>
                                     </li>
                                     <?php endif;?>
                                 </ul>
                             </div>
+                            <?php endif;?>
                         </td>
                     </tr>
                     <?php                       

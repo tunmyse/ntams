@@ -6,7 +6,7 @@
  * User Group controller
  * 
  * @category   Controller
- * @package    Acess Control
+ * @package    Access Control
  * @subpackage Group
  * @author     Tunmise Akinsola <akinsolatunmise@gmail.com>
  * @copyright  Copyright © 2014 TAMS.

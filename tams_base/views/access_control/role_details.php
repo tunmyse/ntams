@@ -30,11 +30,7 @@
             <div class="tab-content">
                 <div id="groups" class="tab-pane active">
                     <table class="table table-striped table-hover dataTable dataTable-columnfilter">
-                        <thead>
-                            <tr>
-                                <th>Group</th>
-                                <th>Actions</th>
-                            </tr>                                        
+                        <thead>                                      
                             <tr class="thefilter">
                                 <th>Group</th>
                                 <th>Actions</th>
@@ -85,12 +81,7 @@
                             <tr class="thefilter">
                                 <th>Permission</th>
                                 <th>Module</th>
-                                <th>Actions</th>
-                            </tr> 
-                            <tr>
-                                <th>Permission</th>
-                                <th>Module</th>
-                                <th>Actions</th>
+                                <th>Actions</th>                            
                             </tr>                                        
                         </thead>
                         <tbody>
@@ -138,12 +129,7 @@
                 
                 <div id="users" class="tab-pane">
                     <table class="table table-striped table-hover dataTable dataTable-columnfilter">
-                        <thead>
-                            <tr>
-                                <th>Users</th>
-                                <th>Type</th>
-                                <th>Actions</th>
-                            </tr>                                        
+                        <thead>                                    
                             <tr class="thefilter">
                                 <th>Users</th>
                                 <th>Type</th>

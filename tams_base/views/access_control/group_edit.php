@@ -39,11 +39,7 @@
                     </p>
                     
                     <table class="table table-striped table-hover dataTable dataTable-columnfilter">
-                        <thead>
-                            <tr>
-                                <th>Role</th>
-                                <th>Actions</th>
-                            </tr>      
+                        <thead>   
                             <tr class="thefilter">
                                 <th>Role</th>
                                 <th>Actions</th>
@@ -86,12 +82,7 @@
                                 <th>Permission</th>
                                 <th>Module</th>
                                 <th>Actions</th>
-                            </tr> 
-                            <tr>
-                                <th>Permission</th>
-                                <th>Module</th>
-                                <th>Actions</th>
-                            </tr>                                        
+                            </tr>                                       
                         </thead>
                         <tbody>
                             <?php 
@@ -131,11 +122,6 @@
                     </p>
                     <table class="table table-striped table-hover dataTable dataTable-columnfilter">
                         <thead>
-                            <tr>
-                                <th>Users</th>
-                                <th>Type</th>
-                                <th>Actions</th>
-                            </tr> 
                             <tr class="thefilter">
                                 <th>Users</th>
                                 <th>Type</th>

@@ -3,8 +3,9 @@
         "js": [
             "plugins/chosen/chosen.jquery.min.js",
             "angular/angular.min.js",
-            "angular/angular-setup.js?nn",
-            "lodash/lodash.min.js"
+            "angular/angular-setup.js",
+            "lodash/lodash.min.js",
+            "jquery.validate.js"
         ],
         
         "css": [

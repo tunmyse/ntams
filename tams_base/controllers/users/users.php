@@ -238,10 +238,10 @@ abstract class Users extends CI_Controller {
     /**
      * Get information about the currently logged in user.
      * 
-     * @access protected 
+     * @access public 
      * @return array	 
      */
-    protected function get_user_info() {
+    public function get_user_info() {
         
         $params = [
             'school_id' => $this->main->item('school_id'),

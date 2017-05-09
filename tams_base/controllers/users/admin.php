@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-require_once APPPATH.'controllers/users/Users.php';
+require_once APPPATH.'controllers/users/users.php';
 
 /**
  * TAMS
@@ -54,9 +54,7 @@ class Admin extends Users {
         $page_name = "{$this->user_type}_profile";
         $title = "{$this->main->item('user_lname')}'s Profile";
         $page_content = $this->load->view($this->folder_name.'/'.$page_name, $data, true);
-        $page_content .= $this->load->view($this->folder_name.'/partials/change_password', $data, true);
-        $page_content .= $this->load->view($this->folder_name.'/partials//change_image', $data, true);
-//        $page_content .= $this->load->view($this->folder_name.'/partials/edit_profile', $data, true);
+        $page_content .= $this->load->view($this->folder_name.'/partials/change_image', $data, true);
         $this->page->build($page_content, $this->folder_name, $page_name, $title, false);
     }// End of func view_profile
     

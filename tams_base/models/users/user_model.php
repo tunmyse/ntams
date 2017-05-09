@@ -140,7 +140,7 @@ class User_model extends CI_Model {
         $join = [];
         $table_name = $params['user_type'].' ut';
             
-        $select = ['ut.*', 'p1.progname as prog1', 'p2.progname as prog2', 'p0.progname as offered', 'a.*'];
+        $select = ['ut.*', 'p1.progname as progname1', 'p2.progname as progname2', 'p0.progname as offered', 'a.*'];
 
         $where[] = ['field' => "ut.userid", 'value' => $params['user_id']];
         

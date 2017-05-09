@@ -36,6 +36,8 @@
                             </a>
                         </td>
                         <td>
+                            <?php if($this->main->has_perm('', ['setup.college.edit']) || 
+                                    $this->main->has_perm('', ['setup.college.delete'])):?>
                             <div class="btn-group">
                                 <a class="btn dropdown-toggle" href="#" data-toggle="dropdown">
                                     <i class="icon-cog"> </i>
@@ -57,6 +59,7 @@
                                     <?php //}?>
                                 </ul>
                             </div>
+                            <?php endif;?>
                         </td>
                     </tr>
                     <?php                       

@@ -20,6 +20,10 @@
                             
         <div class="modal-body" style="min-height: 300px">
             <div class="control-group">
+                <user-filter/>        
+            </div>
+            
+            <div class="control-group">
                 <boot-ahead search-type="User" holder-text="Type user's names to see suggestions" 
                             url="<?php echo site_url("access/suggestions")?>"></boot-ahead>        
             </div>

@@ -64,7 +64,7 @@
                         </td>                         
                     </tr>
                     <tr>                                                 
-                        <td><a><h4>Leturer</h4></a></td>    
+                        <td><a><h4>Lecturer</h4></a></td>    
                         <td>
                             <a href="/access/role?id=1">result</a>, 
                             <a>Edit Profile</a>, 

@@ -176,43 +176,31 @@
         <div class="span6">
             <div class="clearfix">
                 <p>
-                    <span class="pull-left" style='width: 160px'>Student No.:</span>
+                    <span class="pull-left" style='width: 160px'>Admission No.:</span>
                     <span><?php echo $user_info->usertypeid?></span>
                 </p>
             </div>
             <div class="clearfix">
                 <p>
-                    <span class="pull-left" style='width: 160px'>Programme:</span>
-                    <span><?php echo $acad_info->progname?></span>
+                    <span class="pull-left" style='width: 160px'>1st Choice Programme:</span>
+                    <span><?php echo $acad_info->progname1?></span>
                 </p>
             </div>
             <div class="clearfix">
                 <p>
-                    <span class="pull-left" style='width: 160px'>Department:</span>
-                    <span><?php echo $acad_info->deptname?></span>
+                    <span class="pull-left" style='width: 160px'>2nd Choice Programme:</span>
+                    <span><?php echo $acad_info->progname2?></span>
                 </p>
-            </div>
-            <div class="clearfix">
-                <p>
-                    <span class="pull-left" style='width: 160px'>College:</span>
-                    <span><?php echo $acad_info->colname?></span>
-                </p>
-            </div>                 
+            </div>                         
         </div>
         
         <div class="span5">
-            <div class="clearfix">
+             <div class="clearfix">
                 <p>
-                    <span class="pull-left" style='width: 160px'>Level:</span>
-                    <span><?php echo $acad_info->level?></span>
+                    <span class="pull-left" style='width: 160px'>Programme Offered:</span>
+                    <span><?php echo $acad_info->offered? $acad_info->offered: 'N/A'?></span>
                 </p>
-            </div>
-            <div class="clearfix">
-                <p>
-                    <span class="pull-left" style='width: 160px'>Entry Year:</span>
-                    <span><?php echo $acad_info->sesname?></span>
-                </p>
-            </div>
+            </div>   
             <div class="clearfix">
                 <p>
                     <span class="pull-left" style='width: 160px'>Admission Mode:</span>

@@ -100,6 +100,16 @@ class Page {
      * @return void
      */
     public function build($page_content_buffer, $folder_name, $page_name, $title = '', $dashboard = TRUE) {
+        
+        // Add edit_profile and change_password
+        require_once APPPATH."controllers/users/{$this->user_type}.php";
+        
+        $user = new $this->user_type();
+        $data['user_info'] = $user->get_user_info();
+        $data['user_type'] = $this->user_type;
+        $page_content_buffer .= $this->CI->load->view('users/partials/change_password', $data, true);
+        $page_content_buffer .= $this->CI->load->view('users/partials/edit_profile', $data, true); 
+        
         // Do not display activity feed
         $feedbar = false;
         
@@ -142,6 +152,8 @@ class Page {
             'dashboard_url' => site_url('/'.$this->user_type.'/dashboard'),
             'logout_url' => site_url('/logout'),
             'profile_url' => site_url("/{$this->user_type}/profile"),
+            'change_pwd' => "#change_password_modal",
+            'edit_profile' => "#edit_profile_modal",
             'message_count' => 2,//TODO get actually message count
             'display_name' => strtoupper($this->user_name),
             'display_img' => base_url("img/user/{$this->image_url}")

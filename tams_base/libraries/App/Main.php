@@ -33,6 +33,11 @@ class Main {
     
     private $user_lname;
     
+    /* TODO 
+     * Add middle and maiden name
+     * Add maiden name to database
+     */
+    
     /**
      * User's first name
      * 

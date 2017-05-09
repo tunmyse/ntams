@@ -12,11 +12,7 @@
                     <tr class="thefilter">
                         <th>Role Name</th>
                         <th>Actions</th>
-                    </tr>   
-                    <tr>
-                        <th>Role Name</th>
-                        <th>Actions</th>
-                    </tr>                                        
+                    </tr>                                          
                 </thead>
                 <tbody>
                     <?php foreach($roles as $role) : ?>

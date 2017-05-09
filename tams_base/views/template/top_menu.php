@@ -64,8 +64,14 @@
                         <a href="<?php echo $profile_url; ?>">My Profile</a>
                     </li>
                     <li>
-                        <a href="#">Account settings</a>
+                        <a href="<?php echo $change_pwd;?>" data-toggle="modal">Change Password</a>
                     </li>
+                    <li>
+                        <a href="<?php echo $edit_profile;?>" data-toggle="modal">Edit Profile</a>
+                    </li>
+<!--                    <li>
+                        <a href="#">Account settings</a>
+                    </li>-->
                     <li>
                         <a href="<?php echo $logout_url; ?>">Sign out</a>
                     </li>

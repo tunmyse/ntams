@@ -1,73 +1,54 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-require_once APPPATH.'controllers/users/users.php';
+require_once APPPATH.'controllers/users/uers.php';
 
 /**
- * Applicant controller
+ * TAMS
+ * Admin controller
  * 
  * @category   Controller
  * @package    Users
- * @subpackage Applicant
+ * @subpackage Admin
  * @author     Tunmise Akinsola <akinsolatunmise@gmail.com>
  * @copyright  Copyright © 2014 TAMS.
  * @version    1.0.0
  * @since      File available since Release 1.0.0
  */
+class Staff extends Users {
 
-class Applicant extends Users {
-       
     /*
      * Class constructor
      * 
      * @access public 
      * @retun void
      */
-            
-    public function __construct(){
-        
+    public function __construct() {
+
         parent::__construct();
+
+        /*
+         * Load libraries
+         */
         
-    } 
+        // Initialize class variables
+        
+    }// End func __construct
     
     /**
-     * Prospective Application page .	 
+     * Dashboard for admin.	 
      */
-    public function index() {
-        parent::index();
-    }
-     
-    
-    /**
-     * Get academic information for this user.
-     * 
-     * @access protected 
-     * @return array	 
-     */
-    private function get_acad_info() {
-        
-        $params = [
-            'school_id' => $this->main->item('school_id'),
-            'user_id' => $this->user_id,
-            'user_type' => 'prospective'
-        ];
-        
-        $info = $this->mdl->get_app_acad_info($params);
-        
-        return ($info['status'] == DEFAULT_SUCCESS)? $info['rs']: [];
-        
-    }// End of func get_acad_info
+    public function index() { 
+        parent::index();   
+    }// End of func index
     
     /**
      * Show a user's profile.
      * 
-     * @access public 
+     * @access public
      * @return void	 
      */
     public function view_profile() {
         
         $data['user_info'] = $this->get_user_info();
-        
-        $data['acad_info'] = $this->get_acad_info(); 
-        
         $data['user_type'] = $this->user_type;
         
         $page_name = "{$this->user_type}_profile";
@@ -78,15 +59,16 @@ class Applicant extends Users {
     }// End of func view_profile
     
     /**
-     * Edit a applicant's profile.
+     * Edit an admin's profile.
      * 
      * @access public 
      * @param string $section
      * @return void	 
      */
-    public function edit_profile($section) {
+    public function edit_profile($section) {                
         parent::edit_profile($section);        
     }// End of func edit_profile
-}// End class Applicant
+}
 
-// End file Applicant.php
+/* End of file admin.php */
+/* Location: ./application/controllers/admin.php */

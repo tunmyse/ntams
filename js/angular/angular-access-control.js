@@ -99,3 +99,118 @@ accessModule.directive('bootAhead', function($http) {
     };
        
 });
+
+accessModule.directive('userFilter', function($http, $timeout) {
+    
+    return {
+        restrict: 'EA',
+        replace: true,
+        template: '<div>\n\
+                        <div ng-show="enabled">\n\
+                            <div>\n\
+                                <select id="usertype" class="chosen-select input-medium" ng-model="data.usertype">\n\
+                                    <option value="prospective">Prospective</option>\n\
+                                    <option value="student">Student</option>\n\
+                                    <option value="staff">Staff</option>\n\
+                                    <option value="admin">Admin</option>\n\
+                                </select>\n\
+                                <input type="text" class="input-small btn" ng-click="clearFilter()" value="Clear All Filter"/>\n\
+                            </div>\n\
+                            <div id="filter-id" ng-repeat="filter in filters">\n\
+                                <select class="chosen-select input-small" id="group{{$index}}" ng-if="!$first" ng-model="filter.group">\n\
+                                    <option value="or">OR</option>\n\
+                                    <option value="and">AND</option>\n\
+                                </select>\n\
+                                <select class="chosen-select input-medium" id="attr{{$index}}" ng-model="filter.attr">\n\
+                                    <option value="or">Matric</option>\n\
+                                    <option value="or">Last Name</option>\n\
+                                    <option value="or">First Name</option>\n\
+                                    <option>Level</option>\n\
+                                    <option>Gender</option>\n\
+                                    <option>Religion</option>\n\
+                                    <option>State of Origin</option>\n\
+                                    <option>Programme</option>\n\
+                                    <option>Department</option>\n\
+                                    <option>College</option>\n\
+                                </select>\n\
+                                <select class="chosen-select input-medium" id="func{{$index}}" ng-model="filter.func">\n\
+                                    <option>contains</option>\n\
+                                    <option>equals</option>\n\
+                                    <option>greater than</option>\n\
+                                    <option>less than</option>\n\
+                                    <option>in</option>\n\
+                                </select>\n\
+                                <input type="text" class="input-small" ng-model="filter.val"/>\n\
+                                <a ng-click="removeFilter($index)"><i class="icon-trash"></i></a>\n\
+                                <a ng-show="$last" ng-click="addFilter()"><i class="icon-plus-sign"></i></a>\n\
+                            </div>\n\
+                            <button type="button" ng-hide="enabled" class="btn" ng-click="getFilter()" >\n\
+                                Filter\n\
+                            </button>\n\
+                        </div>\n\
+                        <button type="button" ng-hide="enabled" class="btn" ng-click="createFilter()" >\n\
+                            <i class="icon-filter"></i>Filter\n\
+                        </button>\n\
+                    </div>',
+        scope: {
+        },
+        link: function(scope, elem, attrs) {
+            scope.enabled = false;
+            scope.data = {
+                usertype: "prospective"                
+            };
+            
+            scope.$watch("data.usertype", function(value) {
+                console.log("watch");
+                if(scope.data.usertype !== value) {
+                    scope.clearFilter();
+                    scope.createFilter();
+                }
+            });
+            
+            scope.filters = [];
+            
+            scope.createFilter = function() {
+                scope.enabled = true;
+                scope.filters.push({"group": "OR", "attr": "", "func": "contains", "val": ""});
+                scope.updateDropdown();
+            };
+            
+            scope.clearFilter = function() {
+                scope.enabled = false;
+                scope.filters = [];
+                scope.data.usertype = "prospective" ;
+                scope.updateDropdown();
+            };
+            
+            scope.getFilter = function() {
+                $http.post("", {
+                    
+                });
+            };
+            
+            scope.addFilter = function() {
+                var filter = scope.filters[scope.filters.length - 1];
+                
+                if(!filter.val || !filter.attr) {
+                    alert("Supply all the information for the last filter before creating another!");
+                    return;
+                }
+                scope.filters.push({"group": "or", "attr": "", "func": "contains", "val": ""});
+                scope.updateDropdown();
+            };
+            
+            scope.removeFilter = function(index) {
+                scope.filters.splice(index, 1);
+            };
+            
+            scope.updateDropdown = function() {
+                $timeout(function() {
+                    elem.find('#filter-id .chosen-select').chosen({});
+                    elem.find('.chosen-select').trigger('liszt:updated');                         
+                }, 0);           
+            };          
+        }
+    };
+       
+});
